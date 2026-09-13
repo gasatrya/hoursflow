@@ -1,0 +1,192 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: opennow-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: PHP and JavaScript quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up PHP 7.4
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
+        with:
+          php-version: '7.4'
+          extensions: curl, mbstring, mysqli, xml, xmlreader, xmlwriter, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Set up Node 20
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Install npm dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Record tool versions
+        run: |
+          php --version
+          composer --version
+          node --version
+          npm --version
+          vendor/bin/phpunit --version
+
+      - name: Run PHP, standards, security, i18n, and unit checks
+        run: composer check:php
+
+      - name: Run JavaScript, style, build, translation, and package checks
+        run: npm run check
+
+  wordpress:
+    name: WordPress ${{ matrix.wp }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    env:
+      WP_VERSION: ${{ matrix.wp }}
+      WP_TESTS_DIR: ${{ runner.temp }}/wordpress-tests-${{ matrix.wp }}-${{ matrix.php }}
+      WP_CORE_DIR: ${{ runner.temp }}/wordpress-${{ matrix.wp }}-${{ matrix.php }}
+      WP_TESTS_PHPUNIT_POLYFILLS_PATH: ${{ github.workspace }}/vendor/yoast/phpunit-polyfills
+      OPENNOW_TEST_PLUGIN_FILE: ${{ runner.temp }}/wordpress-${{ matrix.wp }}-${{ matrix.php }}/wp-content/plugins/opennow/opennow.php
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wp: '6.6.7'
+            php: '7.4'
+          - wp: '6.6.7'
+            php: '8.3'
+          - wp: '7.0.4'
+            php: '7.4'
+          - wp: '7.0.4'
+            php: '8.3'
+          - wp: '7.0.4'
+            php: '8.5'
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, mbstring, mysqli, xml, xmlreader, xmlwriter, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Set up Node 20
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install locked development dependencies
+        run: |
+          composer install --no-interaction --no-progress --prefer-dist
+          npm ci --ignore-scripts
+
+      - name: Verify generated block assets
+        run: npm run build:check
+
+      - name: Install exact WordPress patch and matching test suite
+        run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 "${WP_VERSION}"
+
+      - name: Build and install the dependency-free production package
+        run: |
+          node tools/package.js --output "${RUNNER_TEMP}/opennow-0.1.0.zip"
+          mkdir -p "${WP_CORE_DIR}/wp-content/plugins"
+          unzip -q "${RUNNER_TEMP}/opennow-0.1.0.zip" -d "${WP_CORE_DIR}/wp-content/plugins"
+          test -f "${OPENNOW_TEST_PLUGIN_FILE}"
+          test ! -e "${WP_CORE_DIR}/wp-content/plugins/opennow/vendor"
+          test ! -e "${WP_CORE_DIR}/wp-content/plugins/opennow/node_modules"
+
+      - name: Record matrix versions
+        run: |
+          php --version
+          composer --version
+          vendor/bin/phpunit --version
+          grep -F "\$wp_version = '${WP_VERSION}';" "${WP_CORE_DIR}/wp-includes/version.php"
+
+      - name: Run production-package WordPress integration tests
+        run: vendor/bin/phpunit --configuration phpunit.integration.xml.dist
+
+  package:
+    name: Production package
+    runs-on: ubuntu-latest
+    needs: [quality, wordpress]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up PHP 7.4 for the POT generator
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
+        with:
+          php-version: '7.4'
+          extensions: curl, mbstring, xml
+          coverage: none
+          tools: composer:v2
+
+      - name: Set up Node 20
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install locked development dependencies
+        run: |
+          composer install --no-interaction --no-progress --prefer-dist
+          npm ci --ignore-scripts
+
+      - name: Verify generated build and POT reproducibility
+        run: |
+          npm run build:check
+          npm run i18n:pot:check
+
+      - name: Build and inspect deterministic production package
+        run: |
+          npm run package:check
+          npm run package
+          unzip -t dist/opennow-0.1.0.zip
+          unzip -Z1 dist/opennow-0.1.0.zip > package-files.txt
+          grep -Fx 'opennow/opennow.php' package-files.txt
+          grep -Fx 'opennow/uninstall.php' package-files.txt
+          grep -Fx 'opennow/languages/opennow.pot' package-files.txt
+          ! grep -E '^opennow/(tests|docs|vendor|node_modules|tools|src/blocks)/' package-files.txt
+          ! grep -E '^opennow/(composer|package|phpunit|phpcs)' package-files.txt
+          unzip -p dist/opennow-0.1.0.zip opennow/opennow.php | grep -F 'Plugin Name: OpenNow CTA'
+          sha256sum dist/opennow-0.1.0.zip
+
+      - name: Upload production package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: opennow-0.1.0-${{ github.sha }}
+          path: dist/opennow-0.1.0.zip
+          if-no-files-found: error

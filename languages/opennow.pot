@@ -1,0 +1,410 @@
+# Copyright (C) 2026 OpenNow contributors
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenNow CTA 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/gasatrya/opennow/issues\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 1970-01-01 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI i18n-command 3.0.1\n"
+"X-Domain: opennow\n"
+
+#. Plugin Name of the plugin
+#: opennow.php:3
+#: src/blocks/cta/index.js:14
+msgid "OpenNow CTA"
+msgstr ""
+
+#. Description of the plugin
+#: opennow.php:4
+msgid "Automatically show the right call to action based on business hours."
+msgstr ""
+
+#: src/Admin/Settings.php:81
+#: src/Admin/Settings.php:229
+msgid "OpenNow Settings"
+msgstr ""
+
+#: src/Admin/Settings.php:82
+msgid "OpenNow"
+msgstr ""
+
+#: src/Admin/Settings.php:116
+#: src/Admin/Settings.php:123
+#: src/Admin/Settings.php:858
+msgid "Business timezone"
+msgstr ""
+
+#: src/Admin/Settings.php:134
+msgid "CTA appearance"
+msgstr ""
+
+#: src/Admin/Settings.php:141
+#: src/Admin/Settings.php:929
+msgid "Background color"
+msgstr ""
+
+#: src/Admin/Settings.php:153
+#: src/Admin/Settings.php:930
+msgid "Text color"
+msgstr ""
+
+#: src/Admin/Settings.php:165
+msgid "Weekly hours"
+msgstr ""
+
+#: src/Admin/Settings.php:172
+msgid "Monday to Sunday"
+msgstr ""
+
+#: src/Admin/Settings.php:180
+msgid "CTA while open"
+msgstr ""
+
+#: src/Admin/Settings.php:187
+#: src/Admin/Settings.php:901
+msgid "Open CTA"
+msgstr ""
+
+#: src/Admin/Settings.php:199
+msgid "CTA while closed"
+msgstr ""
+
+#: src/Admin/Settings.php:206
+#: src/Admin/Settings.php:902
+msgid "Closed CTA"
+msgstr ""
+
+#: src/Admin/Settings.php:224
+msgid "You do not have permission to access these settings."
+msgstr ""
+
+#: src/Admin/Settings.php:234
+msgid "Save Changes"
+msgstr ""
+
+#: src/Admin/Settings.php:280
+msgid "OpenNow settings errors"
+msgstr ""
+
+#: src/Admin/Settings.php:293
+msgid "Choose the named timezone used for all weekly hours. Times are entered as local business time."
+msgstr ""
+
+#: src/Admin/Settings.php:307
+msgid "Set each day to closed or one period. A closing time earlier than the opening time is an overnight period."
+msgstr ""
+
+#: src/Admin/Settings.php:356
+msgid "Select UTC or a named IANA region/city timezone. Manual UTC offsets are not supported."
+msgstr ""
+
+#: src/Admin/Settings.php:370
+msgid "Choose optional global CTA colors shared by the shortcode and every OpenNow block. Leave a field blank to use the plugin default. The effective color pair must meet WCAG 2.2 AA contrast for normal text."
+msgstr ""
+
+#: src/Admin/Settings.php:399
+msgid "Optional global CTA link background color. Enter a six-digit hexadecimal value such as #166534, or leave it blank for the plugin default."
+msgstr ""
+
+#: src/Admin/Settings.php:400
+msgid "Optional global CTA link text color. Enter a six-digit hexadecimal value such as #FFFFFF, or leave it blank for the plugin default."
+msgstr ""
+
+#: src/Admin/Settings.php:428
+msgid "Check Closed all day to omit period times for a closed day."
+msgstr ""
+
+#: src/Admin/Settings.php:434
+msgid "Enter exact 24-hour HH:MM local business time, for example 09:30. Overnight periods are allowed."
+msgstr ""
+
+#: src/Admin/Settings.php:489
+msgid "Closed all day"
+msgstr ""
+
+#: src/Admin/Settings.php:494
+#: src/Admin/Settings.php:877
+msgid "Opening time"
+msgstr ""
+
+#: src/Admin/Settings.php:512
+#: src/Admin/Settings.php:878
+msgid "Closing time"
+msgstr ""
+
+#. translators: %s: the business state, either open or closed.
+#: src/Admin/Settings.php:572
+#, php-format
+msgid "Configure the CTA shown when the business is %s. Enter administrator content as plain text."
+msgstr ""
+
+#: src/Admin/Settings.php:573
+#: src/Admin/Settings.php:754
+msgid "open"
+msgstr ""
+
+#: src/Admin/Settings.php:573
+#: src/Admin/Settings.php:755
+msgid "closed"
+msgstr ""
+
+#: src/Admin/Settings.php:579
+msgid "CTA label"
+msgstr ""
+
+#: src/Admin/Settings.php:593
+msgid "Required plain-text button label; angle brackets are not allowed."
+msgstr ""
+
+#: src/Admin/Settings.php:597
+msgid "CTA action"
+msgstr ""
+
+#: src/Admin/Settings.php:611
+msgid "Required root-relative URL, HTTPS URL, or telephone action (tel:)."
+msgstr ""
+
+#: src/Admin/Settings.php:615
+msgid "CTA status"
+msgstr ""
+
+#: src/Admin/Settings.php:629
+msgid "Optional plain-text status shown with this CTA."
+msgstr ""
+
+#. translators: %s: the business state, either open or closed.
+#: src/Admin/Settings.php:761
+#, php-format
+msgid "Set the label, action, and optional status for the CTA used while the business is %s."
+msgstr ""
+
+#: src/Admin/Settings.php:799
+msgid "Monday"
+msgstr ""
+
+#: src/Admin/Settings.php:800
+msgid "Tuesday"
+msgstr ""
+
+#: src/Admin/Settings.php:801
+msgid "Wednesday"
+msgstr ""
+
+#: src/Admin/Settings.php:802
+msgid "Thursday"
+msgstr ""
+
+#: src/Admin/Settings.php:803
+msgid "Friday"
+msgstr ""
+
+#: src/Admin/Settings.php:804
+msgid "Saturday"
+msgstr ""
+
+#: src/Admin/Settings.php:805
+msgid "Sunday"
+msgstr ""
+
+#. translators: 1: field label, 2: validation message.
+#: src/Admin/Settings.php:857
+#: src/Admin/Settings.php:872
+#: src/Admin/Settings.php:882
+#: src/Admin/Settings.php:905
+#: src/Admin/Settings.php:915
+#: src/Admin/Settings.php:935
+#, php-format
+msgid "%1$s: %2$s"
+msgstr ""
+
+#. translators: %s: validation message.
+#: src/Admin/Settings.php:866
+#, php-format
+msgid "Weekly hours: %s"
+msgstr ""
+
+#: src/Admin/Settings.php:876
+msgid "Day status"
+msgstr ""
+
+#. translators: 1: section label, 2: field label, 3: validation message.
+#: src/Admin/Settings.php:887
+#: src/Admin/Settings.php:920
+#, php-format
+msgid "%1$s — %2$s: %3$s"
+msgstr ""
+
+#. translators: %s: validation message.
+#: src/Admin/Settings.php:897
+#, php-format
+msgid "CTA settings: %s"
+msgstr ""
+
+#: src/Admin/Settings.php:909
+msgid "Label"
+msgstr ""
+
+#: src/Admin/Settings.php:910
+msgid "Action"
+msgstr ""
+
+#: src/Admin/Settings.php:911
+msgid "Status"
+msgstr ""
+
+#. translators: %s: validation message.
+#: src/Admin/Settings.php:942
+#, php-format
+msgid "Appearance: %s"
+msgstr ""
+
+#. translators: %s: validation message.
+#: src/Admin/Settings.php:947
+#, php-format
+msgid "Configuration: %s"
+msgstr ""
+
+#: src/Config/Validator.php:24
+msgid "The OpenNow configuration must be an array."
+msgstr ""
+
+#: src/Config/Validator.php:34
+msgid "The OpenNow configuration contains missing or unknown fields."
+msgstr ""
+
+#: src/Config/Validator.php:55
+msgid "A named business timezone is required."
+msgstr ""
+
+#: src/Config/Validator.php:63
+msgid "Enter a valid named business timezone."
+msgstr ""
+
+#: src/Config/Validator.php:75
+msgid "The weekly schedule must contain one entry for every day."
+msgstr ""
+
+#: src/Config/Validator.php:85
+msgid "The weekly schedule contains missing or unknown days."
+msgstr ""
+
+#: src/Config/Validator.php:95
+msgid "Every day needs a valid closed or period entry."
+msgstr ""
+
+#: src/Config/Validator.php:115
+msgid "The CTA settings must contain open and closed states."
+msgstr ""
+
+#: src/Config/Validator.php:122
+msgid "The CTA settings contain missing or unknown states."
+msgstr ""
+
+#: src/Config/Validator.php:132
+msgid "Each CTA state needs a label, action, and status field."
+msgstr ""
+
+#: src/Config/Validator.php:149
+msgid "The appearance settings must contain both colors."
+msgstr ""
+
+#: src/Config/Validator.php:156
+msgid "The appearance settings contain missing or unknown fields."
+msgstr ""
+
+#: src/Config/Validator.php:171
+msgid "Use a six-digit background color such as #166534, or leave it blank."
+msgstr ""
+
+#: src/Config/Validator.php:181
+msgid "Use a six-digit text color such as #FFFFFF, or leave it blank."
+msgstr ""
+
+#: src/Config/Validator.php:191
+#: src/Config/Validator.php:196
+msgid "The background and text colors must meet WCAG AA contrast for normal text."
+msgstr ""
+
+#: src/Config/Validator.php:394
+msgid "A schedule entry must be either closed or one period."
+msgstr ""
+
+#: src/Config/Validator.php:405
+#: src/Config/Validator.php:428
+msgid "Choose either closed or period for this day."
+msgstr ""
+
+#: src/Config/Validator.php:416
+msgid "A closed day may not contain period fields or unknown fields."
+msgstr ""
+
+#: src/Config/Validator.php:438
+msgid "A period must contain only type, opens, and closes fields."
+msgstr ""
+
+#: src/Config/Validator.php:448
+msgid "Enter an opening time in HH:MM format."
+msgstr ""
+
+#: src/Config/Validator.php:458
+msgid "Enter a closing time in HH:MM format."
+msgstr ""
+
+#: src/Config/Validator.php:467
+msgid "Opening and closing times must be different."
+msgstr ""
+
+#: src/Config/Validator.php:494
+msgid "Each CTA state must be an array with label, action, and status fields."
+msgstr ""
+
+#: src/Config/Validator.php:504
+msgid "Each CTA state must contain only label, action, and status fields."
+msgstr ""
+
+#: src/Config/Validator.php:516
+msgid "Enter a non-empty plain-text CTA label."
+msgstr ""
+
+#: src/Config/Validator.php:526
+msgid "Enter a valid root-relative, HTTPS, or telephone CTA action."
+msgstr ""
+
+#: src/Config/Validator.php:538
+msgid "Enter plain-text status text or leave it blank."
+msgstr ""
+
+#: src/blocks/cta/index.js:15
+msgid "The output uses the global OpenNow configuration and the current business state."
+msgstr ""
+
+#: src/blocks/cta/block.json
+msgctxt "block title"
+msgid "OpenNow CTA"
+msgstr ""
+
+#: src/blocks/cta/block.json
+msgctxt "block description"
+msgid "Show the right call to action based on the current business state."
+msgstr ""
+
+#: src/blocks/cta/block.json
+msgctxt "block keyword"
+msgid "call to action"
+msgstr ""
+
+#: src/blocks/cta/block.json
+msgctxt "block keyword"
+msgid "business hours"
+msgstr ""
+
+#: src/blocks/cta/block.json
+msgctxt "block keyword"
+msgid "open now"
+msgstr ""

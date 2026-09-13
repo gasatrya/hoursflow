@@ -7,7 +7,14 @@
         "php": ">=7.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.6"
+        "dealerdirect/phpcodesniffer-composer-installer": "1.2.1",
+        "php-parallel-lint/php-parallel-lint": "1.4.0",
+        "phpunit/phpunit": "9.6.36",
+        "squizlabs/php_codesniffer": "3.13.6",
+        "wp-cli/i18n-command": "3.0.1",
+        "wp-cli/wp-cli": "3.0.x-dev@dev",
+        "wp-coding-standards/wpcs": "3.4.1",
+        "yoast/phpunit-polyfills": "1.1.5"
     },
     "autoload": {
         "psr-4": {
@@ -23,10 +30,34 @@
         "platform": {
             "php": "7.4.0"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "scripts": {
-        "test": "phpunit --configuration phpunit.xml.dist"
+        "test": "@php vendor/bin/phpunit --configuration phpunit.xml.dist",
+        "test:unit": "@php vendor/bin/phpunit --configuration phpunit.xml.dist",
+        "test:integration": "@php vendor/bin/phpunit --configuration phpunit.integration.xml.dist",
+        "lint": "@lint:php",
+        "lint:php": "@php vendor/bin/parallel-lint --exclude vendor --exclude node_modules .",
+        "lint:phpcs": "@php vendor/bin/phpcs --standard=phpcs.xml.dist",
+        "phpcs": "@lint:phpcs",
+        "format:php": "@php vendor/bin/phpcbf --standard=phpcs.xml.dist",
+        "i18n:audit": [
+            "vendor/bin/wp i18n audit . --slug=opennow --domain=opennow --include=opennow.php,uninstall.php,src --skip-js --skip-block-json --format=plaintext",
+            "vendor/bin/wp i18n audit src/blocks/cta --slug=opennow --domain=opennow --exclude=*.test.js --skip-php --skip-block-json --format=plaintext"
+        ],
+        "i18n:pot": "node tools/make-pot.js",
+        "check": "@check:php",
+        "check:php": [
+            "@composer validate --strict",
+            "@composer audit --locked",
+            "@lint:php",
+            "@lint:phpcs",
+            "@i18n:audit",
+            "@test"
+        ]
     },
     "minimum-stability": "stable",
     "prefer-stable": true

@@ -6,66 +6,64 @@ use OpenNow\Frontend\Block;
 use OpenNow\Frontend\Renderer;
 use OpenNow\Frontend\Shortcode;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Main plugin service bootstrap.
  */
-final class Plugin
-{
-    /**
-     * @var self|null
-     */
-    private static $instance;
+final class Plugin {
 
-    /**
-     * @var Settings|null
-     */
-    private $settings;
+	/**
+	 * @var self|null
+	 */
+	private static $instance;
 
-    /**
-     * @var Renderer
-     */
-    private $renderer;
+	/**
+	 * @var Settings|null
+	 */
+	private $settings;
 
-    /**
-     * @var Shortcode
-     */
-    private $shortcode;
+	/**
+	 * @var Renderer
+	 */
+	private $renderer;
 
-    /**
-     * @var Block
-     */
-    private $block;
+	/**
+	 * @var Shortcode
+	 */
+	private $shortcode;
 
-    /**
-     * Boot the plugin once after all plugins have loaded.
-     *
-     * @return self
-     */
-    public static function boot()
-    {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
+	/**
+	 * @var Block
+	 */
+	private $block;
 
-        return self::$instance;
-    }
+	/**
+	 * Boot the plugin once after all plugins have loaded.
+	 *
+	 * @return self
+	 */
+	public static function boot() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
 
-    /**
-     * @return void
-     */
-    private function __construct()
-    {
-        $this->renderer = new Renderer();
-        $this->shortcode = new Shortcode($this->renderer);
-        $this->shortcode->register();
-        $this->block = new Block($this->renderer);
-        $this->block->register();
+		return self::$instance;
+	}
 
-        if (is_admin()) {
-            $this->settings = new Settings();
-            $this->settings->register();
-        }
-    }
+	/**
+	 * @return void
+	 */
+	private function __construct() {
+		$this->renderer  = new Renderer();
+		$this->shortcode = new Shortcode( $this->renderer );
+		$this->shortcode->register();
+		$this->block = new Block( $this->renderer );
+		$this->block->register();
+
+		if ( is_admin() ) {
+			$this->settings = new Settings();
+			$this->settings->register();
+		}
+	}
 }

@@ -1,26 +1,24 @@
-# OpenNow foundation and configuration
+# OpenNow configuration and runtime foundation
 
-This document describes the installable foundation shipped in issue #3. It does
-not add a settings screen or a frontend renderer.
+OpenNow is an installable WordPress plugin. Its entry point is `opennow.php`.
+The entry point defines the `OPENNOW_*` constants, loads the namespaced
+autoloading layer, registers activation/deactivation callbacks, and boots the
+plugin after `plugins_loaded`. Frontend services are always available; the
+Settings API screen is registered only during an admin request.
 
-## Bootstrap
+The user-facing installation and support disclosures are in [`README.md`](../README.md)
+and [`readme.txt`](../readme.txt). The normative behavior contract is in
+[`mvp-behavior-support-contract.md`](mvp-behavior-support-contract.md).
 
-`opennow.php` is the plugin entry point. It defines the global constants
-`OPENNOW_VERSION` (`0.1.0`), `OPENNOW_PLUGIN_FILE`, and `OPENNOW_PLUGIN_DIR`,
-loads the namespaced autoloader, registers activation/deactivation callbacks,
-and schedules `OpenNow\Plugin::boot()` on `plugins_loaded`.
+## Configuration
 
-The plugin has no public layer yet. On the `plugins_loaded` callback it creates
-and registers `OpenNow\Admin\Settings` only when WordPress reports an admin
-request. The settings registration runs on `admin_init` and registers the
-`opennow_config` option in the `opennow` group. It is an array setting, has a
-strict validation callback, and is not exposed in REST responses. No settings
-UI is created by this foundation.
+The Settings API registers one atomic, non-REST option: `opennow_config` in
+the `opennow` group. A successful submission is validated completely before
+WordPress persists it. Invalid submissions return the exact existing option
+(or `false` when it does not exist), add field-specific settings errors, and
+never partially update the option.
 
-## Stored shape
-
-There is one atomic configuration option, `opennow_config`. A valid stored
-value has exactly this shape (the values below are illustrative):
+A valid value has exactly this shape:
 
 ```php
 array(
@@ -35,16 +33,8 @@ array(
         'sunday' => array('type' => 'closed'),
     ),
     'cta' => array(
-        'open' => array(
-            'label' => 'Call Now',
-            'action' => 'tel:+123456789',
-            'status' => 'We are open.',
-        ),
-        'closed' => array(
-            'label' => 'Book an Appointment',
-            'action' => '/booking/',
-            'status' => '',
-        ),
+        'open' => array('label' => 'Call Now', 'action' => 'tel:+123456789', 'status' => ''),
+        'closed' => array('label' => 'Book an Appointment', 'action' => '/booking/', 'status' => ''),
     ),
     'appearance' => array(
         'background_color' => '',
@@ -53,69 +43,43 @@ array(
 )
 ```
 
-The top-level keys, all seven weekday keys, both CTA state keys, and every
-nested key shown above are required. A closed day has only `type`; a period has
-only `type`, `opens`, and `closes`. Openings and closings are local `HH:MM`
-values and may describe an overnight period, but they may not be equal. CTA
-status is optional in meaning but remains present as a blank string in the
-canonical shape. Blank colors select their defaults and remain blank in
-storage; surrounding whitespace is trimmed, but disallowed data is not
-rewritten into an allowed value.
+There must be exactly seven weekday entries, exactly one period or a closed
+entry per day, and both CTA states. Times are local `HH:MM` values. A closing
+time earlier than its opening time is overnight; equal times are invalid.
+Actions are root-relative URLs, HTTPS URLs, or supported `tel:` values. Labels
+and status are plain text. Optional colors are six-digit hex values or blank;
+blank values use the accessible plugin defaults and a low-contrast pair falls
+back to the complete default pair.
 
-The default effective colors are background `#166534` and text `#FFFFFF`.
-They meet the WCAG AA normal-text contrast requirement of 4.5:1. A submitted
-nonblank color must be an exact six-digit hexadecimal value, and the effective
-pair must meet that same threshold.
+`OpenNow\Config\Repository` revalidates every stored section in memory and
+never repairs the option. Missing or invalid days become closed, invalid CTA
+states become unavailable, invalid timezones make evaluation closed, and
+invalid appearance data uses the default color pair.
 
-## Runtime shape and revalidation
+## Frontend services
 
-`OpenNow\Config\Repository` reads the option without writing to it. It always
-returns this shape, even when the option is absent, legacy, or manually
-corrupted:
+The shortcode is:
 
-```php
-array(
-    'timezone' => 'America/New_York', // or null when invalid/missing
-    'schedule' => array(/* exactly monday through sunday */),
-    'cta' => array(
-        'open' => array(/* canonical label/action/status */), // or null
-        'closed' => null,                                    // or canonical array
-    ),
-    'appearance' => array(
-        'background_color' => '#166534',
-        'text_color' => '#FFFFFF',
-    ),
-)
+```text
+[opennow_cta]
 ```
 
-Each invalid or missing weekday is independently coerced to
-`array('type' => 'closed')`. Each CTA state is independently revalidated and
-becomes `null` when invalid. Runtime appearance values are always effective
-colors: a blank color uses its individual default; a malformed value, or a
-pair with insufficient contrast, uses the complete default pair. This salvage
-is in memory only and never repairs the WordPress option.
+The dynamic block is `opennow/cta`. It stores no user attributes and uses the
+same `OpenNow\Frontend\Renderer` as the shortcode, so saved settings produce
+the same server-rendered output for both integrations. The renderer evaluates
+the current absolute instant in the saved named IANA timezone, selects only
+the matching open or closed CTA, escapes output, and conditionally enqueues
+the local shared stylesheet after valid markup is built.
 
-Named IANA timezone identifiers are required; `UTC` is valid, while raw UTC
-offsets are not. Supported actions are exactly root-relative URLs, complete
-`https://` URLs with a valid hostname and no credentials, or the supported
-`tel:` form. Labels and status text remain plain text and reject angle brackets.
+The plugin has no browser polling, AJAX, REST polling, cache variation, or
+scheduled purge. Cached HTML can therefore be stale until the site's normal
+page-cache TTL; configure that TTL to the maximum staleness the site requires
+or arrange a boundary purge outside OpenNow.
 
-## Atomicity and lifecycle
+## Lifecycle
 
-The Settings API callback validates the complete submission before WordPress
-persists it. Any error adds field-specific settings errors and returns the
-exact existing option, or `false` when the option does not exist. A valid
-submission returns one canonical array. No partial update or read-time repair
-is performed.
-
-Activation is repeat-safe. It adds only the
-`opennow_schema_version` marker with value `1` when that marker does not
-already exist, using non-autoloaded marker storage. Activation never creates a
-configuration, posts, pages, or external requests. Deactivation is a no-op and
-retains the configuration. Uninstall removes `opennow_config` and
-`opennow_schema_version`; reinstalling then starts unconfigured.
-
-This MVP does not evaluate schedules, render frontend output, make remote
-requests, or vary/cache page output. When a later renderer is added, cached
-HTML may remain stale until the site's normal page-cache TTL or an externally
-managed boundary purge.
+Activation is repeat-safe and creates only the non-autoloaded schema marker.
+It does not create content or make requests. Deactivation is a no-op that
+retains settings for reactivation. Uninstall deletes the configuration and
+schema marker. Direct PHP execution is guarded and no custom tables, posts,
+visitor data, cookies, tracking, telemetry, or external assets are used.

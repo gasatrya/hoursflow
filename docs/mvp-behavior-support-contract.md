@@ -15,13 +15,13 @@ The MVP targets:
 
 These are target minimums, not release claims, until CI demonstrates them. The initial matrix, selected on 2026-09-13 from the official WordPress [requirements](https://wordpress.org/about/requirements/), [PHP compatibility table](https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/), and [release archive](https://wordpress.org/download/releases/), is:
 
-| WordPress release line | PHP release line | Purpose |
+| WordPress patch | PHP release line | Purpose |
 | --- | --- | --- |
-| 6.6.x | 7.4.x | Minimum supported combination |
-| 6.6.x | 8.3.x | Minimum WordPress on a modern PHP version supported by that branch |
-| 7.0.x | 7.4.x | Current WordPress release line with the PHP minimum |
-| 7.0.x | 8.3.x | Current WordPress with the recommended PHP baseline |
-| 7.0.x | 8.5.x | Current WordPress with the newest PHP release line it supports |
+| 6.6.7 | 7.4.x | Minimum supported combination |
+| 6.6.7 | 8.3.x | Minimum WordPress on a modern PHP version supported by that branch |
+| 7.0.4 | 7.4.x | Current WordPress release line with the PHP minimum |
+| 7.0.4 | 8.3.x | Current WordPress with the recommended PHP baseline |
+| 7.0.4 | 8.5.x | Current WordPress with the newest PHP release line it supports |
 
 CI MUST record the exact patch versions used and use the newest available patch in each listed release line. Before release, metadata and documentation MUST claim only the minimums and combinations that pass required automated checks. An allowed-failure or experimental job proves no compatibility. Updating current-version lanes does not lower the minimums, but raising either minimum requires an explicit contract change.
 

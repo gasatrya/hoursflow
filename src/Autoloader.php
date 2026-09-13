@@ -1,42 +1,41 @@
 <?php
 namespace OpenNow;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Small PSR-4 autoloader for the plugin namespace.
  */
-final class Autoloader
-{
-    /**
-     * Register the OpenNow namespace loader.
-     *
-     * @param string $directory Directory containing the namespace classes.
-     * @return void
-     */
-    public static function register($directory)
-    {
-        $directory = rtrim($directory, '/\\');
-        $prefix = __NAMESPACE__ . '\\';
+final class Autoloader {
 
-        spl_autoload_register(
-            static function ($class) use ($directory, $prefix) {
-                if (0 !== strpos($class, $prefix)) {
-                    return;
-                }
+	/**
+	 * Register the OpenNow namespace loader.
+	 *
+	 * @param string $directory Directory containing the namespace classes.
+	 * @return void
+	 */
+	public static function register( $directory ) {
+		$directory = rtrim( $directory, '/\\' );
+		$prefix    = __NAMESPACE__ . '\\';
 
-                $relative_class = substr($class, strlen($prefix));
-                if ('' === $relative_class) {
-                    return;
-                }
+		spl_autoload_register(
+			static function ( $class_name ) use ( $directory, $prefix ) {
+				if ( 0 !== strpos( $class_name, $prefix ) ) {
+					return;
+				}
 
-                $file = $directory . DIRECTORY_SEPARATOR
-                    . str_replace('\\', DIRECTORY_SEPARATOR, $relative_class) . '.php';
+				$relative_class = substr( $class_name, strlen( $prefix ) );
+				if ( '' === $relative_class ) {
+					return;
+				}
 
-                if (is_file($file)) {
-                    require_once $file;
-                }
-            }
-        );
-    }
+				$file = $directory . DIRECTORY_SEPARATOR
+					. str_replace( '\\', DIRECTORY_SEPARATOR, $relative_class ) . '.php';
+
+				if ( is_file( $file ) ) {
+					require_once $file;
+				}
+			}
+		);
+	}
 }

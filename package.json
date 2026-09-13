@@ -4,13 +4,26 @@
   "private": true,
   "description": "Build and test tooling for the OpenNow CTA WordPress block.",
   "scripts": {
+    "audit:production": "npm audit --omit=dev --audit-level=high",
     "build": "wp-scripts build",
-    "lint:js": "wp-scripts lint-js src/blocks/cta",
-    "test:unit": "wp-scripts test-unit-js"
+    "build:check": "node tools/check-build.js",
+    "check": "npm run audit:production && npm run test:js && npm run lint:js && npm run lint:style && npm run format:check && npm run build:check && npm run i18n:pot:check && npm run package:check",
+    "format": "wp-scripts format assets/admin/settings.js src/blocks/cta && prettier --write --config node_modules/@wordpress/prettier-config/lib/index.js tools/*.js",
+    "format:check": "prettier --check --config node_modules/@wordpress/prettier-config/lib/index.js assets/admin/settings.js src/blocks/cta tools/*.js",
+    "i18n:pot": "node tools/make-pot.js",
+    "i18n:pot:check": "node tools/check-pot.js",
+    "lint:css": "npm run lint:style",
+    "lint:js": "wp-scripts lint-js src/blocks/cta assets/admin/settings.js tools",
+    "lint:style": "wp-scripts lint-style \"assets/**/*.css\"",
+    "package": "node tools/package.js",
+    "package:check": "node tools/package.js --check",
+    "test:js": "wp-scripts test-unit-js --runInBand",
+    "test:unit": "npm run test:js"
   },
   "devDependencies": {
     "@wordpress/blocks": "13.0.3",
     "@wordpress/scripts": "28.0.2",
-    "typescript": "5.4.5"
+    "typescript": "5.4.5",
+    "yazl": "3.3.1"
   }
 }

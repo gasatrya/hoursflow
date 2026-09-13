@@ -11,24 +11,24 @@
  * Domain Path: /languages
  */
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
-if (!defined('OPENNOW_VERSION')) {
-    define('OPENNOW_VERSION', '0.1.0');
+if ( ! defined( 'OPENNOW_VERSION' ) ) {
+	define( 'OPENNOW_VERSION', '0.1.0' );
 }
 
-if (!defined('OPENNOW_PLUGIN_FILE')) {
-    define('OPENNOW_PLUGIN_FILE', __FILE__);
+if ( ! defined( 'OPENNOW_PLUGIN_FILE' ) ) {
+	define( 'OPENNOW_PLUGIN_FILE', __FILE__ );
 }
 
-if (!defined('OPENNOW_PLUGIN_DIR')) {
-    define('OPENNOW_PLUGIN_DIR', __DIR__ . '/');
+if ( ! defined( 'OPENNOW_PLUGIN_DIR' ) ) {
+	define( 'OPENNOW_PLUGIN_DIR', __DIR__ . '/' );
 }
 
 require_once OPENNOW_PLUGIN_DIR . 'src' . DIRECTORY_SEPARATOR . 'Autoloader.php';
-\OpenNow\Autoloader::register(OPENNOW_PLUGIN_DIR . 'src');
+\OpenNow\Autoloader::register( OPENNOW_PLUGIN_DIR . 'src' );
 
-register_activation_hook(OPENNOW_PLUGIN_FILE, array('OpenNow\\Lifecycle', 'activate'));
-register_deactivation_hook(OPENNOW_PLUGIN_FILE, array('OpenNow\\Lifecycle', 'deactivate'));
+register_activation_hook( OPENNOW_PLUGIN_FILE, array( 'OpenNow\\Lifecycle', 'activate' ) );
+register_deactivation_hook( OPENNOW_PLUGIN_FILE, array( 'OpenNow\\Lifecycle', 'deactivate' ) );
 
-add_action('plugins_loaded', array('OpenNow\\Plugin', 'boot'));
+add_action( 'plugins_loaded', array( 'OpenNow\\Plugin', 'boot' ) );
