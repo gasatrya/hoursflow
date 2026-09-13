@@ -8,6 +8,7 @@ $GLOBALS['opennow_test_options'] = array();
 $GLOBALS['opennow_test_option_calls'] = array();
 $GLOBALS['opennow_test_hooks'] = array();
 $GLOBALS['opennow_test_shortcodes'] = array();
+$GLOBALS['opennow_test_registered_blocks'] = array();
 $GLOBALS['opennow_test_activation_hooks'] = array();
 $GLOBALS['opennow_test_deactivation_hooks'] = array();
 $GLOBALS['opennow_test_registered_settings'] = array();
@@ -245,6 +246,18 @@ if (!function_exists('add_shortcode')) {
     function add_shortcode($tag, $callback)
     {
         $GLOBALS['opennow_test_shortcodes'][$tag] = $callback;
+    }
+}
+
+if (!function_exists('register_block_type')) {
+    function register_block_type($block_type, $args = array())
+    {
+        $GLOBALS['opennow_test_registered_blocks'][] = array(
+            'block_type' => $block_type,
+            'args' => $args,
+        );
+
+        return true;
     }
 }
 
@@ -551,6 +564,7 @@ function opennow_reset_wp_stubs()
     $GLOBALS['opennow_test_option_calls'] = array();
     $GLOBALS['opennow_test_hooks'] = array();
     $GLOBALS['opennow_test_shortcodes'] = array();
+    $GLOBALS['opennow_test_registered_blocks'] = array();
     $GLOBALS['opennow_test_activation_hooks'] = array();
     $GLOBALS['opennow_test_deactivation_hooks'] = array();
     $GLOBALS['opennow_test_registered_settings'] = array();

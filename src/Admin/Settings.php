@@ -14,6 +14,7 @@ final class Settings
     const PAGE_SLUG = 'opennow';
     const PAGE_CAPABILITY = 'manage_options';
     const TIMEZONE_SECTION = 'opennow_timezone_section';
+    const APPEARANCE_SECTION = 'opennow_appearance_section';
     const SCHEDULE_SECTION = 'opennow_schedule_section';
     const OPEN_CTA_SECTION = 'opennow_open_cta_section';
     const CLOSED_CTA_SECTION = 'opennow_closed_cta_section';
@@ -129,6 +130,37 @@ final class Settings
             self::TIMEZONE_SECTION,
             array(
                 'label_for' => 'opennow-timezone',
+            )
+        );
+
+        add_settings_section(
+            self::APPEARANCE_SECTION,
+            __('CTA appearance', 'opennow'),
+            array($this, 'renderAppearanceSection'),
+            self::PAGE_SLUG
+        );
+
+        add_settings_field(
+            'opennow_appearance_background_color',
+            __('Background color', 'opennow'),
+            array($this, 'renderAppearanceField'),
+            self::PAGE_SLUG,
+            self::APPEARANCE_SECTION,
+            array(
+                'color' => 'background_color',
+                'label_for' => 'opennow-appearance-background-color',
+            )
+        );
+
+        add_settings_field(
+            'opennow_appearance_text_color',
+            __('Text color', 'opennow'),
+            array($this, 'renderAppearanceField'),
+            self::PAGE_SLUG,
+            self::APPEARANCE_SECTION,
+            array(
+                'color' => 'text_color',
+                'label_for' => 'opennow-appearance-text-color',
             )
         );
 
@@ -309,7 +341,7 @@ final class Settings
     }
 
     /**
-     * Render the business timezone field and preserve the hidden appearance shape.
+     * Render the business timezone field.
      *
      * @param array<string, mixed> $args Field arguments.
      * @return void
@@ -318,8 +350,6 @@ final class Settings
     {
         $config = $this->getEditorConfig();
         $timezone = is_string($config['timezone']) ? $config['timezone'] : '';
-        $background = $config['appearance']['background_color'];
-        $text = $config['appearance']['text_color'];
 
         echo '<select id="opennow-timezone" name="opennow_config[timezone]"'
             . $this->getErrorAttributes(
@@ -335,13 +365,58 @@ final class Settings
                 'opennow'
             )
             . '</p>';
+    }
 
-        echo '<input type="hidden" name="opennow_config[appearance][background_color]" value="'
-            . esc_attr($background)
-            . '" />';
-        echo '<input type="hidden" name="opennow_config[appearance][text_color]" value="'
-            . esc_attr($text)
-            . '" />';
+    /**
+     * Render the appearance section description.
+     *
+     * @return void
+     */
+    public function renderAppearanceSection()
+    {
+        echo '<p class="description">'
+            . esc_html__(
+                'Choose optional global CTA colors shared by the shortcode and every OpenNow block. Leave a field blank to use the plugin default. The effective color pair must meet WCAG 2.2 AA contrast for normal text.',
+                'opennow'
+            )
+            . '</p>';
+    }
+
+    /**
+     * Render one global appearance color field.
+     *
+     * @param array<string, mixed> $args Field arguments.
+     * @return void
+     */
+    public function renderAppearanceField($args = array())
+    {
+        $color = isset($args['color']) && in_array($args['color'], array('background_color', 'text_color'), true)
+            ? $args['color']
+            : null;
+        if (null === $color) {
+            return;
+        }
+
+        $config = $this->getEditorConfig();
+        $value = isset($config['appearance'][$color]) && is_string($config['appearance'][$color])
+            ? $config['appearance'][$color]
+            : '';
+        $id = 'opennow-appearance-' . str_replace('_', '-', $color);
+        $description_id = $id . '-description';
+        $error_code = 'opennow_appearance_' . $color;
+        $description = 'background_color' === $color
+            ? __('Optional global CTA link background color. Enter a six-digit hexadecimal value such as #166534, or leave it blank for the plugin default.', 'opennow')
+            : __('Optional global CTA link text color. Enter a six-digit hexadecimal value such as #FFFFFF, or leave it blank for the plugin default.', 'opennow');
+
+        echo '<p><input type="text" class="regular-text" id="' . esc_attr($id)
+            . '" name="opennow_config[appearance][' . esc_attr($color) . ']" value="'
+            . esc_attr($value)
+            . '" maxlength="7" pattern="#[0-9A-Fa-f]{6}" inputmode="text" autocomplete="off"'
+            . $this->getErrorAttributes($description_id, array($error_code))
+            . ' />';
+        echo '<span class="description" id="' . esc_attr($description_id) . '"> '
+            . esc_html($description)
+            . '</span></p>';
     }
 
     /**
@@ -839,6 +914,18 @@ final class Settings
         }
 
         if ('appearance' === $root) {
+            $appearance_labels = array(
+                'background_color' => __('Background color', 'opennow'),
+                'text_color' => __('Text color', 'opennow'),
+            );
+            if (isset($parts[1]) && isset($appearance_labels[$parts[1]])) {
+                return sprintf(
+                    __('%1$s: %2$s', 'opennow'),
+                    $appearance_labels[$parts[1]],
+                    $message
+                );
+            }
+
             return sprintf(__('Appearance: %s', 'opennow'), $message);
         }
 

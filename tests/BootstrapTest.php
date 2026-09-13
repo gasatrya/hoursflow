@@ -35,6 +35,15 @@ final class BootstrapTest extends TestCase
         do_action('plugins_loaded');
 
         $this->assertArrayHasKey('opennow_cta', $GLOBALS['opennow_test_shortcodes']);
+        $this->assertArrayHasKey('init', $GLOBALS['opennow_test_hooks']);
+        $this->assertCount(1, $GLOBALS['opennow_test_hooks']['init']);
+        do_action('init');
+        $this->assertCount(1, $GLOBALS['opennow_test_registered_blocks']);
+        $this->assertStringEndsWith(
+            DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . 'blocks' . DIRECTORY_SEPARATOR . 'cta',
+            $GLOBALS['opennow_test_registered_blocks'][0]['block_type']
+        );
+        $this->assertArrayHasKey('render_callback', $GLOBALS['opennow_test_registered_blocks'][0]['args']);
         $this->assertArrayHasKey('admin_init', $GLOBALS['opennow_test_hooks']);
         $this->assertCount(1, $GLOBALS['opennow_test_hooks']['admin_init']);
         $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
@@ -48,6 +57,9 @@ final class BootstrapTest extends TestCase
         do_action('plugins_loaded');
 
         $this->assertArrayHasKey('opennow_cta', $GLOBALS['opennow_test_shortcodes']);
+        $this->assertArrayHasKey('init', $GLOBALS['opennow_test_hooks']);
+        do_action('init');
+        $this->assertCount(1, $GLOBALS['opennow_test_registered_blocks']);
         $this->assertArrayNotHasKey('admin_init', $GLOBALS['opennow_test_hooks']);
         $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
     }

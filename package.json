@@ -1,0 +1,16 @@
+{
+  "name": "opennow-cta",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Build and test tooling for the OpenNow CTA WordPress block.",
+  "scripts": {
+    "build": "wp-scripts build",
+    "lint:js": "wp-scripts lint-js src/blocks/cta",
+    "test:unit": "wp-scripts test-unit-js"
+  },
+  "devDependencies": {
+    "@wordpress/blocks": "13.0.3",
+    "@wordpress/scripts": "28.0.2",
+    "typescript": "5.4.5"
+  }
+}

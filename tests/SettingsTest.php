@@ -33,8 +33,18 @@ final class SettingsTest extends TestCase
         $this->assertFalse($registration['args']['show_in_rest']);
         $this->assertIsArray($registration['args']['sanitize_callback']);
         $this->assertSame('sanitize', $registration['args']['sanitize_callback'][1]);
-        $this->assertCount(4, $GLOBALS['opennow_test_settings_sections'][Settings::PAGE_SLUG]);
+        $this->assertCount(5, $GLOBALS['opennow_test_settings_sections'][Settings::PAGE_SLUG]);
         $this->assertCount(1, $GLOBALS['opennow_test_settings_fields'][Settings::PAGE_SLUG][Settings::SCHEDULE_SECTION]);
+        $appearance_fields = $GLOBALS['opennow_test_settings_fields'][Settings::PAGE_SLUG][Settings::APPEARANCE_SECTION];
+        $this->assertCount(2, $appearance_fields);
+        $this->assertSame(
+            'opennow-appearance-background-color',
+            $appearance_fields['opennow_appearance_background_color']['args']['label_for']
+        );
+        $this->assertSame(
+            'opennow-appearance-text-color',
+            $appearance_fields['opennow_appearance_text_color']['args']['label_for']
+        );
     }
 
     public function testSettingsPageUsesManageOptionsAndSettingsApiNonce(): void
@@ -63,6 +73,8 @@ final class SettingsTest extends TestCase
         $this->assertStringContainsString('name="opennow_config[cta][open][label]"', $output);
         $this->assertStringContainsString('name="opennow_config[cta][closed][action]"', $output);
         $this->assertStringContainsString('name="opennow_config[appearance][background_color]"', $output);
+        $this->assertStringContainsString('name="opennow_config[appearance][text_color]"', $output);
+        $this->assertStringNotContainsString('type="hidden" name="opennow_config[appearance]', $output);
         $this->assertSame(7, substr_count($output, 'data-opennow-schedule-day='));
         $this->assertSame(7, substr_count($output, 'checked="checked"'));
         $this->assertSame(array(), $GLOBALS['opennow_test_option_calls']);
@@ -105,6 +117,68 @@ final class SettingsTest extends TestCase
         $this->assertFileExists(dirname(__DIR__) . '/assets/admin/settings.js');
         $this->assertSame(array(), $script['deps']);
         $this->assertTrue($script['args']);
+    }
+
+    public function testAppearanceFieldsAreVisibleBlankCapableAndTranslated(): void
+    {
+        $settings = new Settings();
+
+        ob_start();
+        $settings->renderAppearanceSection();
+        $section = (string) ob_get_clean();
+        $this->assertStringContainsString('global CTA colors shared by the shortcode and every OpenNow block', $section);
+        $this->assertStringContainsString('Leave a field blank to use the plugin default.', $section);
+        $this->assertStringContainsString('must meet WCAG 2.2 AA contrast for normal text', $section);
+
+        ob_start();
+        $settings->renderAppearanceField(array('color' => 'background_color'));
+        $settings->renderAppearanceField(array('color' => 'text_color'));
+        $output = (string) ob_get_clean();
+
+        $this->assertStringContainsString('type="text"', $output);
+        $this->assertStringContainsString('name="opennow_config[appearance][background_color]" value=""', $output);
+        $this->assertStringContainsString('name="opennow_config[appearance][text_color]" value=""', $output);
+        $this->assertStringContainsString('six-digit hexadecimal value such as #166534', $output);
+        $this->assertStringContainsString('six-digit hexadecimal value such as #FFFFFF', $output);
+
+        $config = $this->validConfig();
+        $config['appearance'] = array(
+            'background_color' => '#000000',
+            'text_color' => '#FFFFFF',
+        );
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $settings = new Settings();
+
+        ob_start();
+        $settings->renderAppearanceField(array('color' => 'background_color'));
+        $settings->renderAppearanceField(array('color' => 'text_color'));
+        $custom_output = (string) ob_get_clean();
+        $this->assertStringContainsString('name="opennow_config[appearance][background_color]" value="#000000"', $custom_output);
+        $this->assertStringContainsString('name="opennow_config[appearance][text_color]" value="#FFFFFF"', $custom_output);
+    }
+
+    public function testAppearanceErrorsAreFieldSpecificAndConnectedToEachControl(): void
+    {
+        $config = $this->validConfig();
+        $config['appearance'] = array(
+            'background_color' => '#FFFFFF',
+            'text_color' => '#FFFFFF',
+        );
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+
+        (new Settings())->sanitize($config);
+        $settings = new Settings();
+
+        ob_start();
+        $settings->renderAppearanceField(array('color' => 'background_color'));
+        $settings->renderAppearanceField(array('color' => 'text_color'));
+        $output = (string) ob_get_clean();
+
+        $this->assertSame(2, substr_count($output, 'aria-invalid="true"'));
+        $this->assertStringContainsString('opennow-appearance-background-color-description setting-error-opennow_appearance_background_color', $output);
+        $this->assertStringContainsString('opennow-appearance-text-color-description setting-error-opennow_appearance_text_color', $output);
+        $this->assertStringContainsString('Background color: The background and text colors must meet WCAG AA contrast for normal text.', $GLOBALS['opennow_test_settings_errors'][0]['message']);
+        $this->assertStringContainsString('Text color: The background and text colors must meet WCAG AA contrast for normal text.', $GLOBALS['opennow_test_settings_errors'][1]['message']);
     }
 
     public function testInvalidSubmissionReturnsTheExactExistingOptionAndAddsErrors(): void

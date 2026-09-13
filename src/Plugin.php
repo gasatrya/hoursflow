@@ -2,6 +2,7 @@
 namespace OpenNow;
 
 use OpenNow\Admin\Settings;
+use OpenNow\Frontend\Block;
 use OpenNow\Frontend\Renderer;
 use OpenNow\Frontend\Shortcode;
 
@@ -33,6 +34,11 @@ final class Plugin
     private $shortcode;
 
     /**
+     * @var Block
+     */
+    private $block;
+
+    /**
      * Boot the plugin once after all plugins have loaded.
      *
      * @return self
@@ -54,6 +60,8 @@ final class Plugin
         $this->renderer = new Renderer();
         $this->shortcode = new Shortcode($this->renderer);
         $this->shortcode->register();
+        $this->block = new Block($this->renderer);
+        $this->block->register();
 
         if (is_admin()) {
             $this->settings = new Settings();
