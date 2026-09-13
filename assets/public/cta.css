@@ -1,0 +1,35 @@
+.opennow-cta {
+    --opennow-cta-background-color: #166534;
+    --opennow-cta-text-color: #FFFFFF;
+}
+
+.opennow-cta__link {
+    background-color: var(--opennow-cta-background-color);
+    color: var(--opennow-cta-text-color);
+    display: inline-block;
+}
+
+.opennow-cta__link:hover {
+    text-decoration: underline;
+}
+
+.opennow-cta__link:focus {
+    box-shadow: 0 0 0 4px #000000;
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+}
+
+.opennow-cta__link:focus:not(:focus-visible) {
+    box-shadow: none;
+    outline: none;
+}
+
+.opennow-cta__link:focus-visible {
+    box-shadow: 0 0 0 4px #000000;
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+}
+
+.opennow-cta__status {
+    display: block;
+}

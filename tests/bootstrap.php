@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 $GLOBALS['opennow_test_options'] = array();
 $GLOBALS['opennow_test_option_calls'] = array();
 $GLOBALS['opennow_test_hooks'] = array();
+$GLOBALS['opennow_test_shortcodes'] = array();
 $GLOBALS['opennow_test_activation_hooks'] = array();
 $GLOBALS['opennow_test_deactivation_hooks'] = array();
 $GLOBALS['opennow_test_registered_settings'] = array();
@@ -16,6 +17,7 @@ $GLOBALS['opennow_test_admin_pages'] = array();
 $GLOBALS['opennow_test_settings_sections'] = array();
 $GLOBALS['opennow_test_settings_fields'] = array();
 $GLOBALS['opennow_test_enqueued_scripts'] = array();
+$GLOBALS['opennow_test_enqueued_styles'] = array();
 $GLOBALS['opennow_test_current_user_can'] = true;
 $GLOBALS['opennow_test_is_admin'] = false;
 
@@ -131,6 +133,38 @@ if (!function_exists('esc_attr')) {
     }
 }
 
+if (!function_exists('esc_url')) {
+    function esc_url($url, $protocols = null, $_context = 'display')
+    {
+        if (!is_string($url)) {
+            return '';
+        }
+
+        $url = trim($url);
+        if ('' === $url || false !== strpos($url, "\0")
+            || 1 === preg_match('/[\x00-\x1F\x7F-\x9F]/', $url)
+        ) {
+            return '';
+        }
+
+        if (null !== $protocols && 1 === preg_match('/\A([a-z][a-z0-9+.-]*):/i', $url, $matches)) {
+            $protocol = strtolower($matches[1]);
+            $allowed = array();
+            foreach ((array) $protocols as $allowed_protocol) {
+                if (is_string($allowed_protocol)) {
+                    $allowed[] = strtolower($allowed_protocol);
+                }
+            }
+
+            if (!in_array($protocol, $allowed, true)) {
+                return '';
+            }
+        }
+
+        return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+    }
+}
+
 if (!function_exists('esc_html__')) {
     function esc_html__($text, $domain = 'default')
     {
@@ -204,6 +238,13 @@ if (!function_exists('delete_option')) {
         );
         unset($GLOBALS['opennow_test_options'][$option]);
         return true;
+    }
+}
+
+if (!function_exists('add_shortcode')) {
+    function add_shortcode($tag, $callback)
+    {
+        $GLOBALS['opennow_test_shortcodes'][$tag] = $callback;
     }
 }
 
@@ -465,6 +506,18 @@ if (!function_exists('wp_enqueue_script')) {
     }
 }
 
+if (!function_exists('wp_enqueue_style')) {
+    function wp_enqueue_style($handle, $src = '', $deps = array(), $ver = false, $media = 'all')
+    {
+        $GLOBALS['opennow_test_enqueued_styles'][$handle] = array(
+            'src' => $src,
+            'deps' => $deps,
+            'ver' => $ver,
+            'media' => $media,
+        );
+    }
+}
+
 if (!function_exists('add_settings_error')) {
     function add_settings_error($setting, $code, $message, $type = 'error')
     {
@@ -497,6 +550,7 @@ function opennow_reset_wp_stubs()
     $GLOBALS['opennow_test_options'] = array();
     $GLOBALS['opennow_test_option_calls'] = array();
     $GLOBALS['opennow_test_hooks'] = array();
+    $GLOBALS['opennow_test_shortcodes'] = array();
     $GLOBALS['opennow_test_activation_hooks'] = array();
     $GLOBALS['opennow_test_deactivation_hooks'] = array();
     $GLOBALS['opennow_test_registered_settings'] = array();
@@ -506,6 +560,7 @@ function opennow_reset_wp_stubs()
     $GLOBALS['opennow_test_settings_sections'] = array();
     $GLOBALS['opennow_test_settings_fields'] = array();
     $GLOBALS['opennow_test_enqueued_scripts'] = array();
+    $GLOBALS['opennow_test_enqueued_styles'] = array();
     $GLOBALS['opennow_test_current_user_can'] = true;
     $GLOBALS['opennow_test_is_admin'] = false;
     $GLOBALS['wp_locale'] = new OpenNow_Test_Locale();

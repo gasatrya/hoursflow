@@ -34,8 +34,10 @@ final class BootstrapTest extends TestCase
 
         do_action('plugins_loaded');
 
+        $this->assertArrayHasKey('opennow_cta', $GLOBALS['opennow_test_shortcodes']);
         $this->assertArrayHasKey('admin_init', $GLOBALS['opennow_test_hooks']);
         $this->assertCount(1, $GLOBALS['opennow_test_hooks']['admin_init']);
+        $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
     }
 
     public function testFrontendBootstrapDoesNotInstantiateOrRegisterAdminSettings(): void
@@ -45,6 +47,8 @@ final class BootstrapTest extends TestCase
 
         do_action('plugins_loaded');
 
+        $this->assertArrayHasKey('opennow_cta', $GLOBALS['opennow_test_shortcodes']);
         $this->assertArrayNotHasKey('admin_init', $GLOBALS['opennow_test_hooks']);
+        $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
     }
 }
