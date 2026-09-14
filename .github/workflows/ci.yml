@@ -59,10 +59,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       WP_VERSION: ${{ matrix.wp }}
-      WP_TESTS_DIR: ${{ runner.temp }}/wordpress-tests-${{ matrix.wp }}-${{ matrix.php }}
-      WP_CORE_DIR: ${{ runner.temp }}/wordpress-${{ matrix.wp }}-${{ matrix.php }}
+      WP_TESTS_DIR: ${{ github.workspace }}/.wordpress-tests-${{ matrix.wp }}-${{ matrix.php }}
+      WP_CORE_DIR: ${{ github.workspace }}/.wordpress-${{ matrix.wp }}-${{ matrix.php }}
       WP_TESTS_PHPUNIT_POLYFILLS_PATH: ${{ github.workspace }}/vendor/yoast/phpunit-polyfills
-      OPENNOW_TEST_PLUGIN_FILE: ${{ runner.temp }}/wordpress-${{ matrix.wp }}-${{ matrix.php }}/wp-content/plugins/opennow/opennow.php
+      OPENNOW_TEST_PLUGIN_FILE: ${{ github.workspace }}/.wordpress-${{ matrix.wp }}-${{ matrix.php }}/wp-content/plugins/opennow/opennow.php
     strategy:
       fail-fast: false
       matrix:
