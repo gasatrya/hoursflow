@@ -103,12 +103,13 @@ The MVP provides only two optional global appearance controls, shared by the sho
 
 A blank control selects its plugin default; a nonblank value must match `#[0-9A-Fa-f]{6}` exactly after surrounding whitespace is trimmed. The settings UI MUST reject an effective text/background pair that does not meet WCAG 2.2 AA contrast for normal text. The default pair MUST meet the same threshold. During runtime revalidation, if either stored value is malformed or the effective pair has insufficient contrast, the complete default pair is used.
 
-The plugin supplies minimal layout, hover, and visible keyboard-focus styling. It MUST NOT expose typography, font loading, dimensions, spacing, borders, shadows, animation, responsive layout, per-state styles, or per-block style overrides.
+The plugin supplies a tightly bounded layout baseline, hover, and visible keyboard-focus styling. The link MUST use compact button-like internal spacing, a minimum 44x44 CSS-pixel target, modest corner rounding, centered text, and wrapping safeguards. Status text MUST remain block-level, have a modest separation gap, and wrap safely. The baseline inherits theme typography, does not set fixed width/height dimensions, and does not load fonts. No new appearance controls are exposed: the plugin MUST NOT expose controls for typography, font loading, fixed dimensions, spacing, borders, shadows, animation, responsive layout, per-state styles, or per-block style overrides.
 
 Themes may customize stable public hooks without editing plugin files:
 
 - `.opennow-cta`
-- `.opennow-cta--open` or `.opennow-cta--closed`
+- `.opennow-cta--open`
+- `.opennow-cta--closed`
 - `.opennow-cta__link`
 - `.opennow-cta__status`
 

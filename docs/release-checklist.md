@@ -70,14 +70,18 @@ a screen reader check is recommended for the release environment.
    closing controls become disabled or enabled without trapping focus.
 4. Tab to the frontend CTA. Confirm it is a native link with a visible,
    non-empty accessible name and an obvious focus indicator in default, hover,
-   and focused states. Status text must remain visible text, not an `aria-live`
+   and focused states. Confirm the link target is at least 44x44 CSS pixels and
+   the focus indicator remains visible and unclipped. Status text must remain
+   visible text, have a clear separation gap, not be an `aria-live`
    announcement, and state must not be communicated by color alone.
 5. Confirm default colors and a representative accepted custom pair meet WCAG
    2.2 AA contrast for normal text (4.5:1). Check the focus indicator against
    surrounding light and dark content. Themes/custom CSS must be checked again
    because plugin validation cannot govern later overrides.
-6. At narrow and enlarged-text layouts, confirm labels, errors, CTA text, and
-   focus indicators remain perceivable and no control requires pointer input.
+6. At a 320px viewport and with text enlarged, confirm labels, errors, CTA
+   text, and status text wrap within the viewport without horizontal overflow.
+   Focus indicators must remain perceivable and no control may require pointer
+   input.
 
 ## Metadata and lifecycle
 

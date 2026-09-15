@@ -6,7 +6,18 @@
 .opennow-cta__link {
     background-color: var(--opennow-cta-background-color);
     color: var(--opennow-cta-text-color);
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 44px;
+    min-height: 44px;
+    max-width: 100%;
+    padding: 0.5em 1em;
+    border-radius: 0.25em;
+    text-align: center;
+    text-decoration: none;
+    overflow-wrap: anywhere;
 }
 
 .opennow-cta__link:hover {
@@ -32,4 +43,6 @@
 
 .opennow-cta__status {
     display: block;
+    margin-top: 0.5em;
+    overflow-wrap: anywhere;
 }

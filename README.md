@@ -76,6 +76,11 @@ must meet WCAG 2.2 AA contrast for normal text. Invalid colors or an invalid
 pair use the complete default pair at runtime; they do not create per-block or
 per-state overrides.
 
+Plugin styling uses the theme's inherited typography and a compact, button-like
+baseline: the link has a minimum 44x44 CSS-pixel target, modest rounding, and
+responsive wrapping; status text has a small separation gap and also wraps
+safely. It does not set fixed dimensions or load fonts.
+
 The output uses a native, keyboard-operable link with a visible focus style.
 Open/closed state is not conveyed by color alone, and the plugin does not add a
 fake button role or an `aria-live` announcement. Themes may style the stable

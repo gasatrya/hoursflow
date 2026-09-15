@@ -74,6 +74,11 @@ six-digit hexadecimal colors and the effective pair must meet WCAG 2.2 AA
 contrast for normal text. Invalid colors or low contrast use the complete
 plugin default pair. There are no per-block or per-state style controls.
 
+Plugin styling uses the theme's inherited typography and a compact, button-like
+baseline: the link has a minimum 44x44 CSS-pixel target, modest rounding, and
+responsive wrapping; status text has a small separation gap and also wraps
+safely. It does not set fixed dimensions or load fonts.
+
 The rendered CTA is a native keyboard-operable link with visible focus styling.
 State is not communicated by color alone, and no fake button role or `aria-live`
 region is added. Stable styling hooks are `.opennow-cta`,
