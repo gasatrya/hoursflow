@@ -81,9 +81,13 @@ Actions MUST be trimmed, validated as a complete value, and escaped as a URL whe
 
 Rejected schemes include `javascript:`, `data:`, `file:`, `http:`, `mailto:`, and `sms:`. Bare relative forms such as `booking/` are also rejected. No action opens a new window by default.
 
+The dynamic `opennow/cta` block MAY store a sparse `overrides` object with optional `open` and `closed` state objects. Each state MAY contain only `label`, `action`, and `status` fields. Runtime canonicalization MUST ignore malformed containers, unknown states or fields, wrong types, and invalid field values independently. A valid field is trimmed and replaces only that field for the selected state; every missing or invalid field falls back to the matching global field. A valid explicitly blank `status` override MUST suppress the global status. The block editor MUST add enabled fields sparsely and prune empty states and the empty overrides object when fields are disabled. The shortcode MUST continue to call the renderer without overrides.
+
 ## 5. Rendering and invalid configuration
 
 - The current schedule state selects exactly the matching open or closed CTA. The plugin MUST NOT substitute the other state's CTA.
+- For a block, valid overrides replace only fields in the selected state. The renderer MUST first revalidate and require the selected global CTA to be complete; overrides MUST NOT rescue an invalid selected global CTA. Missing or invalid override fields fall back independently, while a valid blank status suppresses the global status.
+- With no overrides, the block MUST retain the legacy serialized delimiter and exact global-rendered markup. The editor preview MUST use the server-rendered block output for the current state; it may be empty when the selected global CTA is invalid.
 - A missing or invalid business timezone deterministically selects the closed state. If the closed CTA is valid, it renders; otherwise nothing renders. Invalid timezone configuration never falls back to another timezone.
 - A missing, closed, or invalid weekday entry starts no period for that weekday. A valid previous-day overnight period may still apply.
 - If required content for the selected state is missing or invalid, the shortcode and block render no frontend markup. They MUST fail safely without warnings or fatal errors.
@@ -100,6 +104,10 @@ The MVP provides only two optional global appearance controls, shared by the sho
 
 - CTA link background color.
 - CTA link text color.
+
+Block content overrides MUST NOT change these global colors or any frontend
+style, class, or stylesheet behavior. The shortcode and every block instance
+share the same global appearance configuration.
 
 A blank control selects its plugin default; a nonblank value must match `#[0-9A-Fa-f]{6}` exactly after surrounding whitespace is trimmed. The settings UI MUST reject an effective text/background pair that does not meet WCAG 2.2 AA contrast for normal text. The default pair MUST meet the same threshold. During runtime revalidation, if either stored value is malformed or the effective pair has insufficient contrast, the complete default pair is used.
 
@@ -133,6 +141,7 @@ The MVP support contract is single-site WordPress only; multisite and network ac
 ## 9. Accessibility, internationalization, and privacy
 
 - The CTA uses a native link with a visible, non-empty label. It MUST remain keyboard operable and have a visible focus indicator. It MUST NOT use a fake button role or an `aria-live` region for server-rendered status.
+- The block editor MUST show the actual server-rendered preview and provide translated open/closed per-field controls. Enabling a field stores an explicit value, including `status: ''`; disabling it removes only that field and prunes empty containers.
 - Status text, when present, is visibly grouped with the CTA and rendered as text. The plugin does not add a hidden open/closed announcement; administrators are responsible for labels and status copy that communicate the intended action. Plugin styling MUST NOT use color as the only distinction between otherwise identical state content.
 - Every plugin-authored user-facing PHP or JavaScript string MUST be translatable with the `opennow` text domain, including block-editor and validation messages. Weekday labels in administration MUST use WordPress locale data; stored weekday keys and `HH:MM` values remain locale-independent. Administrator-authored CTA copy is displayed as entered and is not automatically translated.
 - All output MUST be escaped for its context. Administrative writes require capability checks, nonce verification, sanitization, and validation.

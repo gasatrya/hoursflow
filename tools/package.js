@@ -27,6 +27,8 @@ const REQUIRED_ENTRIES = [
 	'assets/public/cta.css',
 	'build/blocks/cta/block.json',
 	'build/blocks/cta/index.asset.php',
+	'build/blocks/cta/index.css',
+	'build/blocks/cta/index-rtl.css',
 	'build/blocks/cta/index.js',
 	'languages/opennow.pot',
 	'opennow.php',

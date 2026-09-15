@@ -29,7 +29,8 @@ not authorize a WordPress.org submission, Git tag, or hosted release.
 4. Confirm `npm run build:check`, `npm run i18n:pot:check`, and
    `npm run package:check` report reproducible output. Inspect the ZIP manifest:
    it must have one `opennow/` root, contain runtime PHP, local assets, generated
-   block files, `languages/opennow.pot`, and release documents, and omit tests,
+   block files (including editor CSS and its RTL companion), `languages/opennow.pot`,
+   and release documents, and omit tests,
    development source, dependency directories, repository tooling, and lock
    files.
 
@@ -42,7 +43,11 @@ Use a clean single-site WordPress installation with `WP_DEBUG` enabled.
    entries.
 2. Confirm a fresh activation renders no CTA before settings are saved.
 3. Save a valid timezone, all seven weekdays, both CTA states, and blank default
-   colors. Confirm the shortcode and block show equivalent markup and state.
+   colors. Confirm the shortcode and an override-free block show equivalent
+   markup and state. In the block editor, verify the real server-rendered
+   preview, independent open/closed field overrides, global fallback for
+   omitted fields, explicit blank-status suppression, and pruning back to the
+   legacy empty delimiter.
 4. Check an exact opening instant, an exact closing instant, a closed weekday,
    an overnight carry into the next day, Sunday-to-Monday rollover, a different
    site/business timezone pair, and representative spring-forward and fall-back
@@ -50,9 +55,11 @@ Use a clean single-site WordPress installation with `WP_DEBUG` enabled.
 5. Confirm invalid configuration is rejected atomically and the previous valid
    settings remain active.
 6. View pages without a CTA and confirm OpenNow frontend CSS is absent. View a
-   page with a valid shortcode or block and confirm only the local CTA stylesheet
-   is loaded. Confirm the settings script appears only on **Settings → OpenNow**
-   for a user with `manage_options`.
+   page with a valid shortcode or block and confirm only the unchanged local
+   frontend CTA stylesheet is loaded. In the editor, confirm the generated
+   editor stylesheet disables CTA navigation without changing public CSS.
+   Confirm the settings script appears only on **Settings → OpenNow** for a user
+   with `manage_options`.
 7. Inspect browser network/storage panels and confirm no plugin-originated remote
    requests, cookies, local storage, tracking, polling, or telemetry.
 

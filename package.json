@@ -14,7 +14,7 @@
     "i18n:pot:check": "node tools/check-pot.js",
     "lint:css": "npm run lint:style",
     "lint:js": "wp-scripts lint-js src/blocks/cta assets/admin/settings.js tools",
-    "lint:style": "wp-scripts lint-style \"assets/**/*.css\"",
+    "lint:style": "wp-scripts lint-style \"assets/**/*.css\" \"src/**/*.scss\" --custom-syntax postcss-scss",
     "package": "node tools/package.js",
     "package:check": "node tools/package.js --check",
     "test:js": "wp-scripts test-unit-js --runInBand",

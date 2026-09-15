@@ -55,14 +55,18 @@ final class Block {
 	/**
 	 * Render the block from the shared current-state renderer.
 	 *
-	 * @param mixed $attributes Block attributes, intentionally ignored.
+	 * @param mixed $attributes Block attributes.
 	 * @param mixed $content Block content, intentionally ignored.
 	 * @param mixed $block Block instance, intentionally ignored.
 	 * @return string
 	 */
 	public function render( $attributes = array(), $content = '', $block = null ): string {
-		unset( $attributes, $content, $block );
+		$overrides = array();
+		if ( is_array( $attributes ) && array_key_exists( 'overrides', $attributes ) ) {
+			$overrides = $attributes['overrides'];
+		}
+		unset( $content, $block );
 
-		return $this->renderer->render();
+		return $this->renderer->render( $overrides );
 	}
 }

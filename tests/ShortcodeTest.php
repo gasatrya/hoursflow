@@ -35,7 +35,16 @@ final class ShortcodeTest extends TestCase
 
         $output = call_user_func(
             $GLOBALS['opennow_test_shortcodes']['opennow_cta'],
-            array('label' => 'Override', 'action' => 'javascript:bad'),
+            array(
+                'label' => 'Override',
+                'action' => 'javascript:bad',
+                'overrides' => array(
+                    'open' => array(
+                        'label' => 'Shortcode override',
+                        'action' => '/shortcode-override/',
+                    ),
+                ),
+            ),
             '<script>override</script>',
             'opennow_cta'
         );
@@ -43,6 +52,7 @@ final class ShortcodeTest extends TestCase
         $this->assertStringContainsString('Call Now', $output);
         $this->assertStringContainsString('opennow-cta--open', $output);
         $this->assertStringNotContainsString('Override', $output);
+        $this->assertStringNotContainsString('shortcode-override', $output);
         $this->assertStringNotContainsString('<script>', $output);
         $this->assertArrayHasKey('opennow-cta', $GLOBALS['opennow_test_enqueued_styles']);
     }

@@ -40,9 +40,14 @@ Add this shortcode:
 
 `[opennow_cta]`
 
-Alternatively insert the **OpenNow CTA** block (`opennow/cta`). The block stores
-no CTA, schedule, color, or custom-content attributes. Appearance settings are
-global and shared by every shortcode and block instance.
+Alternatively insert the **OpenNow CTA** block (`opennow/cta`). The block is
+dynamic and its editor preview uses the current server-rendered output. It may
+store sparse per-state content overrides for the label, action, and status.
+Each missing or invalid override field independently falls back to the matching
+field in the global open or closed CTA. An enabled blank status explicitly
+suppresses the global status; removing every override restores the legacy empty
+block delimiter. The shortcode accepts no overrides, and schedules, colors, and
+styles remain global and shared by every integration.
 
 Actions may be root-relative URLs such as `/booking/`, complete `https://`
 URLs, or supported `tel:` actions. Labels and status text are plain text. HTML,
@@ -69,10 +74,11 @@ or date ranges.
 == Appearance and accessibility ==
 
 Only two global appearance controls exist: CTA link background and text color.
-Blank values use the defaults `#166534` and `#FFFFFF`. Nonblank values must be
-six-digit hexadecimal colors and the effective pair must meet WCAG 2.2 AA
-contrast for normal text. Invalid colors or low contrast use the complete
-plugin default pair. There are no per-block or per-state style controls.
+Content overrides do not affect appearance. Blank values use the defaults
+`#166534` and `#FFFFFF`. Nonblank values must be six-digit hexadecimal colors
+and the effective pair must meet WCAG 2.2 AA contrast for normal text. Invalid
+colors or low contrast use the complete plugin default pair. There are no
+per-block or per-state style controls.
 
 Plugin styling uses the theme's inherited typography and a compact, button-like
 baseline: the link has a minimum 44x44 CSS-pixel target, modest rounding, and

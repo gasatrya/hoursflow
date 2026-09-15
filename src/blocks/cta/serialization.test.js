@@ -1,6 +1,7 @@
 import {
 	createBlock,
 	getBlockType,
+	parse,
 	registerBlockType,
 	serialize,
 	unregisterBlockType,
@@ -27,5 +28,24 @@ describe( 'OpenNow CTA serialization', () => {
 
 		expect( block.attributes ).toEqual( {} );
 		expect( serialize( block ) ).toBe( '<!-- wp:opennow/cta /-->' );
+	} );
+
+	test( 'serializes sparse overrides including an explicitly blank status and round-trips them', () => {
+		const attributes = {
+			overrides: {
+				open: {
+					label: 'Call this block',
+					status: '',
+				},
+			},
+		};
+		const block = createBlock( metadata.name, attributes );
+		const serialized = serialize( block );
+
+		expect( block.attributes ).toEqual( attributes );
+		expect( serialized ).toBe(
+			'<!-- wp:opennow/cta {"overrides":{"open":{"label":"Call this block","status":""}}} /-->'
+		);
+		expect( parse( serialized )[ 0 ].attributes ).toEqual( attributes );
 	} );
 } );

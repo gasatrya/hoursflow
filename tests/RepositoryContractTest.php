@@ -100,6 +100,8 @@ final class RepositoryContractTest extends TestCase
                 . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'cta.css',
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR
                 . 'blocks' . DIRECTORY_SEPARATOR . 'cta' . DIRECTORY_SEPARATOR . 'index.js',
+            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR
+                . 'blocks' . DIRECTORY_SEPARATOR . 'cta' . DIRECTORY_SEPARATOR . 'editor.scss',
         ) as $path) {
             $file_contents = file_get_contents($path);
             $this->assertIsString($file_contents);

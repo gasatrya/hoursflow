@@ -1,6 +1,12 @@
 import { useBlockProps } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
-import { Placeholder } from '@wordpress/components';
+import {
+	Disabled,
+	PanelBody,
+	TextControl,
+	ToggleControl,
+} from '@wordpress/components';
+import ServerSideRender from '@wordpress/server-side-render';
 import { __ } from '@wordpress/i18n';
 
 import metadata from './block.json';
@@ -9,6 +15,7 @@ import { Edit, Save } from './index';
 jest.mock(
 	'@wordpress/block-editor',
 	() => ( {
+		InspectorControls: jest.fn(),
 		useBlockProps: jest.fn( () => ( {
 			className: 'wp-block-opennow-cta',
 		} ) ),
@@ -25,7 +32,18 @@ jest.mock(
 jest.mock(
 	'@wordpress/components',
 	() => ( {
-		Placeholder: jest.fn(),
+		Disabled: jest.fn(),
+		PanelBody: jest.fn(),
+		TextControl: jest.fn(),
+		ToggleControl: jest.fn(),
+	} ),
+	{ virtual: true }
+);
+jest.mock(
+	'@wordpress/server-side-render',
+	() => ( {
+		__esModule: true,
+		default: jest.fn(),
 	} ),
 	{ virtual: true }
 );
@@ -36,6 +54,26 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
+jest.mock( '../../../assets/public/cta.css', () => ( {} ), {
+	virtual: true,
+} );
+jest.mock( './editor.scss', () => ( {} ), { virtual: true } );
+
+function childrenOf( element ) {
+	return Array.isArray( element.props.children )
+		? element.props.children
+		: [ element.props.children ];
+}
+
+function panelsFrom( element ) {
+	const inspector = childrenOf( element )[ 0 ];
+	return childrenOf( inspector );
+}
+
+function controlsFrom( panel ) {
+	const controls = panel.props.children;
+	return controls.type( controls.props ).props.children;
+}
 
 describe( 'OpenNow CTA block', () => {
 	test( 'registers metadata with an editor and null serializer', () => {
@@ -47,36 +85,274 @@ describe( 'OpenNow CTA block', () => {
 		expect( Save() ).toBeNull();
 	} );
 
-	test( 'uses block props and a translated global-state placeholder', () => {
-		const element = Edit();
-		const placeholder = element.props.children;
+	test( 'renders the current server output with block attributes', () => {
+		const attributes = {
+			overrides: {
+				open: {
+					label: 'Custom label',
+				},
+			},
+		};
+		const element = Edit( { attributes, setAttributes: jest.fn() } );
+		const wrapper = childrenOf( element )[ 1 ];
+		const previewGuard = wrapper.props.children;
+		const preview = previewGuard.props.children;
 
+		expect( previewGuard.type ).toBe( Disabled );
+		expect( preview.type ).toBe( ServerSideRender );
+		expect( preview.props.block ).toBe( 'opennow/cta' );
+		expect( preview.props.attributes ).toEqual( attributes );
 		expect( useBlockProps ).toHaveBeenCalledWith();
-		expect( element.type ).toBe( 'div' );
-		expect( placeholder.type ).toBe( Placeholder );
-		expect( placeholder.props.label ).toBe( 'OpenNow CTA' );
-		expect( placeholder.props.instructions ).toContain(
-			'global OpenNow configuration'
+	} );
+
+	test( 'groups translated open and closed field controls in inspector panels', () => {
+		const element = Edit( { attributes: {}, setAttributes: jest.fn() } );
+		const panels = panelsFrom( element );
+
+		expect( panels ).toHaveLength( 2 );
+		expect( panels[ 0 ].type ).toBe( PanelBody );
+		expect( panels[ 1 ].type ).toBe( PanelBody );
+		expect( panels[ 0 ].props.title ).toBe( 'Open CTA' );
+		expect( panels[ 1 ].props.title ).toBe( 'Closed CTA' );
+
+		const openControls = controlsFrom( panels[ 0 ] ).filter( Boolean );
+		expect(
+			openControls.filter( ( control ) => control.type === ToggleControl )
+		).toHaveLength( 3 );
+		expect(
+			openControls.filter( ( control ) => control.type === TextControl )
+		).toHaveLength( 0 );
+		expect( __ ).toHaveBeenCalledWith( 'Override label', 'opennow' );
+		expect( __ ).toHaveBeenCalledWith( 'Override action', 'opennow' );
+		expect( __ ).toHaveBeenCalledWith( 'Override status', 'opennow' );
+	} );
+
+	test( 'provides translated guidance for each editable override field', () => {
+		const element = Edit( {
+			attributes: {
+				overrides: {
+					open: {
+						label: '',
+						action: '',
+						status: '',
+					},
+				},
+			},
+			setAttributes: jest.fn(),
+		} );
+		const textControls = controlsFrom( panelsFrom( element )[ 0 ] ).filter(
+			( control ) => control && control.type === TextControl
 		);
-		expect( placeholder.props.instructions ).toContain(
-			'The output uses the global OpenNow configuration'
+
+		expect( textControls.map( ( control ) => control.props.help ) ).toEqual(
+			[
+				'Enter non-empty plain text. Invalid or empty values fall back to the global label.',
+				'Enter a root-relative URL, HTTPS URL, or tel: action. Invalid or empty values fall back to the global action.',
+				'Enter plain text. A blank value explicitly hides the global status; invalid values fall back to the global status.',
+			]
 		);
-		expect( placeholder.props.instructions ).toContain(
-			'current business state'
-		);
-		expect( __ ).toHaveBeenCalledWith( 'OpenNow CTA', 'opennow' );
 		expect( __ ).toHaveBeenCalledWith(
-			'The output uses the global OpenNow configuration and the current business state.',
+			'Enter non-empty plain text. Invalid or empty values fall back to the global label.',
+			'opennow'
+		);
+		expect( __ ).toHaveBeenCalledWith(
+			'Enter a root-relative URL, HTTPS URL, or tel: action. Invalid or empty values fall back to the global action.',
+			'opennow'
+		);
+		expect( __ ).toHaveBeenCalledWith(
+			'Enter plain text. A blank value explicitly hides the global status; invalid values fall back to the global status.',
 			'opennow'
 		);
 	} );
 
-	test( 'has no serialized attributes or presentation supports', () => {
-		expect( metadata ).not.toHaveProperty( 'attributes' );
-		expect( metadata.supports ).toEqual( {
-			html: false,
-			customClassName: false,
+	test( 'toggle and text updates add, preserve, and remove sparse fields immutably', () => {
+		const attributes = {
+			overrides: {
+				open: {
+					label: 'Custom label',
+					status: '',
+				},
+			},
+		};
+		const setAttributes = jest.fn();
+		const element = Edit( { attributes, setAttributes } );
+		const controls = controlsFrom( panelsFrom( element )[ 0 ] ).filter(
+			Boolean
+		);
+		const toggles = controls.filter(
+			( control ) => control.type === ToggleControl
+		);
+		const textControls = controls.filter(
+			( control ) => control.type === TextControl
+		);
+
+		expect( toggles.map( ( control ) => control.props.checked ) ).toEqual( [
+			true,
+			false,
+			true,
+		] );
+		expect(
+			textControls.map( ( control ) => control.props.value )
+		).toEqual( [ 'Custom label', '' ] );
+
+		textControls[ 1 ].props.onChange( '' );
+		expect( setAttributes ).toHaveBeenLastCalledWith( {
+			overrides: {
+				open: {
+					label: 'Custom label',
+					status: '',
+				},
+			},
 		} );
+
+		toggles[ 1 ].props.onChange( true );
+		expect( setAttributes ).toHaveBeenLastCalledWith( {
+			overrides: {
+				open: {
+					label: 'Custom label',
+					status: '',
+					action: '',
+				},
+			},
+		} );
+
+		toggles[ 0 ].props.onChange( false );
+		expect( setAttributes ).toHaveBeenLastCalledWith( {
+			overrides: {
+				open: {
+					status: '',
+				},
+			},
+		} );
+	} );
+
+	test( 'prunes an empty state and overrides object after the last field is disabled', () => {
+		const setAttributes = jest.fn();
+		const element = Edit( {
+			attributes: { overrides: { closed: { status: '' } } },
+			setAttributes,
+		} );
+		const controls = controlsFrom( panelsFrom( element )[ 1 ] ).filter(
+			Boolean
+		);
+		const statusToggle = controls.find(
+			( control ) =>
+				control.type === ToggleControl && control.props.checked === true
+		);
+
+		statusToggle.props.onChange( false );
+
+		expect( setAttributes ).toHaveBeenCalledWith( {
+			overrides: undefined,
+		} );
+	} );
+
+	test( 'canonicalizes malformed attributes on update without changing preview input', () => {
+		const malformed = {
+			overrides: {
+				open: {
+					label: 'Keep open',
+					action: 42,
+					unknown: 'drop this field',
+				},
+				closed: 'not an object',
+				unknown: { status: 'drop this state' },
+			},
+		};
+		const setAttributes = jest.fn();
+		expect( () => Edit( null ) ).not.toThrow();
+
+		const element = Edit( { attributes: malformed, setAttributes } );
+		const preview =
+			childrenOf( element )[ 1 ].props.children.props.children;
+		expect( preview.props.attributes ).toEqual( {
+			overrides: malformed.overrides,
+		} );
+		expect( preview.props.attributes.overrides ).toBe(
+			malformed.overrides
+		);
+		expect( malformed ).toEqual( {
+			overrides: {
+				open: {
+					label: 'Keep open',
+					action: 42,
+					unknown: 'drop this field',
+				},
+				closed: 'not an object',
+				unknown: { status: 'drop this state' },
+			},
+		} );
+
+		const openControls = controlsFrom( panelsFrom( element )[ 0 ] ).filter(
+			Boolean
+		);
+		expect(
+			openControls
+				.filter( ( control ) => control.type === ToggleControl )
+				.map( ( control ) => control.props.checked )
+		).toEqual( [ true, false, false ] );
+
+		openControls
+			.filter( ( control ) => control.type === ToggleControl )[ 1 ]
+			.props.onChange( true );
+		expect( setAttributes ).toHaveBeenCalledWith( {
+			overrides: {
+				open: {
+					label: 'Keep open',
+					action: '',
+				},
+			},
+		} );
+	} );
+
+	test( 'preserves valid sibling-state overrides during canonical updates', () => {
+		const attributes = {
+			overrides: {
+				open: {
+					label: 'Open label',
+					status: 123,
+					unknown: 'discard',
+				},
+				closed: {
+					label: 'Closed label',
+					action: '/closed/',
+					status: '',
+				},
+				unknown: {
+					label: 'discard',
+				},
+			},
+		};
+		const setAttributes = jest.fn();
+		const element = Edit( { attributes, setAttributes } );
+		const openControls = controlsFrom( panelsFrom( element )[ 0 ] ).filter(
+			Boolean
+		);
+		const labelControl = openControls.find(
+			( control ) =>
+				control.type === TextControl &&
+				control.props.value === 'Open label'
+		);
+
+		labelControl.props.onChange( 'Updated open label' );
+
+		expect( setAttributes ).toHaveBeenCalledWith( {
+			overrides: {
+				open: { label: 'Updated open label' },
+				closed: {
+					label: 'Closed label',
+					action: '/closed/',
+					status: '',
+				},
+			},
+		} );
+	} );
+
+	test( 'has the expected metadata attributes and dynamic serializer', () => {
+		expect( metadata.attributes ).toEqual( {
+			overrides: { type: 'object' },
+		} );
+		expect( metadata.editorStyle ).toBe( 'file:./index.css' );
 		expect( Save() ).toBeNull();
 	} );
 } );

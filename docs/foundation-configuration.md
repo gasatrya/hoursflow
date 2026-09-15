@@ -56,6 +56,14 @@ never repairs the option. Missing or invalid days become closed, invalid CTA
 states become unavailable, invalid timezones make evaluation closed, and
 invalid appearance data uses the default color pair.
 
+Block content overrides are not part of the global option. The dynamic block
+may store a sparse `overrides` attribute with optional `open` and `closed`
+objects and optional `label`, `action`, and `status` fields. The runtime
+canonicalizes each field independently using the same plain-text and action
+rules as global CTA values. A valid field replaces only the selected state's
+matching global field; a missing or invalid field falls back independently.
+An explicitly present blank status is valid and suppresses the global status.
+
 ## Frontend services
 
 The shortcode is:
@@ -64,12 +72,18 @@ The shortcode is:
 [opennow_cta]
 ```
 
-The dynamic block is `opennow/cta`. It stores no user attributes and uses the
-same `OpenNow\Frontend\Renderer` as the shortcode, so saved settings produce
-the same server-rendered output for both integrations. The renderer evaluates
-the current absolute instant in the saved named IANA timezone, selects only
-the matching open or closed CTA, escapes output, and conditionally enqueues
-the local shared stylesheet after valid markup is built.
+The dynamic block is `opennow/cta`. It uses the same
+`OpenNow\Frontend\Renderer` as the shortcode, so saved global settings produce
+the same server-rendered output when no block overrides are present. Its editor
+uses a server-side-rendered preview of the current output. The shortcode still
+calls the renderer with no overrides and remains global-only. Schedules,
+appearance colors, and frontend styles remain global for both integrations.
+
+The renderer evaluates the current absolute instant in the saved named IANA
+timezone, selects only the matching open or closed CTA, applies only valid
+selected-state block fields after validating the selected global CTA, escapes
+output, and conditionally enqueues the local shared stylesheet after valid
+markup is built.
 
 The plugin has no browser polling, AJAX, REST polling, cache variation, or
 scheduled purge. Cached HTML can therefore be stale until the site's normal

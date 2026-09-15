@@ -2,6 +2,7 @@
 namespace OpenNow\Frontend;
 
 use OpenNow\Config\Repository;
+use OpenNow\Config\Validator;
 use OpenNow\Schedule\Evaluator;
 
 defined( 'ABSPATH' ) || exit;
@@ -33,9 +34,10 @@ final class Renderer {
 	/**
 	 * Render the CTA for the current runtime state.
 	 *
+	 * @param mixed $overrides Raw block override candidate.
 	 * @return string
 	 */
-	public function render(): string {
+	public function render( $overrides = array() ): string {
 		try {
 			$config = $this->repository->getRuntimeConfig();
 			if ( ! is_array( $config ) ) {
@@ -64,6 +66,11 @@ final class Renderer {
 				|| '' === trim( $cta['action'] )
 			) {
 				return '';
+			}
+
+			$canonical_overrides = Validator::canonicalCtaOverrides( $overrides );
+			if ( isset( $canonical_overrides[ $state ] ) ) {
+				$cta = array_replace( $cta, $canonical_overrides[ $state ] );
 			}
 
 			$appearance = isset( $config['appearance'] ) && is_array( $config['appearance'] )

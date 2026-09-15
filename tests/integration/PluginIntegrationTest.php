@@ -19,6 +19,9 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         if (function_exists('deactivate_plugins')) {
             deactivate_plugins('opennow/opennow.php', true);
         }
+        if (function_exists('wp_set_current_user')) {
+            wp_set_current_user(0);
+        }
         delete_option(Schema::OPTION_NAME);
         delete_option(Schema::SCHEMA_OPTION_NAME);
         parent::tearDown();
@@ -95,6 +98,135 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $this->assertStringContainsString('opennow-cta--' . $expected_state, $block_output);
     }
 
+    public function testSerializedDynamicBlockUsesNestedOverridesAndKeepsLegacyBlocksWorking(): void
+    {
+        $config = $this->config();
+        $config['cta']['closed']['status'] = 'We are closed.';
+        update_option(Schema::OPTION_NAME, $config, false);
+
+        $overrides = array(
+            'open' => array(
+                'label' => 'Serialized CTA',
+                'action' => '/serialized/',
+                'status' => '',
+            ),
+            'closed' => array(
+                'label' => 'Serialized CTA',
+                'action' => '/serialized/',
+                'status' => '',
+            ),
+        );
+        $attributes = array('overrides' => $overrides);
+        $serialized = $this->serializedCta($overrides);
+        $parsed = parse_blocks($serialized);
+
+        $this->assertCount(1, $parsed);
+        $this->assertSame($attributes, $parsed[0]['attrs']);
+
+        $output = do_blocks($serialized);
+
+        $this->assertSame(1, preg_match('/opennow-cta--(open|closed)/', $output));
+        $this->assertStringContainsString('Serialized CTA', $output);
+        $this->assertStringContainsString('href="/serialized/"', $output);
+        $this->assertStringNotContainsString('Call Now', $output);
+        $this->assertStringNotContainsString('Book online', $output);
+        $this->assertStringNotContainsString('We are open.', $output);
+        $this->assertStringNotContainsString('We are closed.', $output);
+        $this->assertStringNotContainsString('opennow-cta__status', $output);
+
+        $legacy_output = do_blocks('<!-- wp:opennow/cta /-->');
+        $this->assertSame(1, preg_match('/opennow-cta--(open|closed)/', $legacy_output));
+        $this->assertSame(1, preg_match('/Call Now|Book online/', $legacy_output));
+        $this->assertStringNotContainsString('Serialized CTA', $legacy_output);
+    }
+
+    public function testSerializedDynamicBlockFallsBackPerFieldAndNeverRescuesInvalidGlobalState(): void
+    {
+        update_option(Schema::OPTION_NAME, $this->config(), false);
+
+        $overrides = array(
+            'open' => array(
+                'label' => 'Override label',
+                'action' => 'javascript:bad',
+                'status' => 'Override status',
+            ),
+            'closed' => array(
+                'label' => 'Override label',
+                'action' => 'javascript:bad',
+                'status' => 'Override status',
+            ),
+        );
+        $output = do_blocks($this->serializedCta($overrides));
+
+        $this->assertSame(
+            1,
+            preg_match('/opennow-cta opennow-cta--(open|closed)/', $output, $matches)
+        );
+        $state = $matches[1];
+        $selected_action = 'open' === $state ? 'tel:+123456789' : '/booking/';
+        $other_action = 'open' === $state ? '/booking/' : 'tel:+123456789';
+
+        $this->assertStringContainsString('Override label', $output);
+        $this->assertStringContainsString('href="' . $selected_action . '"', $output);
+        $this->assertStringContainsString('Override status', $output);
+        $this->assertStringNotContainsString('javascript:', $output);
+        $this->assertStringNotContainsString('href="' . $other_action . '"', $output);
+
+        $invalid_config = $this->config();
+        $invalid_config['cta']['open']['action'] = 'javascript:bad';
+        $invalid_config['cta']['closed']['action'] = 'javascript:bad';
+        update_option(Schema::OPTION_NAME, $invalid_config, false);
+
+        $valid_overrides = array(
+            'open' => array(
+                'label' => 'Rescue attempt',
+                'action' => '/rescue/',
+                'status' => 'Rescued',
+            ),
+            'closed' => array(
+                'label' => 'Rescue attempt',
+                'action' => '/rescue/',
+                'status' => 'Rescued',
+            ),
+        );
+
+        $this->assertSame('', do_blocks($this->serializedCta($valid_overrides)));
+    }
+
+    public function testRestBlockRendererReturnsAuthenticatedNestedOverrideOutput(): void
+    {
+        update_option(Schema::OPTION_NAME, $this->config(), false);
+        $administrator = self::factory()->user->create(array('role' => 'administrator'));
+        wp_set_current_user($administrator);
+
+        $overrides = array(
+            'open' => array(
+                'label' => 'REST CTA',
+                'action' => '/rest-cta/',
+                'status' => '',
+            ),
+            'closed' => array(
+                'label' => 'REST CTA',
+                'action' => '/rest-cta/',
+                'status' => '',
+            ),
+        );
+        $request = new \WP_REST_Request('GET', '/wp/v2/block-renderer/opennow/cta');
+        $request->set_param('context', 'edit');
+        $request->set_param('attributes', array('overrides' => $overrides));
+
+        $response = rest_do_request($request);
+        $this->assertNotWPError($response);
+        $this->assertSame(200, $response->get_status());
+        $data = $response->get_data();
+
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('rendered', $data);
+        $this->assertStringContainsString('REST CTA', $data['rendered']);
+        $this->assertStringContainsString('href="/rest-cta/"', $data['rendered']);
+        $this->assertStringNotContainsString('opennow-cta__status', $data['rendered']);
+    }
+
     public function testRealWordPressLifecycleRetainsOnDeactivateAndDeletesOnUninstall(): void
     {
         Lifecycle::activate();
@@ -115,6 +247,27 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         return array(
             'open instant' => array('2024-01-08 10:00:00', 'open'),
             'closed instant' => array('2024-01-08 18:00:00', 'closed'),
+        );
+    }
+
+    /**
+     * Serialize a dynamic CTA block with the same shape WordPress stores.
+     *
+     * @param array<string, mixed> $overrides
+     * @return string
+     */
+    private function serializedCta(array $overrides): string
+    {
+        return serialize_blocks(
+            array(
+                array(
+                    'blockName' => 'opennow/cta',
+                    'attrs' => array('overrides' => $overrides),
+                    'innerBlocks' => array(),
+                    'innerHTML' => '',
+                    'innerContent' => array(),
+                ),
+            )
         );
     }
 

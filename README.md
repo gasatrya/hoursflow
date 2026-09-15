@@ -35,8 +35,17 @@ Use the shortcode anywhere WordPress processes shortcodes:
 ```
 
 Or insert the **OpenNow CTA** block (`opennow/cta`) in the block editor. The
-block is dynamic, stores no content or style overrides, and the shortcode and
-every block instance use the same global configuration and renderer.
+block is dynamic and uses the same server renderer as the shortcode. Its editor
+preview shows the current server-rendered output, including the current
+business state.
+
+Each block may optionally override the label, action, and/or status separately
+for its open and closed state. Overrides are sparse: every missing or invalid
+field independently falls back to that field in the global state CTA. Enabling
+a status override and leaving it blank explicitly suppresses the global status.
+Removing all overrides restores the legacy empty block delimiter. The
+shortcode accepts no content overrides, and schedules, global colors, and
+styles remain global for every integration.
 
 Allowed actions are root-relative URLs (for example `/booking/`), complete
 `https://` URLs, and supported `tel:` actions. Labels and status values are
@@ -69,12 +78,12 @@ result. There is no DST override or ambiguity setting.
 ## Appearance and accessibility
 
 Appearance controls are global only and are shared by the shortcode and all
-OpenNow blocks. The MVP exposes only CTA link background and text colors.
-Leave either field blank to use the plugin defaults (`#166534` and `#FFFFFF`).
-Nonblank values must be six-digit hexadecimal colors and the effective pair
-must meet WCAG 2.2 AA contrast for normal text. Invalid colors or an invalid
-pair use the complete default pair at runtime; they do not create per-block or
-per-state overrides.
+OpenNow blocks. The MVP exposes only CTA link background and text colors;
+content overrides do not change appearance. Leave either field blank to use
+the plugin defaults (`#166534` and `#FFFFFF`). Nonblank values must be
+six-digit hexadecimal colors and the effective pair must meet WCAG 2.2 AA
+contrast for normal text. Invalid colors or an invalid pair use the complete
+default pair at runtime; there are no per-block or per-state style overrides.
 
 Plugin styling uses the theme's inherited typography and a compact, button-like
 baseline: the link has a minimum 44x44 CSS-pixel target, modest rounding, and

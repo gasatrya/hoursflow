@@ -88,6 +88,62 @@ final class BlockTest extends TestCase
         $this->assertStringNotContainsString('Call Now', $closed_block);
     }
 
+    public function testBlockPassesOnlyNestedOverridesAndIgnoresContentAndTopLevelFields(): void
+    {
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
+        $block = new Block($this->rendererAt('2024-01-08 10:00:00'));
+        $block->register();
+        do_action('init');
+
+        $callback = $GLOBALS['opennow_test_registered_blocks'][0]['args']['render_callback'];
+        $output = call_user_func(
+            $callback,
+            array(
+                'label' => 'Top-level ignored',
+                'overrides' => array(
+                    'open' => array(
+                        'label' => 'Nested label',
+                        'action' => ' /nested/ ',
+                        'status' => '',
+                    ),
+                ),
+            ),
+            '<script>ignored content</script>',
+            (object) array('overrides' => array('open' => array('label' => 'ignored block')))
+        );
+
+        $this->assertStringContainsString('Nested label', $output);
+        $this->assertStringContainsString('href="/nested/"', $output);
+        $this->assertStringNotContainsString('Call Now', $output);
+        $this->assertStringNotContainsString('Top-level ignored', $output);
+        $this->assertStringNotContainsString('<script>', $output);
+        $this->assertStringNotContainsString('opennow-cta__status', $output);
+    }
+
+    public function testBlockHandlesMalformedAttributesWithoutWarningsOrOverrideRescue(): void
+    {
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
+        $block = new Block($this->rendererAt('2024-01-08 10:00:00'));
+
+        $output = $block->render(
+            array(
+                'overrides' => array(
+                    'open' => 'malformed',
+                    'closed' => array('action' => 'javascript:bad'),
+                ),
+            ),
+            '<strong>ignored</strong>',
+            null
+        );
+
+        $this->assertStringContainsString('Call Now', $output);
+        $this->assertStringContainsString('href="tel:+123456789"', $output);
+        $this->assertStringNotContainsString('javascript:', $output);
+
+        $malformed_top_level = $block->render('not an array', 'ignored', null);
+        $this->assertStringContainsString('Call Now', $malformed_top_level);
+    }
+
     public function testMissingConfigurationRendersNothingAndDoesNotEnqueueStyles(): void
     {
         $block = new Block($this->rendererAt('2024-01-08 10:00:00'));

@@ -24,12 +24,19 @@ final class BlockMetadataTest extends TestCase
         $this->assertSame('widgets', $metadata['category']);
         $this->assertSame('megaphone', $metadata['icon']);
         $this->assertSame('file:./index.js', $metadata['editorScript']);
-        $this->assertArrayNotHasKey('attributes', $metadata);
+        $this->assertSame('file:./index.css', $metadata['editorStyle']);
+        $this->assertSame(
+            array(
+                'overrides' => array(
+                    'type' => 'object',
+                ),
+            ),
+            $metadata['attributes']
+        );
         $this->assertArrayNotHasKey('script', $metadata);
         $this->assertArrayNotHasKey('style', $metadata);
         $this->assertArrayNotHasKey('viewScript', $metadata);
         $this->assertArrayNotHasKey('viewStyle', $metadata);
-        $this->assertArrayNotHasKey('editorStyle', $metadata);
         $this->assertSame(
             array(
                 'html' => false,
@@ -43,13 +50,32 @@ final class BlockMetadataTest extends TestCase
         $built_metadata = $this->readMetadata($built_directory . DIRECTORY_SEPARATOR . 'block.json');
         $this->assertSame($metadata, $built_metadata);
         $this->assertFileExists($built_directory . DIRECTORY_SEPARATOR . 'index.js');
+        $this->assertFileExists($built_directory . DIRECTORY_SEPARATOR . 'index.css');
+        $this->assertFileExists($built_directory . DIRECTORY_SEPARATOR . 'index-rtl.css');
         $this->assertFileExists($built_directory . DIRECTORY_SEPARATOR . 'index.asset.php');
+
+        $editor_css = file_get_contents($built_directory . DIRECTORY_SEPARATOR . 'index.css');
+        $this->assertIsString($editor_css);
+        $this->assertStringContainsString('.opennow-cta__link', $editor_css);
+        $this->assertStringContainsString('min-height:44px', $editor_css);
+        $this->assertStringContainsString(
+            '.wp-block-opennow-cta .opennow-cta__link{pointer-events:none}',
+            $editor_css
+        );
 
         $asset = require $built_directory . DIRECTORY_SEPARATOR . 'index.asset.php';
         $this->assertIsArray($asset);
-        foreach (array('wp-blocks', 'wp-block-editor', 'wp-components', 'wp-i18n') as $dependency) {
-            $this->assertContains($dependency, $asset['dependencies']);
-        }
+        $this->assertSame(
+            array(
+                'react-jsx-runtime',
+                'wp-block-editor',
+                'wp-blocks',
+                'wp-components',
+                'wp-i18n',
+                'wp-server-side-render',
+            ),
+            $asset['dependencies']
+        );
     }
 
     /**

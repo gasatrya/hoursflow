@@ -13,6 +13,12 @@
   ],
   "textdomain": "opennow",
   "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "attributes": {
+    "overrides": {
+      "type": "object"
+    }
+  },
   "supports": {
     "html": false,
     "customClassName": false

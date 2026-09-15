@@ -306,6 +306,52 @@ final class Validator {
 	}
 
 	/**
+	 * Return sparse canonical per-state CTA overrides.
+	 *
+	 * Invalid containers, fields, and values are ignored independently.
+	 *
+	 * @param mixed $value
+	 * @return array<string, array<string, string>>
+	 */
+	public static function canonicalCtaOverrides( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return array();
+		}
+
+		$canonical = array();
+		foreach ( array( 'open', 'closed' ) as $state ) {
+			if ( ! array_key_exists( $state, $value ) || ! is_array( $value[ $state ] ) ) {
+				continue;
+			}
+
+			$state_overrides = array();
+			foreach ( array( 'label', 'action', 'status' ) as $field ) {
+				if ( ! array_key_exists( $field, $value[ $state ] ) ) {
+					continue;
+				}
+
+				if ( 'label' === $field ) {
+					$field_value = self::canonicalPlainText( $value[ $state ][ $field ], true );
+				} elseif ( 'action' === $field ) {
+					$field_value = self::canonicalAction( $value[ $state ][ $field ] );
+				} else {
+					$field_value = self::canonicalPlainText( $value[ $state ][ $field ], false );
+				}
+
+				if ( null !== $field_value ) {
+					$state_overrides[ $field ] = $field_value;
+				}
+			}
+
+			if ( ! empty( $state_overrides ) ) {
+				$canonical[ $state ] = $state_overrides;
+			}
+		}
+
+		return $canonical;
+	}
+
+	/**
 	 * Return a canonical action or null when it is not one of the supported forms.
 	 *
 	 * @param mixed $value

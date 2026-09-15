@@ -129,6 +129,72 @@ final class ConfigTest extends TestCase
         );
     }
 
+    public function testCtaOverridesCanonicalizePartialTrimmedValuesAndPreserveBlankStatus(): void
+    {
+        $overrides = Validator::canonicalCtaOverrides(
+            array(
+                'open' => array(
+                    'label' => ' Call now ',
+                    'action' => ' /booking/ ',
+                    'status' => ' ',
+                ),
+                'closed' => array(
+                    'status' => ' Closed. ',
+                ),
+            )
+        );
+
+        $this->assertSame(
+            array(
+                'open' => array(
+                    'label' => 'Call now',
+                    'action' => '/booking/',
+                    'status' => '',
+                ),
+                'closed' => array(
+                    'status' => 'Closed.',
+                ),
+            ),
+            $overrides
+        );
+    }
+
+    public function testCtaOverridesIgnoreMalformedContainersUnknownFieldsAndInvalidValuesIndependently(): void
+    {
+        $overrides = Validator::canonicalCtaOverrides(
+            array(
+                'open' => array(
+                    'label' => '<strong>unsafe</strong>',
+                    'action' => ' /valid/ ',
+                    'status' => array('wrong type'),
+                    'unknown' => 'ignored',
+                ),
+                'closed' => array(
+                    'label' => ' Closed override ',
+                    'action' => 'javascript:bad',
+                    'status' => '',
+                ),
+                'unknown' => array('label' => 'ignored'),
+                'malformed' => 'not an array',
+            )
+        );
+
+        $this->assertSame(
+            array(
+                'open' => array(
+                    'action' => '/valid/',
+                ),
+                'closed' => array(
+                    'label' => 'Closed override',
+                    'status' => '',
+                ),
+            ),
+            $overrides
+        );
+        $this->assertSame(array(), Validator::canonicalCtaOverrides('not an array'));
+        $this->assertSame(array(), Validator::canonicalCtaOverrides(array('open' => array('label' => '   '))));
+    }
+
     /**
      * @dataProvider actionValues
      */

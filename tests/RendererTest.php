@@ -36,6 +36,114 @@ final class RendererTest extends TestCase
         $this->assertArrayHasKey('opennow-cta', $GLOBALS['opennow_test_enqueued_styles']);
     }
 
+    public function testValidOpenOverridesReplaceContentAndPreserveGlobalAppearance(): void
+    {
+        $config = $this->config();
+        $config['appearance'] = array(
+            'background_color' => '#000000',
+            'text_color' => '#FFFFFF',
+        );
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+
+        $output = $this->rendererAt('2024-01-08 10:00:00')->render(
+            array(
+                'open' => array(
+                    'label' => ' Override now ',
+                    'action' => ' /override/ ',
+                    'status' => ' Override status ',
+                ),
+            )
+        );
+
+        $this->assertStringContainsString('href="/override/"', $output);
+        $this->assertStringContainsString('Override now', $output);
+        $this->assertStringContainsString('Override status', $output);
+        $this->assertStringNotContainsString('Call Now', $output);
+        $this->assertStringNotContainsString('We are open.', $output);
+        $this->assertStringContainsString(
+            'style="--opennow-cta-background-color: #000000; --opennow-cta-text-color: #FFFFFF;"',
+            $output
+        );
+    }
+
+    public function testValidClosedOverridesReplaceClosedContent(): void
+    {
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
+
+        $output = $this->rendererAt('2024-01-08 18:00:00')->render(
+            array(
+                'closed' => array(
+                    'label' => ' Schedule a visit ',
+                    'action' => 'https://example.com/visit ',
+                    'status' => ' Closed now. ',
+                ),
+            )
+        );
+
+        $this->assertStringContainsString('href="https://example.com/visit"', $output);
+        $this->assertStringContainsString('Schedule a visit', $output);
+        $this->assertStringContainsString('Closed now.', $output);
+        $this->assertStringNotContainsString('Book online', $output);
+    }
+
+    public function testInvalidOverrideFieldsFallBackIndependentlyAndDoNotRescueGlobals(): void
+    {
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
+
+        $output = $this->rendererAt('2024-01-08 10:00:00')->render(
+            array(
+                'open' => array(
+                    'label' => '<strong>unsafe</strong>',
+                    'action' => ' /valid/ ',
+                    'status' => array('wrong type'),
+                ),
+            )
+        );
+
+        $this->assertStringContainsString('href="/valid/"', $output);
+        $this->assertStringContainsString('Call Now', $output);
+        $this->assertStringContainsString('We are open.', $output);
+        $this->assertStringNotContainsString('<strong>', $output);
+
+        $config = $this->config();
+        $config['cta']['open']['action'] = 'javascript:bad';
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $GLOBALS['opennow_test_enqueued_styles'] = array();
+
+        $this->assertSame(
+            '',
+            $this->rendererAt('2024-01-08 10:00:00')->render(
+                array(
+                    'open' => array(
+                        'label' => 'Rescue attempt',
+                        'action' => '/rescue/',
+                        'status' => 'Rescued',
+                    ),
+                )
+            )
+        );
+        $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
+    }
+
+    public function testBlankOverrideStatusSuppressesGlobalStatusAndStateOverridesAreIsolated(): void
+    {
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
+        $overrides = array(
+            'open' => array(
+                'label' => 'Open only',
+                'status' => ' ',
+            ),
+        );
+
+        $open_output = $this->rendererAt('2024-01-08 10:00:00')->render($overrides);
+        $closed_output = $this->rendererAt('2024-01-08 18:00:00')->render($overrides);
+
+        $this->assertStringContainsString('Open only', $open_output);
+        $this->assertStringNotContainsString('opennow-cta__status', $open_output);
+        $this->assertStringContainsString('Book online', $closed_output);
+        $this->assertStringNotContainsString('Open only', $closed_output);
+    }
+
     public function testAfterHoursRenderOnlyTheClosedCta(): void
     {
         $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
