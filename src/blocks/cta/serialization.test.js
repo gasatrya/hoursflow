@@ -48,4 +48,25 @@ describe( 'OpenNow CTA serialization', () => {
 		);
 		expect( parse( serialized )[ 0 ].attributes ).toEqual( attributes );
 	} );
+
+	test( 'serializes strict per-state hideStatus overrides and round-trips them', () => {
+		const attributes = {
+			overrides: {
+				open: {
+					hideStatus: true,
+				},
+				closed: {
+					hideStatus: true,
+				},
+			},
+		};
+		const block = createBlock( metadata.name, attributes );
+		const serialized = serialize( block );
+
+		expect( block.attributes ).toEqual( attributes );
+		expect( serialized ).toBe(
+			'<!-- wp:opennow/cta {"overrides":{"open":{"hideStatus":true},"closed":{"hideStatus":true}}} /-->'
+		);
+		expect( parse( serialized )[ 0 ].attributes ).toEqual( attributes );
+	} );
 } );

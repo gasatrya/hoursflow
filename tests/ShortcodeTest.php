@@ -57,7 +57,43 @@ final class ShortcodeTest extends TestCase
         $this->assertArrayHasKey('opennow-cta', $GLOBALS['opennow_test_enqueued_styles']);
     }
 
-    private function renderer(): Renderer
+    public function testExactHideStatusAttributeHidesTheSelectedStateStatus(): void
+    {
+        $open_shortcode = new Shortcode($this->renderer());
+        $open_output = $open_shortcode->render(array('hide_status' => '1'));
+
+        $closed_shortcode = new Shortcode($this->renderer('2024-01-08 18:00:00'));
+        $closed_output = $closed_shortcode->render(array('hide_status' => '1'));
+
+        $this->assertStringContainsString('Call Now', $open_output);
+        $this->assertStringNotContainsString('opennow-cta__status', $open_output);
+        $this->assertStringContainsString('Book online', $closed_output);
+        $this->assertStringNotContainsString('opennow-cta__status', $closed_output);
+    }
+
+    public function testNonExactHideStatusValuesAndMalformedContainersAreNoOp(): void
+    {
+        $invalid_attributes = array(
+            array('hide_status' => 1),
+            array('hide_status' => true),
+            array('hide_status' => false),
+            array('hide_status' => 'true'),
+            array('hide_status' => ' 1'),
+            array('hide_status' => array('1')),
+            array('hideStatus' => '1'),
+            'not an array',
+            (object) array('hide_status' => '1'),
+        );
+
+        foreach ($invalid_attributes as $attributes) {
+            $output = (new Shortcode($this->renderer()))->render($attributes);
+
+            $this->assertStringContainsString('We are open.', $output);
+            $this->assertStringContainsString('opennow-cta__status', $output);
+        }
+    }
+
+    private function renderer(string $instant = '2024-01-08 10:00:00'): Renderer
     {
         $schedule = array();
         foreach (Schema::days() as $day) {
@@ -75,12 +111,12 @@ final class ShortcodeTest extends TestCase
                 'open' => array(
                     'label' => 'Call Now',
                     'action' => 'tel:+123456789',
-                    'status' => '',
+                    'status' => 'We are open.',
                 ),
                 'closed' => array(
                     'label' => 'Book online',
                     'action' => '/booking/',
-                    'status' => '',
+                    'status' => 'We are closed.',
                 ),
             ),
             'appearance' => array(
@@ -91,8 +127,8 @@ final class ShortcodeTest extends TestCase
 
         return new Renderer(
             new Repository(),
-            new Evaluator(static function (): \DateTimeInterface {
-                return new \DateTimeImmutable('2024-01-08 10:00:00', new \DateTimeZone('UTC'));
+            new Evaluator(static function () use ($instant): \DateTimeInterface {
+                return new \DateTimeImmutable($instant, new \DateTimeZone('UTC'));
             })
         );
     }

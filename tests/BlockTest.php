@@ -88,6 +88,56 @@ final class BlockTest extends TestCase
         $this->assertStringNotContainsString('Call Now', $closed_block);
     }
 
+    public function testBlockAndShortcodeStayInOutputParityWhenBothRequestStatusHiding(): void
+    {
+        $instant = '2024-01-08 10:00:00';
+        $renderer = new Renderer(
+            new Repository(),
+            new Evaluator(static function () use (&$instant): \DateTimeInterface {
+                return new \DateTimeImmutable($instant, new \DateTimeZone('UTC'));
+            })
+        );
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
+
+        $block = new Block($renderer);
+        $shortcode = new Shortcode($renderer);
+        $block->register();
+        $shortcode->register();
+        do_action('init');
+
+        $block_callback = $GLOBALS['opennow_test_registered_blocks'][0]['args']['render_callback'];
+        $shortcode_callback = $GLOBALS['opennow_test_shortcodes']['opennow_cta'];
+        $block_attributes = array(
+            'overrides' => array(
+                'open' => array('hideStatus' => true),
+                'closed' => array('hideStatus' => true),
+            ),
+        );
+
+        $open_block = call_user_func($block_callback, $block_attributes, '', null);
+        $open_shortcode = call_user_func(
+            $shortcode_callback,
+            array('hide_status' => '1'),
+            '',
+            'opennow_cta'
+        );
+
+        $this->assertSame($open_shortcode, $open_block);
+        $this->assertStringNotContainsString('opennow-cta__status', $open_block);
+
+        $instant = '2024-01-08 18:00:00';
+        $closed_block = call_user_func($block_callback, $block_attributes, '', null);
+        $closed_shortcode = call_user_func(
+            $shortcode_callback,
+            array('hide_status' => '1'),
+            '',
+            'opennow_cta'
+        );
+
+        $this->assertSame($closed_shortcode, $closed_block);
+        $this->assertStringNotContainsString('opennow-cta__status', $closed_block);
+    }
+
     public function testBlockPassesOnlyNestedOverridesAndIgnoresContentAndTopLevelFields(): void
     {
         $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
@@ -214,7 +264,7 @@ final class BlockTest extends TestCase
                 'closed' => array(
                     'label' => 'Book online',
                     'action' => '/booking/',
-                    'status' => '',
+                    'status' => 'We are closed.',
                 ),
             ),
             'appearance' => array(

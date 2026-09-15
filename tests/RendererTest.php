@@ -144,6 +144,68 @@ final class RendererTest extends TestCase
         $this->assertStringNotContainsString('Open only', $closed_output);
     }
 
+    public function testHideStatusAppliesOnlyToTheSelectedState(): void
+    {
+        $config = $this->config();
+        $config['cta']['closed']['status'] = 'We are closed.';
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $overrides = array(
+            'open' => array(
+                'hideStatus' => true,
+            ),
+            'closed' => array(
+                'status' => 'Closed override',
+            ),
+        );
+
+        $open_output = $this->rendererAt('2024-01-08 10:00:00')->render($overrides);
+        $closed_output = $this->rendererAt('2024-01-08 18:00:00')->render($overrides);
+
+        $this->assertStringContainsString('Call Now', $open_output);
+        $this->assertStringNotContainsString('opennow-cta__status', $open_output);
+        $this->assertStringContainsString('Book online', $closed_output);
+        $this->assertStringContainsString('Closed override', $closed_output);
+        $this->assertStringContainsString('opennow-cta__status', $closed_output);
+    }
+
+    public function testHideStatusWinsWhenItCoexistsWithAStatusOverride(): void
+    {
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
+
+        $output = $this->rendererAt('2024-01-08 10:00:00')->render(
+            array(
+                'open' => array(
+                    'status' => 'Override status',
+                    'hideStatus' => true,
+                ),
+            )
+        );
+
+        $this->assertStringContainsString('Call Now', $output);
+        $this->assertStringNotContainsString('We are open.', $output);
+        $this->assertStringNotContainsString('Override status', $output);
+        $this->assertStringNotContainsString('opennow-cta__status', $output);
+    }
+
+    public function testInvalidHideStatusValuesFallBackWithoutAffectingValidFields(): void
+    {
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
+
+        foreach (array(false, 'true', 1, array('invalid')) as $invalid_value) {
+            $output = $this->rendererAt('2024-01-08 10:00:00')->render(
+                array(
+                    'open' => array(
+                        'hideStatus' => $invalid_value,
+                        'status' => 'Override status',
+                    ),
+                )
+            );
+
+            $this->assertStringContainsString('Override status', $output);
+            $this->assertStringContainsString('opennow-cta__status', $output);
+        }
+    }
+
     public function testAfterHoursRenderOnlyTheClosedCta(): void
     {
         $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();

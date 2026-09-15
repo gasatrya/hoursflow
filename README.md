@@ -32,7 +32,13 @@ Use the shortcode anywhere WordPress processes shortcodes:
 
 ```text
 [opennow_cta]
+[opennow_cta hide_status="1"]
 ```
+
+`hide_status="1"` is the only recognized shortcode attribute spelling and
+value. It hides the status for whichever state is selected at render time; all
+other attribute values, attribute containers, attributes, and enclosed content
+are ignored. The default `[opennow_cta]` behavior is unchanged.
 
 Or insert the **OpenNow CTA** block (`opennow/cta`) in the block editor. The
 block is dynamic and uses the same server renderer as the shortcode. Its editor
@@ -40,12 +46,16 @@ preview shows the current server-rendered output, including the current
 business state.
 
 Each block may optionally override the label, action, and/or status separately
-for its open and closed state. Overrides are sparse: every missing or invalid
-field independently falls back to that field in the global state CTA. Enabling
-a status override and leaving it blank explicitly suppresses the global status.
-Removing all overrides restores the legacy empty block delimiter. The
-shortcode accepts no content overrides, and schedules, global colors, and
-styles remain global for every integration.
+for its open and closed state. Each state may also store the nested boolean
+`hideStatus` flag; only strict `true` is valid. Overrides are sparse: every
+missing or invalid content field or flag independently falls back to the
+matching global state CTA. The selected state's overrides alone are applied;
+the other state's values have no effect. `hideStatus: true` hides the selected
+status even when the global or overridden status is nonblank, while a valid
+blank status override continues to suppress the global status for backward
+compatibility. Removing all overrides restores the legacy empty block
+delimiter. Schedules, global colors, and styles remain global for every
+integration.
 
 Allowed actions are root-relative URLs (for example `/booking/`), complete
 `https://` URLs, and supported `tel:` actions. Labels and status values are

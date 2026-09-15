@@ -30,7 +30,7 @@ final class Shortcode {
 	}
 
 	/**
-	 * Render the shortcode without accepting attribute or content overrides.
+	 * Render the shortcode with its optional exact status-hiding attribute.
 	 *
 	 * @param mixed  $attributes
 	 * @param mixed  $content
@@ -38,8 +38,18 @@ final class Shortcode {
 	 * @return string
 	 */
 	public function render( $attributes = array(), $content = null, $tag = '' ): string {
-		unset( $attributes, $content, $tag );
+		$overrides = array();
+		if ( is_array( $attributes )
+			&& array_key_exists( 'hide_status', $attributes )
+			&& '1' === $attributes['hide_status']
+		) {
+			$overrides = array(
+				'open'   => array( 'hideStatus' => true ),
+				'closed' => array( 'hideStatus' => true ),
+			);
+		}
+		unset( $content, $tag );
 
-		return $this->renderer->render();
+		return $this->renderer->render( $overrides );
 	}
 }

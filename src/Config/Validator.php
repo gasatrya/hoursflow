@@ -311,7 +311,7 @@ final class Validator {
 	 * Invalid containers, fields, and values are ignored independently.
 	 *
 	 * @param mixed $value
-	 * @return array<string, array<string, string>>
+	 * @return array<string, array<string, string|bool>>
 	 */
 	public static function canonicalCtaOverrides( $value ): array {
 		if ( ! is_array( $value ) ) {
@@ -325,8 +325,15 @@ final class Validator {
 			}
 
 			$state_overrides = array();
-			foreach ( array( 'label', 'action', 'status' ) as $field ) {
+			foreach ( array( 'label', 'action', 'status', 'hideStatus' ) as $field ) {
 				if ( ! array_key_exists( $field, $value[ $state ] ) ) {
+					continue;
+				}
+
+				if ( 'hideStatus' === $field ) {
+					if ( true === $value[ $state ][ $field ] ) {
+						$state_overrides[ $field ] = true;
+					}
 					continue;
 				}
 

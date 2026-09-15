@@ -10,6 +10,9 @@ All notable OpenNow CTA changes are documented here.
   retention/deletion behavior.
 - Added backward-compatible per-block, per-state CTA content overrides with
   independent global fallback and explicit blank-status suppression.
+- Added explicit per-state status hiding for blocks and the exact
+  `[opennow_cta hide_status="1"]` shortcode attribute, with selected-state
+  semantics and legacy blank-status compatibility.
 - Added a real server-rendered block-editor preview while keeping schedules,
   global colors, styles, and shortcode behavior unchanged.
 - Added reproducible quality checks, WordPress integration coverage, and a

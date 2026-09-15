@@ -195,6 +195,51 @@ final class ConfigTest extends TestCase
         $this->assertSame(array(), Validator::canonicalCtaOverrides(array('open' => array('label' => '   '))));
     }
 
+    public function testCtaOverridesPreserveOnlyStrictTrueHideStatusAndKeepOtherFieldsIndependent(): void
+    {
+        $this->assertSame(
+            array(
+                'open' => array(
+                    'status' => 'Open status',
+                    'hideStatus' => true,
+                ),
+                'closed' => array(
+                    'status' => 'Closed status',
+                ),
+            ),
+            Validator::canonicalCtaOverrides(
+                array(
+                    'open' => array(
+                        'hideStatus' => true,
+                        'status' => ' Open status ',
+                    ),
+                    'closed' => array(
+                        'hideStatus' => false,
+                        'status' => ' Closed status ',
+                    ),
+                )
+            )
+        );
+
+        foreach (array(false, 'true', 1, array('true')) as $invalid_value) {
+            $this->assertSame(
+                array(
+                    'open' => array(
+                        'status' => 'Still valid',
+                    ),
+                ),
+                Validator::canonicalCtaOverrides(
+                    array(
+                        'open' => array(
+                            'hideStatus' => $invalid_value,
+                            'status' => ' Still valid ',
+                        ),
+                    )
+                )
+            );
+        }
+    }
+
     /**
      * @dataProvider actionValues
      */

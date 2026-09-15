@@ -118,13 +118,14 @@ describe( 'OpenNow CTA block', () => {
 		const openControls = controlsFrom( panels[ 0 ] ).filter( Boolean );
 		expect(
 			openControls.filter( ( control ) => control.type === ToggleControl )
-		).toHaveLength( 3 );
+		).toHaveLength( 4 );
 		expect(
 			openControls.filter( ( control ) => control.type === TextControl )
 		).toHaveLength( 0 );
 		expect( __ ).toHaveBeenCalledWith( 'Override label', 'opennow' );
 		expect( __ ).toHaveBeenCalledWith( 'Override action', 'opennow' );
 		expect( __ ).toHaveBeenCalledWith( 'Override status', 'opennow' );
+		expect( __ ).toHaveBeenCalledWith( 'Hide status', 'opennow' );
 	} );
 
 	test( 'provides translated guidance for each editable override field', () => {
@@ -148,7 +149,7 @@ describe( 'OpenNow CTA block', () => {
 			[
 				'Enter non-empty plain text. Invalid or empty values fall back to the global label.',
 				'Enter a root-relative URL, HTTPS URL, or tel: action. Invalid or empty values fall back to the global action.',
-				'Enter plain text. A blank value explicitly hides the global status; invalid values fall back to the global status.',
+				'Enter plain text. A blank value explicitly hides the global status; the Hide status control hides it regardless of its value. Invalid values fall back to the global status.',
 			]
 		);
 		expect( __ ).toHaveBeenCalledWith(
@@ -160,7 +161,7 @@ describe( 'OpenNow CTA block', () => {
 			'opennow'
 		);
 		expect( __ ).toHaveBeenCalledWith(
-			'Enter plain text. A blank value explicitly hides the global status; invalid values fall back to the global status.',
+			'Enter plain text. A blank value explicitly hides the global status; the Hide status control hides it regardless of its value. Invalid values fall back to the global status.',
 			'opennow'
 		);
 	} );
@@ -190,6 +191,7 @@ describe( 'OpenNow CTA block', () => {
 			true,
 			false,
 			true,
+			false,
 		] );
 		expect(
 			textControls.map( ( control ) => control.props.value )
@@ -226,6 +228,97 @@ describe( 'OpenNow CTA block', () => {
 		} );
 	} );
 
+	test( 'hide status toggle stores true and removes only that field', () => {
+		const attributes = {
+			overrides: {
+				open: {
+					label: 'Custom label',
+					status: 'Custom status',
+				},
+			},
+		};
+		const enableSetAttributes = jest.fn();
+		const enabledElement = Edit( {
+			attributes,
+			setAttributes: enableSetAttributes,
+		} );
+		const enabledControls = controlsFrom(
+			panelsFrom( enabledElement )[ 0 ]
+		).filter( Boolean );
+		const hideStatusToggle = enabledControls.find(
+			( control ) =>
+				control.type === ToggleControl &&
+				control.props.label === 'Hide status'
+		);
+
+		expect( hideStatusToggle.props.checked ).toBe( false );
+		hideStatusToggle.props.onChange( true );
+		expect( enableSetAttributes ).toHaveBeenCalledWith( {
+			overrides: {
+				open: {
+					label: 'Custom label',
+					status: 'Custom status',
+					hideStatus: true,
+				},
+			},
+		} );
+
+		const disableSetAttributes = jest.fn();
+		const disabledElement = Edit( {
+			attributes: {
+				overrides: {
+					open: {
+						label: 'Custom label',
+						status: 'Custom status',
+						hideStatus: true,
+					},
+				},
+			},
+			setAttributes: disableSetAttributes,
+		} );
+		const disabledControls = controlsFrom(
+			panelsFrom( disabledElement )[ 0 ]
+		).filter( Boolean );
+		disabledControls
+			.find(
+				( control ) =>
+					control.type === ToggleControl &&
+					control.props.label === 'Hide status'
+			)
+			.props.onChange( false );
+
+		expect( disableSetAttributes ).toHaveBeenCalledWith( {
+			overrides: {
+				open: {
+					label: 'Custom label',
+					status: 'Custom status',
+				},
+			},
+		} );
+	} );
+
+	test( 'prunes an empty state and overrides object after hiding is disabled', () => {
+		const setAttributes = jest.fn();
+		const element = Edit( {
+			attributes: { overrides: { closed: { hideStatus: true } } },
+			setAttributes,
+		} );
+		const controls = controlsFrom( panelsFrom( element )[ 1 ] ).filter(
+			Boolean
+		);
+		const hideStatusToggle = controls.find(
+			( control ) =>
+				control.type === ToggleControl &&
+				control.props.label === 'Hide status'
+		);
+
+		hideStatusToggle.props.onChange( false );
+
+		expect( setAttributes ).toHaveBeenCalledWith( {
+			overrides: undefined,
+		} );
+	} );
+
 	test( 'prunes an empty state and overrides object after the last field is disabled', () => {
 		const setAttributes = jest.fn();
 		const element = Edit( {
@@ -253,6 +346,7 @@ describe( 'OpenNow CTA block', () => {
 				open: {
 					label: 'Keep open',
 					action: 42,
+					hideStatus: '1',
 					unknown: 'drop this field',
 				},
 				closed: 'not an object',
@@ -276,6 +370,7 @@ describe( 'OpenNow CTA block', () => {
 				open: {
 					label: 'Keep open',
 					action: 42,
+					hideStatus: '1',
 					unknown: 'drop this field',
 				},
 				closed: 'not an object',
@@ -290,7 +385,7 @@ describe( 'OpenNow CTA block', () => {
 			openControls
 				.filter( ( control ) => control.type === ToggleControl )
 				.map( ( control ) => control.props.checked )
-		).toEqual( [ true, false, false ] );
+		).toEqual( [ true, false, false, false ] );
 
 		openControls
 			.filter( ( control ) => control.type === ToggleControl )[ 1 ]

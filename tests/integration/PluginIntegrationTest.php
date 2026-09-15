@@ -140,6 +140,67 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $this->assertStringNotContainsString('Serialized CTA', $legacy_output);
     }
 
+    public function testRealShortcodeAndBlockStatusHidingPreservesLegacyOutput(): void
+    {
+        $config = $this->config();
+        $config['cta']['closed']['status'] = 'We are closed.';
+        update_option(Schema::OPTION_NAME, $config, false);
+
+        $legacy_shortcode = do_shortcode('[opennow_cta]');
+        $legacy_block = do_blocks('<!-- wp:opennow/cta /-->');
+
+        $this->assertSame($legacy_shortcode, $legacy_block);
+        $this->assertStringContainsString('opennow-cta__status', $legacy_shortcode);
+        $this->assertSame(
+            1,
+            preg_match('/opennow-cta--(open|closed)/', $legacy_shortcode, $matches)
+        );
+        $selected_state = $matches[1];
+        $other_state = 'open' === $selected_state ? 'closed' : 'open';
+
+        $hidden_overrides = array(
+            'open' => array(
+                'hideStatus' => true,
+            ),
+            'closed' => array(
+                'hideStatus' => true,
+            ),
+        );
+        $hidden_shortcode = do_shortcode(
+            '[opennow_cta hide_status="1" label="Ignored"]Ignored content[/opennow_cta]'
+        );
+        $hidden_block = do_blocks($this->serializedCta($hidden_overrides));
+
+        $this->assertSame($hidden_shortcode, $hidden_block);
+        $this->assertStringNotContainsString('opennow-cta__status', $hidden_shortcode);
+        $this->assertStringNotContainsString('Ignored', $hidden_shortcode);
+
+        $this->assertSame(
+            $legacy_block,
+            do_blocks(
+                $this->serializedCta(
+                    array(
+                        $other_state => array('hideStatus' => true),
+                    )
+                )
+            )
+        );
+        $this->assertSame(
+            $legacy_block,
+            do_blocks(
+                $this->serializedCta(
+                    array(
+                        $selected_state => array('hideStatus' => 'true'),
+                    )
+                )
+            )
+        );
+        $this->assertStringContainsString(
+            'opennow-cta__status',
+            do_shortcode('[opennow_cta hide_status="true"]')
+        );
+    }
+
     public function testSerializedDynamicBlockFallsBackPerFieldAndNeverRescuesInvalidGlobalState(): void
     {
         update_option(Schema::OPTION_NAME, $this->config(), false);
@@ -195,7 +256,9 @@ final class PluginIntegrationTest extends WP_UnitTestCase
 
     public function testRestBlockRendererReturnsAuthenticatedNestedOverrideOutput(): void
     {
-        update_option(Schema::OPTION_NAME, $this->config(), false);
+        $config = $this->config();
+        $config['cta']['closed']['status'] = 'Closed globally.';
+        update_option(Schema::OPTION_NAME, $config, false);
         $administrator = self::factory()->user->create(array('role' => 'administrator'));
         wp_set_current_user($administrator);
 
@@ -203,12 +266,14 @@ final class PluginIntegrationTest extends WP_UnitTestCase
             'open' => array(
                 'label' => 'REST CTA',
                 'action' => '/rest-cta/',
-                'status' => '',
+                'status' => 'REST status',
+                'hideStatus' => true,
             ),
             'closed' => array(
                 'label' => 'REST CTA',
                 'action' => '/rest-cta/',
-                'status' => '',
+                'status' => 'REST status',
+                'hideStatus' => true,
             ),
         );
         $request = new \WP_REST_Request('GET', '/wp/v2/block-renderer/opennow/cta');

@@ -34,7 +34,7 @@ final class Renderer {
 	/**
 	 * Render the CTA for the current runtime state.
 	 *
-	 * @param mixed $overrides Raw block override candidate.
+	 * @param mixed $overrides Raw per-state override candidate.
 	 * @return string
 	 */
 	public function render( $overrides = array() ): string {
@@ -69,8 +69,13 @@ final class Renderer {
 			}
 
 			$canonical_overrides = Validator::canonicalCtaOverrides( $overrides );
+			$hide_status         = false;
 			if ( isset( $canonical_overrides[ $state ] ) ) {
-				$cta = array_replace( $cta, $canonical_overrides[ $state ] );
+				$state_overrides = $canonical_overrides[ $state ];
+				$hide_status     = isset( $state_overrides['hideStatus'] )
+					&& true === $state_overrides['hideStatus'];
+				unset( $state_overrides['hideStatus'] );
+				$cta = array_replace( $cta, $state_overrides );
 			}
 
 			$appearance = isset( $config['appearance'] ) && is_array( $config['appearance'] )
@@ -102,7 +107,7 @@ final class Renderer {
 				. '<a class="' . esc_attr( 'opennow-cta__link' ) . '" href="'
 				. $action . '">' . esc_html( $cta['label'] ) . '</a>';
 
-			if ( '' !== $cta['status'] ) {
+			if ( ! $hide_status && '' !== $cta['status'] ) {
 				$markup .= '<span class="' . esc_attr( 'opennow-cta__status' ) . '">'
 					. esc_html( $cta['status'] ) . '</span>';
 			}

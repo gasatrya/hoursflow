@@ -58,11 +58,16 @@ invalid appearance data uses the default color pair.
 
 Block content overrides are not part of the global option. The dynamic block
 may store a sparse `overrides` attribute with optional `open` and `closed`
-objects and optional `label`, `action`, and `status` fields. The runtime
-canonicalizes each field independently using the same plain-text and action
-rules as global CTA values. A valid field replaces only the selected state's
-matching global field; a missing or invalid field falls back independently.
-An explicitly present blank status is valid and suppresses the global status.
+objects and optional `label`, `action`, `status`, and `hideStatus` fields.
+`hideStatus` is retained only when it is the strict boolean `true`; false,
+strings, numbers, arrays, and other invalid values are ignored independently.
+The runtime canonicalizes each content field using the same plain-text and
+action rules as global CTA values. A valid field replaces only the selected
+state's matching global field; a missing or invalid field falls back
+independently. An explicitly present blank status is valid and suppresses the
+global status. `hideStatus: true` suppresses the selected status even when the
+global or overridden status is nonblank; the other state's overrides never
+apply.
 
 ## Frontend services
 
@@ -70,14 +75,23 @@ The shortcode is:
 
 ```text
 [opennow_cta]
+[opennow_cta hide_status="1"]
 ```
+
+Only the exact string `hide_status="1"` is recognized. It forwards a
+`hideStatus: true` override for both states, so the shared renderer hides only
+the state selected at runtime. Other values or malformed attribute containers
+are a no-op, and all other attributes and content remain ignored.
 
 The dynamic block is `opennow/cta`. It uses the same
 `OpenNow\Frontend\Renderer` as the shortcode, so saved global settings produce
 the same server-rendered output when no block overrides are present. Its editor
-uses a server-side-rendered preview of the current output. The shortcode still
-calls the renderer with no overrides and remains global-only. Schedules,
-appearance colors, and frontend styles remain global for both integrations.
+uses a server-side-rendered preview of the current output. The renderer first
+requires a valid selected global CTA, then applies only valid selected-state
+content and status-visibility overrides. `hideStatus: true` wins over a
+nonblank global or status override, while an explicitly blank status override
+retains its legacy suppression behavior. Schedules, appearance colors, and
+frontend styles remain global for both integrations.
 
 The renderer evaluates the current absolute instant in the saved named IANA
 timezone, selects only the matching open or closed CTA, applies only valid

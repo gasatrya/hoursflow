@@ -67,7 +67,7 @@ msgstr ""
 
 #: src/Admin/Settings.php:187
 #: src/Admin/Settings.php:901
-#: src/blocks/cta/index.js:249
+#: src/blocks/cta/index.js:276
 msgid "Open CTA"
 msgstr ""
 
@@ -77,7 +77,7 @@ msgstr ""
 
 #: src/Admin/Settings.php:206
 #: src/Admin/Settings.php:902
-#: src/blocks/cta/index.js:256
+#: src/blocks/cta/index.js:283
 msgid "Closed CTA"
 msgstr ""
 
@@ -248,17 +248,17 @@ msgid "CTA settings: %s"
 msgstr ""
 
 #: src/Admin/Settings.php:909
-#: src/blocks/cta/index.js:139
+#: src/blocks/cta/index.js:152
 msgid "Label"
 msgstr ""
 
 #: src/Admin/Settings.php:910
-#: src/blocks/cta/index.js:173
+#: src/blocks/cta/index.js:186
 msgid "Action"
 msgstr ""
 
 #: src/Admin/Settings.php:911
-#: src/blocks/cta/index.js:207
+#: src/blocks/cta/index.js:220
 msgid "Status"
 msgstr ""
 
@@ -335,77 +335,81 @@ msgstr ""
 msgid "The background and text colors must meet WCAG AA contrast for normal text."
 msgstr ""
 
-#: src/Config/Validator.php:440
+#: src/Config/Validator.php:447
 msgid "A schedule entry must be either closed or one period."
 msgstr ""
 
-#: src/Config/Validator.php:451
-#: src/Config/Validator.php:474
+#: src/Config/Validator.php:458
+#: src/Config/Validator.php:481
 msgid "Choose either closed or period for this day."
 msgstr ""
 
-#: src/Config/Validator.php:462
+#: src/Config/Validator.php:469
 msgid "A closed day may not contain period fields or unknown fields."
 msgstr ""
 
-#: src/Config/Validator.php:484
+#: src/Config/Validator.php:491
 msgid "A period must contain only type, opens, and closes fields."
 msgstr ""
 
-#: src/Config/Validator.php:494
+#: src/Config/Validator.php:501
 msgid "Enter an opening time in HH:MM format."
 msgstr ""
 
-#: src/Config/Validator.php:504
+#: src/Config/Validator.php:511
 msgid "Enter a closing time in HH:MM format."
 msgstr ""
 
-#: src/Config/Validator.php:513
+#: src/Config/Validator.php:520
 msgid "Opening and closing times must be different."
 msgstr ""
 
-#: src/Config/Validator.php:540
+#: src/Config/Validator.php:547
 msgid "Each CTA state must be an array with label, action, and status fields."
 msgstr ""
 
-#: src/Config/Validator.php:550
+#: src/Config/Validator.php:557
 msgid "Each CTA state must contain only label, action, and status fields."
 msgstr ""
 
-#: src/Config/Validator.php:562
+#: src/Config/Validator.php:569
 msgid "Enter a non-empty plain-text CTA label."
 msgstr ""
 
-#: src/Config/Validator.php:572
+#: src/Config/Validator.php:579
 msgid "Enter a valid root-relative, HTTPS, or telephone CTA action."
 msgstr ""
 
-#: src/Config/Validator.php:584
+#: src/Config/Validator.php:591
 msgid "Enter plain-text status text or leave it blank."
 msgstr ""
 
-#: src/blocks/cta/index.js:125
+#: src/blocks/cta/index.js:138
 msgid "Override label"
 msgstr ""
 
-#: src/blocks/cta/index.js:140
+#: src/blocks/cta/index.js:153
 msgid "Enter non-empty plain text. Invalid or empty values fall back to the global label."
 msgstr ""
 
-#: src/blocks/cta/index.js:159
+#: src/blocks/cta/index.js:172
 msgid "Override action"
 msgstr ""
 
-#: src/blocks/cta/index.js:174
+#: src/blocks/cta/index.js:187
 msgid "Enter a root-relative URL, HTTPS URL, or tel: action. Invalid or empty values fall back to the global action."
 msgstr ""
 
-#: src/blocks/cta/index.js:193
+#: src/blocks/cta/index.js:206
 msgid "Override status"
 msgstr ""
 
-#: src/blocks/cta/index.js:208
-msgid "Enter plain text. A blank value explicitly hides the global status; invalid values fall back to the global status."
+#: src/blocks/cta/index.js:221
+msgid "Enter plain text. A blank value explicitly hides the global status; the Hide status control hides it regardless of its value. Invalid values fall back to the global status."
+msgstr ""
+
+#: src/blocks/cta/index.js:240
+msgid "Hide status"
 msgstr ""
 
 #: src/blocks/cta/block.json
@@ -415,7 +419,7 @@ msgstr ""
 
 #: src/blocks/cta/block.json
 msgctxt "block description"
-msgid "Show the right call to action based on the current business state."
+msgid "Show the right call to action based on the current business state, with optional per-state content and status visibility."
 msgstr ""
 
 #: src/blocks/cta/block.json

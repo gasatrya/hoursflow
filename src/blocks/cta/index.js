@@ -35,11 +35,19 @@ function canonicalizeOverrides( value ) {
 		}
 
 		const stateOverrides = {};
-		[ 'label', 'action', 'status' ].forEach( ( field ) => {
-			if (
-				hasOwn( value[ state ], field ) &&
-				'string' === typeof value[ state ][ field ]
-			) {
+		[ 'label', 'action', 'status', 'hideStatus' ].forEach( ( field ) => {
+			if ( ! hasOwn( value[ state ], field ) ) {
+				return;
+			}
+
+			if ( 'hideStatus' === field ) {
+				if ( true === value[ state ][ field ] ) {
+					stateOverrides[ field ] = true;
+				}
+				return;
+			}
+
+			if ( 'string' === typeof value[ state ][ field ] ) {
 				stateOverrides[ field ] = value[ state ][ field ];
 			}
 		} );
@@ -93,7 +101,11 @@ function updateOverride(
 
 	if ( enabled ) {
 		const nextState = isObject( currentState ) ? { ...currentState } : {};
-		nextState[ field ] = 'string' === typeof value ? value : '';
+		if ( 'hideStatus' === field ) {
+			nextState[ field ] = true;
+		} else {
+			nextState[ field ] = 'string' === typeof value ? value : '';
+		}
 		nextOverrides[ state ] = nextState;
 	} else if ( isObject( currentState ) ) {
 		const nextState = { ...currentState };
@@ -118,6 +130,7 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 	const labelEnabled = hasOverride( stateOverrides, 'label' );
 	const actionEnabled = hasOverride( stateOverrides, 'action' );
 	const statusEnabled = hasOverride( stateOverrides, 'status' );
+	const hideStatusEnabled = hasOverride( stateOverrides, 'hideStatus' );
 
 	return (
 		<>
@@ -206,7 +219,7 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 				<TextControl
 					label={ __( 'Status', 'opennow' ) }
 					help={ __(
-						'Enter plain text. A blank value explicitly hides the global status; invalid values fall back to the global status.',
+						'Enter plain text. A blank value explicitly hides the global status; the Hide status control hides it regardless of its value. Invalid values fall back to the global status.',
 						'opennow'
 					) }
 					value={ getOverrideValue( stateOverrides, 'status' ) }
@@ -222,6 +235,20 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 					}
 				/>
 			) }
+
+			<ToggleControl
+				label={ __( 'Hide status', 'opennow' ) }
+				checked={ hideStatusEnabled }
+				onChange={ ( enabled ) =>
+					updateOverride(
+						attributes,
+						setAttributes,
+						state,
+						'hideStatus',
+						enabled
+					)
+				}
+			/>
 		</>
 	);
 }

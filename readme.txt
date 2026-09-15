@@ -36,17 +36,27 @@ retains the last known-good configuration and reports field-specific errors.
 
 == Usage ==
 
-Add this shortcode:
+Add either shortcode:
 
 `[opennow_cta]`
 
+`[opennow_cta hide_status="1"]`
+
+Only the exact string `hide_status="1"` is recognized. It hides the status for
+the state selected at render time. Other values or malformed attribute
+containers are ignored, as are all other attributes and enclosed content. The
+shortcode without the attribute keeps its existing behavior.
+
 Alternatively insert the **OpenNow CTA** block (`opennow/cta`). The block is
 dynamic and its editor preview uses the current server-rendered output. It may
-store sparse per-state content overrides for the label, action, and status.
-Each missing or invalid override field independently falls back to the matching
-field in the global open or closed CTA. An enabled blank status explicitly
-suppresses the global status; removing every override restores the legacy empty
-block delimiter. The shortcode accepts no overrides, and schedules, colors, and
+store sparse per-state content overrides for the label, action, and status,
+plus a nested per-state `hideStatus: true` flag. Only strict boolean `true` is
+valid for that flag. Each missing or invalid override field independently falls
+back to the matching field in the selected global open or closed CTA; values
+from the other state have no effect. `hideStatus: true` takes priority over a
+nonblank global or status override. An enabled blank status still explicitly
+suppresses the global status for backward compatibility. Removing every
+override restores the legacy empty block delimiter. Schedules, colors, and
 styles remain global and shared by every integration.
 
 Actions may be root-relative URLs such as `/booking/`, complete `https://`

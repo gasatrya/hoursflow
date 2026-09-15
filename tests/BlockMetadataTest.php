@@ -15,7 +15,10 @@ final class BlockMetadataTest extends TestCase
         $this->assertSame(3, $metadata['apiVersion']);
         $this->assertSame('opennow', $metadata['textdomain']);
         $this->assertNotSame('', $metadata['title']);
-        $this->assertNotSame('', $metadata['description']);
+        $this->assertSame(
+            'Show the right call to action based on the current business state, with optional per-state content and status visibility.',
+            $metadata['description']
+        );
         $this->assertNotEmpty($metadata['keywords']);
         foreach ($metadata['keywords'] as $keyword) {
             $this->assertIsString($keyword);

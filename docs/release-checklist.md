@@ -43,11 +43,15 @@ Use a clean single-site WordPress installation with `WP_DEBUG` enabled.
    entries.
 2. Confirm a fresh activation renders no CTA before settings are saved.
 3. Save a valid timezone, all seven weekdays, both CTA states, and blank default
-   colors. Confirm the shortcode and an override-free block show equivalent
-   markup and state. In the block editor, verify the real server-rendered
-   preview, independent open/closed field overrides, global fallback for
-   omitted fields, explicit blank-status suppression, and pruning back to the
-   legacy empty delimiter.
+   colors. Confirm `[opennow_cta]` and an override-free block show equivalent
+   markup and state. Confirm `[opennow_cta hide_status="1"]` hides the selected
+   status, while non-exact values are no-ops and all other shortcode attributes
+   and content remain ignored. In the block editor, verify the real
+   server-rendered preview, independent open/closed field overrides, the
+   per-state `hideStatus: true` toggle, global fallback for omitted or invalid
+   fields, hide priority over nonblank global/status overrides, explicit
+   blank-status suppression, state isolation, and pruning back to the legacy
+   empty delimiter.
 4. Check an exact opening instant, an exact closing instant, a closed weekday,
    an overnight carry into the next day, Sunday-to-Monday rollover, a different
    site/business timezone pair, and representative spring-forward and fall-back

@@ -5,7 +5,7 @@
 	"title": "OpenNow CTA",
 	"category": "widgets",
 	"icon": "megaphone",
-	"description": "Show the right call to action based on the current business state.",
+	"description": "Show the right call to action based on the current business state, with optional per-state content and status visibility.",
 	"keywords": [ "call to action", "business hours", "open now" ],
 	"textdomain": "opennow",
 	"editorScript": "file:./index.js",
