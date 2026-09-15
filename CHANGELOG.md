@@ -13,6 +13,8 @@ All notable OpenNow CTA changes are documented here.
 - Added explicit per-state status hiding for blocks and the exact
   `[opennow_cta hide_status="1"]` shortcode attribute, with selected-state
   semantics and legacy blank-status compatibility.
+- Fixed the editor preview transport so nested boolean status-hiding flags
+  remain booleans during server-side rendering.
 - Added a real server-rendered block-editor preview while keeping schedules,
   global colors, styles, and shortcode behavior unchanged.
 - Added reproducible quality checks, WordPress integration coverage, and a

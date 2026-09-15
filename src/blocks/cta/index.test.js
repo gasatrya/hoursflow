@@ -102,6 +102,7 @@ describe( 'OpenNow CTA block', () => {
 		expect( preview.type ).toBe( ServerSideRender );
 		expect( preview.props.block ).toBe( 'opennow/cta' );
 		expect( preview.props.attributes ).toEqual( attributes );
+		expect( preview.props.httpMethod ).toBe( 'POST' );
 		expect( useBlockProps ).toHaveBeenCalledWith();
 	} );
 

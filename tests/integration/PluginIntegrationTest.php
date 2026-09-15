@@ -276,9 +276,16 @@ final class PluginIntegrationTest extends WP_UnitTestCase
                 'hideStatus' => true,
             ),
         );
-        $request = new \WP_REST_Request('GET', '/wp/v2/block-renderer/opennow/cta');
-        $request->set_param('context', 'edit');
-        $request->set_param('attributes', array('overrides' => $overrides));
+        $request = new \WP_REST_Request('POST', '/wp/v2/block-renderer/opennow/cta');
+        $request->set_header('content-type', 'application/json');
+        $request->set_body(
+            wp_json_encode(
+                array(
+                    'context' => 'edit',
+                    'attributes' => array('overrides' => $overrides),
+                )
+            )
+        );
 
         $response = rest_do_request($request);
         $this->assertNotWPError($response);

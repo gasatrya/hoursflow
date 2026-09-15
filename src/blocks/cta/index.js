@@ -293,6 +293,7 @@ export function Edit( props = {} ) {
 					<ServerSideRender
 						block={ metadata.name }
 						attributes={ serverAttributes }
+						httpMethod="POST"
 					/>
 				</Disabled>
 			</div>
