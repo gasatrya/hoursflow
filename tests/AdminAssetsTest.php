@@ -17,6 +17,12 @@ final class AdminAssetsTest extends TestCase
         $this->assertStringContainsString('.opennow-schedule-day--open', $css);
         $this->assertStringContainsString('.opennow-schedule-day--closed', $css);
         $this->assertStringContainsString('font-weight: 700;', $css);
+        $this->assertStringContainsString('.opennow-schedule-summary', $css);
+        $this->assertStringContainsString('display: flex;', $css);
+        $this->assertStringContainsString('gap: 0.5rem 1rem;', $css);
+        $this->assertStringContainsString('.opennow-schedule-closed-toggle', $css);
+        $this->assertStringContainsString('input[type="checkbox"]', $css);
+        $this->assertStringContainsString('flex: 0 0 auto;', $css);
         $this->assertStringContainsString('.opennow-schedule-row', $css);
         $this->assertStringContainsString('align-items: center;', $css);
         $this->assertStringContainsString('display: grid;', $css);
@@ -29,6 +35,7 @@ final class AdminAssetsTest extends TestCase
         $this->assertStringContainsString('overflow-wrap: anywhere;', $css);
         $this->assertStringContainsString('@media (max-width: 782px)', $css);
         $this->assertStringContainsString('grid-template-columns: minmax(0, 1fr);', $css);
+        $this->assertStringNotContainsString('#opennow-schedule *', $css);
         $this->assertStringNotContainsString('@import', $css);
         $this->assertStringNotContainsString('url(', $css);
 

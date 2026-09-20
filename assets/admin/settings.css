@@ -1,7 +1,9 @@
 #opennow-schedule,
-#opennow-schedule *,
-#opennow-schedule *::before,
-#opennow-schedule *::after {
+#opennow-schedule .opennow-schedule-day,
+#opennow-schedule .opennow-schedule-summary,
+#opennow-schedule .opennow-schedule-period,
+#opennow-schedule .opennow-schedule-row,
+#opennow-schedule .opennow-schedule-row input {
     box-sizing: border-box;
     min-width: 0;
     max-width: 100%;
@@ -39,12 +41,31 @@
     padding: 0 0.35rem;
 }
 
+#opennow-schedule .opennow-schedule-summary {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin: 0 0 0.75rem;
+}
+
 #opennow-schedule .opennow-schedule-state {
     display: inline-block;
     font-weight: 700;
-    margin: 0 0 0.75rem;
     max-width: 100%;
     overflow-wrap: anywhere;
+}
+
+#opennow-schedule .opennow-schedule-closed-toggle {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.4rem;
+    margin: 0;
+}
+
+#opennow-schedule .opennow-schedule-closed-toggle input[type="checkbox"] {
+    flex: 0 0 auto;
+    margin: 0;
 }
 
 #opennow-schedule .opennow-schedule-period {

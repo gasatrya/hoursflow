@@ -594,6 +594,13 @@ final class SettingsTest extends TestCase
             );
             $this->assertSame('Open', $fieldset->getAttribute('data-opennow-open-label'));
             $this->assertSame('Closed', $fieldset->getAttribute('data-opennow-closed-label'));
+            $this->assertSame(
+                1,
+                $xpath->query(
+                    '//fieldset[@data-opennow-schedule-day="' . $day
+                    . '"]/div[contains(concat(" ", normalize-space(@class), " "), " opennow-schedule-summary ")]'
+                )->length
+            );
 
             $opens_id = 'opennow-schedule-' . $day . '-opens';
             $closes_id = 'opennow-schedule-' . $day . '-closes';
@@ -605,6 +612,12 @@ final class SettingsTest extends TestCase
             $this->assertInstanceOf(\DOMElement::class, $checkbox);
             $this->assertInstanceOf(\DOMElement::class, $opens);
             $this->assertInstanceOf(\DOMElement::class, $closes);
+            $closed_label = $xpath->query('//label[@for="' . $closed_id . '"]')->item(0);
+            $this->assertInstanceOf(\DOMElement::class, $closed_label);
+            $this->assertStringContainsString(
+                'opennow-schedule-closed-toggle',
+                $closed_label->getAttribute('class')
+            );
             $this->assertSame($opens_id . ' ' . $closes_id, $checkbox->getAttribute('aria-controls'));
             $this->assertSame(
                 'opennow-schedule-closed-description',

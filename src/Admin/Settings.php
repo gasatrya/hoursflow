@@ -606,15 +606,16 @@ final class Settings {
 			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The localized weekday label is escaped.
 			echo '<legend>' . esc_html( $this->getWeekdayLabel( $day, $day_numbers ) ) . '</legend>';
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The localized state label is escaped.
-			echo '<span class="opennow-schedule-state" data-opennow-schedule-state-text="1">'
-				. esc_html( $state_label )
-				. '</span>';
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The schedule key is escaped.
 			echo '<input type="hidden" name="opennow_config[schedule]['
 				. esc_attr( $day )
 				. '][type]" value="period" />';
-			echo '<label for="' . esc_attr( $closed_id ) . '">';
+			echo '<div class="opennow-schedule-summary">';
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The localized state label is escaped.
+			echo '<span class="opennow-schedule-state" data-opennow-schedule-state-text="1">'
+				. esc_html( $state_label )
+				. '</span>';
+			echo '<label class="opennow-schedule-closed-toggle" for="' . esc_attr( $closed_id ) . '">';
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- All checkbox attributes are escaped.
 			echo '<input type="checkbox" id="' . esc_attr( $closed_id ) . '" name="opennow_config[schedule]['
 				. esc_attr( $day )
@@ -634,6 +635,7 @@ final class Settings {
 			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo esc_html__( 'Closed all day', 'opennow' );
 			echo '</label>';
+			echo '</div>';
 
 			echo '<div class="opennow-schedule-period">';
 			echo '<div class="opennow-schedule-row opennow-schedule-row--opening">';
