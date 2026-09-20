@@ -85,7 +85,129 @@ final class Settings {
 			array( $this, 'renderPage' )
 		);
 
+		if ( is_string( $this->page_hook ) && current_user_can( self::PAGE_CAPABILITY ) ) {
+			add_action(
+				'load-' . $this->page_hook,
+				array( $this, 'registerContextualHelp' )
+			);
+		}
+
 		return $this->page_hook;
+	}
+
+	/**
+	 * Register contextual help tabs for this settings screen.
+	 *
+	 * @return void
+	 */
+	public function registerContextualHelp() {
+		if ( ! current_user_can( self::PAGE_CAPABILITY )
+			|| ! function_exists( 'get_current_screen' )
+			|| ! is_string( $this->page_hook )
+		) {
+			return;
+		}
+
+		$screen = get_current_screen();
+		if ( ! is_object( $screen )
+			|| ! is_callable( array( $screen, 'add_help_tab' ) )
+			|| ! isset( $screen->id )
+			|| $screen->id !== $this->page_hook
+		) {
+			return;
+		}
+
+		$state_label = array(
+			'open'   => __( 'open', 'opennow' ),
+			'closed' => __( 'closed', 'opennow' ),
+		);
+		$help_tabs   = array(
+			array(
+				'id'      => 'opennow-timezone-help',
+				'title'   => __( 'Business timezone', 'opennow' ),
+				'content' => '<p>'
+					. esc_html__(
+						'Choose UTC or a named IANA region/city timezone, such as UTC, America/New_York, or Asia/Jakarta.',
+						'opennow'
+					)
+					. '</p><p>'
+					. esc_html__(
+						'OpenNow evaluates weekly hours in the business timezone, not the visitor, browser, server, or WordPress site timezone. Raw UTC offsets such as UTC+1 are not supported.',
+						'opennow'
+					)
+					. '</p>',
+			),
+			array(
+				'id'      => 'opennow-appearance-help',
+				'title'   => __( 'CTA appearance', 'opennow' ),
+				'content' => '<p>'
+					. esc_html__(
+						'Enter optional six-digit hexadecimal colors in #RRGGBB form, for example #166534 or #FFFFFF.',
+						'opennow'
+					)
+					. '</p><p>'
+					. esc_html__(
+						'Leave a field blank to use the plugin default. These global CTA colors are shared by the shortcode and every OpenNow block. The effective background and text colors must meet WCAG 2.2 AA contrast for normal text.',
+						'opennow'
+					)
+					. '</p>',
+			),
+			array(
+				'id'      => 'opennow-weekly-hours-help',
+				'title'   => __( 'Weekly hours', 'opennow' ),
+				'content' => '<p>'
+					. esc_html__(
+						'For each weekday, choose closed or exactly one period and enter exact 24-hour HH:MM local business time, for example 09:30.',
+						'opennow'
+					)
+					. '</p><p>'
+					. esc_html__(
+						'A closed day has no opening or closing times. Opening and closing times must differ; a closing time earlier than the opening time means overnight. Do not enter 24:00 or multiple periods.',
+						'opennow'
+					)
+					. '</p>',
+			),
+			array(
+				'id'      => 'opennow-open-cta-help',
+				'title'   => __( 'CTA while open', 'opennow' ),
+				'content' => '<p>'
+					. esc_html(
+						sprintf(
+							/* translators: %s: the business state, either open or closed. */
+							__( 'Provide a required plain-text label and action for the CTA shown while the business is %s. Labels and status text must be plain text; angle brackets are not allowed.', 'opennow' ),
+							$state_label['open']
+						)
+					)
+					. '</p><p>'
+					. esc_html__(
+						'Use a root-relative URL such as /booking/, an HTTPS URL such as https://example.com/book, or a telephone action such as tel:+123456789. An optional plain-text status may accompany the CTA; leave it blank to omit it.',
+						'opennow'
+					)
+					. '</p>',
+			),
+			array(
+				'id'      => 'opennow-closed-cta-help',
+				'title'   => __( 'CTA while closed', 'opennow' ),
+				'content' => '<p>'
+					. esc_html(
+						sprintf(
+							/* translators: %s: the business state, either open or closed. */
+							__( 'Provide a required plain-text label and action for the CTA shown while the business is %s. Labels and status text must be plain text; angle brackets are not allowed.', 'opennow' ),
+							$state_label['closed']
+						)
+					)
+					. '</p><p>'
+					. esc_html__(
+						'Use a root-relative URL such as /booking/, an HTTPS URL such as https://example.com/book, or a telephone action such as tel:+123456789. An optional plain-text status may accompany the CTA; leave it blank to omit it.',
+						'opennow'
+					)
+					. '</p>',
+			),
+		);
+
+		foreach ( $help_tabs as $help_tab ) {
+			$screen->add_help_tab( $help_tab );
+		}
 	}
 
 	/**
@@ -398,18 +520,23 @@ final class Settings {
 		$description    = 'background_color' === $color
 			? __( 'Optional global CTA link background color. Enter a six-digit hexadecimal value such as #166534, or leave it blank for the plugin default.', 'opennow' )
 			: __( 'Optional global CTA link text color. Enter a six-digit hexadecimal value such as #FFFFFF, or leave it blank for the plugin default.', 'opennow' );
+		$placeholder    = 'background_color' === $color
+			? __( 'Example: #166534', 'opennow' )
+			: __( 'Example: #FFFFFF', 'opennow' );
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Every dynamic attribute in this control is escaped.
 		echo '<p><input type="text" class="regular-text" id="' . esc_attr( $id )
 			. '" name="opennow_config[appearance][' . esc_attr( $color ) . ']" value="'
 			. esc_attr( $value )
+			. '" placeholder="' . esc_attr( $placeholder )
 			. '" maxlength="7" pattern="#[0-9A-Fa-f]{6}" inputmode="text" autocomplete="off"'
 			. $this->getErrorAttributes( $description_id, array( $error_code ) )
 			. ' />';
 		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo '<span class="description" id="' . esc_attr( $description_id ) . '"> '
+		echo '</p>';
+		echo '<p class="description" id="' . esc_attr( $description_id ) . '">'
 			. esc_html( $description )
-			. '</span></p>';
+			. '</p>';
 	}
 
 	/**
@@ -497,6 +624,7 @@ final class Settings {
 			echo '<input type="text" id="' . esc_attr( $opens_id )
 				. '" name="opennow_config[schedule][' . esc_attr( $day ) . '][opens]" value="'
 				. esc_attr( $opens )
+				. '" placeholder="' . esc_attr__( 'Example: 09:00', 'opennow' )
 				. '" maxlength="5" pattern="[0-9]{2}:[0-9]{2}" inputmode="numeric"'
 				. ' autocomplete="off" data-opennow-time-input="1"'
 				. $this->getErrorAttributes(
@@ -515,6 +643,7 @@ final class Settings {
 			echo '<input type="text" id="' . esc_attr( $closes_id )
 				. '" name="opennow_config[schedule][' . esc_attr( $day ) . '][closes]" value="'
 				. esc_attr( $closes )
+				. '" placeholder="' . esc_attr__( 'Example: 17:00', 'opennow' )
 				. '" maxlength="5" pattern="[0-9]{2}:[0-9]{2}" inputmode="numeric"'
 				. ' autocomplete="off" data-opennow-time-input="1"'
 				. $this->getErrorAttributes(
@@ -562,6 +691,15 @@ final class Settings {
 		$label_description_id  = $label_id . '-description';
 		$action_description_id = $action_id . '-description';
 		$status_description_id = $status_id . '-description';
+		$label_placeholder     = 'open' === $state
+			? __( 'Example: Call now', 'opennow' )
+			: __( 'Example: Book online', 'opennow' );
+		$action_placeholder    = 'open' === $state
+			? __( 'Example: tel:+123456789', 'opennow' )
+			: __( 'Example: /booking/', 'opennow' );
+		$status_placeholder    = 'open' === $state
+			? __( 'Example: Open now', 'opennow' )
+			: __( 'Example: Reopens tomorrow at 09:00', 'opennow' );
 
 		echo '<div id="' . esc_attr( $base_id ) . '">';
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The complete description is escaped.
@@ -582,6 +720,7 @@ final class Settings {
 		echo '<input type="text" class="regular-text" id="' . esc_attr( $label_id )
 			. '" name="opennow_config[cta][' . esc_attr( $state ) . '][label]" value="'
 			. esc_attr( $cta['label'] )
+			. '" placeholder="' . esc_attr( $label_placeholder )
 			. '" required="required" autocomplete="off"'
 			. $this->getErrorAttributes(
 				$label_description_id,
@@ -589,9 +728,10 @@ final class Settings {
 			)
 			. ' />';
 		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo '<span class="description" id="' . esc_attr( $label_description_id ) . '"> '
+		echo '</p>';
+		echo '<p class="description" id="' . esc_attr( $label_description_id ) . '">'
 			. esc_html__( 'Required plain-text button label; angle brackets are not allowed.', 'opennow' )
-			. '</span></p>';
+			. '</p>';
 
 		echo '<p><label for="' . esc_attr( $action_id ) . '">'
 			. esc_html__( 'CTA action', 'opennow' )
@@ -600,6 +740,7 @@ final class Settings {
 		echo '<input type="text" class="regular-text" id="' . esc_attr( $action_id )
 			. '" name="opennow_config[cta][' . esc_attr( $state ) . '][action]" value="'
 			. esc_attr( $cta['action'] )
+			. '" placeholder="' . esc_attr( $action_placeholder )
 			. '" required="required" inputmode="url" autocomplete="off"'
 			. $this->getErrorAttributes(
 				$action_description_id,
@@ -607,9 +748,10 @@ final class Settings {
 			)
 			. ' />';
 		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo '<span class="description" id="' . esc_attr( $action_description_id ) . '"> '
+		echo '</p>';
+		echo '<p class="description" id="' . esc_attr( $action_description_id ) . '">'
 			. esc_html__( 'Required root-relative URL, HTTPS URL, or telephone action (tel:).', 'opennow' )
-			. '</span></p>';
+			. '</p>';
 
 		echo '<p><label for="' . esc_attr( $status_id ) . '">'
 			. esc_html__( 'CTA status', 'opennow' )
@@ -618,6 +760,7 @@ final class Settings {
 		echo '<input type="text" class="regular-text" id="' . esc_attr( $status_id )
 			. '" name="opennow_config[cta][' . esc_attr( $state ) . '][status]" value="'
 			. esc_attr( $cta['status'] )
+			. '" placeholder="' . esc_attr( $status_placeholder )
 			. '" autocomplete="off"'
 			. $this->getErrorAttributes(
 				$status_description_id,
@@ -625,9 +768,10 @@ final class Settings {
 			)
 			. ' />';
 		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo '<span class="description" id="' . esc_attr( $status_description_id ) . '"> '
+		echo '</p>';
+		echo '<p class="description" id="' . esc_attr( $status_description_id ) . '">'
 			. esc_html__( 'Optional plain-text status shown with this CTA.', 'opennow' )
-			. '</span></p>';
+			. '</p>';
 		echo '</div>';
 	}
 

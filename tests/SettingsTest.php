@@ -84,6 +84,224 @@ final class SettingsTest extends TestCase
         $this->assertStringNotContainsString('value="UTC+1"', $output);
     }
 
+    public function testAuthorizedSettingsPageLoadsExactlyFiveContextualHelpTabs(): void
+    {
+        $settings = new Settings();
+        $settings->register();
+        do_action('admin_menu');
+
+        $load_hook = 'load-settings_page_opennow';
+        $this->assertArrayHasKey($load_hook, $GLOBALS['opennow_test_hooks']);
+        $this->assertArrayNotHasKey('load-settings_page_other', $GLOBALS['opennow_test_hooks']);
+        $this->assertCount(1, $GLOBALS['opennow_test_hooks'][$load_hook]);
+        $this->assertSame(
+            array($settings, 'registerContextualHelp'),
+            $GLOBALS['opennow_test_hooks'][$load_hook][0]['callback']
+        );
+
+        $GLOBALS['opennow_test_current_screen'] = new \OpenNow_Test_Screen('settings_page_opennow');
+        do_action($load_hook);
+
+        $tabs = $GLOBALS['opennow_test_current_screen']->help_tabs;
+        $this->assertCount(5, $tabs);
+        $this->assertSame(
+            array(
+                'opennow-timezone-help',
+                'opennow-appearance-help',
+                'opennow-weekly-hours-help',
+                'opennow-open-cta-help',
+                'opennow-closed-cta-help',
+            ),
+            array_column($tabs, 'id')
+        );
+        $this->assertSame(
+            array(
+                'Business timezone',
+                'CTA appearance',
+                'Weekly hours',
+                'CTA while open',
+                'CTA while closed',
+            ),
+            array_column($tabs, 'title')
+        );
+
+        $this->assertStringContainsString('America/New_York', $tabs[0]['content']);
+        $this->assertStringContainsString('visitor, browser, server, or WordPress site timezone', $tabs[0]['content']);
+        $this->assertStringContainsString('Raw UTC offsets', $tabs[0]['content']);
+        $this->assertStringContainsString('#RRGGBB', $tabs[1]['content']);
+        $this->assertStringContainsString('plugin default', $tabs[1]['content']);
+        $this->assertStringContainsString('shortcode and every OpenNow block', $tabs[1]['content']);
+        $this->assertStringContainsString('WCAG 2.2 AA', $tabs[1]['content']);
+        $this->assertStringContainsString('exact 24-hour HH:MM', $tabs[2]['content']);
+        $this->assertStringContainsString('exactly one period', $tabs[2]['content']);
+        $this->assertStringContainsString('closed day has no opening or closing times', $tabs[2]['content']);
+        $this->assertStringContainsString('overnight', $tabs[2]['content']);
+        $this->assertStringContainsString('24:00 or multiple periods', $tabs[2]['content']);
+
+        foreach (array(3, 4) as $cta_tab_index) {
+            $this->assertStringContainsString('plain-text', $tabs[$cta_tab_index]['content']);
+            $this->assertStringContainsString('angle brackets are not allowed', $tabs[$cta_tab_index]['content']);
+            $this->assertStringContainsString('/booking/', $tabs[$cta_tab_index]['content']);
+            $this->assertStringContainsString('https://example.com/book', $tabs[$cta_tab_index]['content']);
+            $this->assertStringContainsString('tel:+123456789', $tabs[$cta_tab_index]['content']);
+            $this->assertStringContainsString('optional plain-text status', $tabs[$cta_tab_index]['content']);
+            $this->assertStringContainsString('leave it blank to omit it', $tabs[$cta_tab_index]['content']);
+            $this->assertSame(2, substr_count($tabs[$cta_tab_index]['content'], '<p>'));
+        }
+    }
+
+    public function testContextualHelpRequiresTheExactScreenAndCapability(): void
+    {
+        $settings = new Settings();
+        $settings->register();
+        do_action('admin_menu');
+
+        $load_hook = 'load-settings_page_opennow';
+        $wrong_screen = new \OpenNow_Test_Screen('settings_page_other');
+        $GLOBALS['opennow_test_current_screen'] = $wrong_screen;
+        do_action($load_hook);
+        $this->assertCount(0, $wrong_screen->help_tabs);
+
+        $unauthorized_screen = new \OpenNow_Test_Screen('settings_page_opennow');
+        $GLOBALS['opennow_test_current_screen'] = $unauthorized_screen;
+        $GLOBALS['opennow_test_current_user_can'] = false;
+        do_action($load_hook);
+        $this->assertCount(0, $unauthorized_screen->help_tabs);
+    }
+
+    public function testUnauthorizedPageDoesNotRegisterAContextualHelpLoadHook(): void
+    {
+        $GLOBALS['opennow_test_current_user_can'] = false;
+        $settings = new Settings();
+        $settings->register();
+        do_action('admin_menu');
+
+        $this->assertArrayNotHasKey(
+            'load-settings_page_opennow',
+            $GLOBALS['opennow_test_hooks']
+        );
+    }
+
+    public function testDescriptionMarkupUsesSiblingParagraphsForAppearanceAndCtaControls(): void
+    {
+        $config = $this->validConfig();
+        $config['appearance'] = array(
+            'background_color' => '#000000',
+            'text_color' => '#FFFFFF',
+        );
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $settings = new Settings();
+
+        ob_start();
+        $settings->renderAppearanceField(array('color' => 'background_color'));
+        $settings->renderAppearanceField(array('color' => 'text_color'));
+        $settings->renderCtaField(array('state' => 'open'));
+        $settings->renderCtaField(array('state' => 'closed'));
+        $output = (string) ob_get_clean();
+
+        $this->assertStringNotContainsString('<span class="description"', $output);
+        $xpath = $this->parseHtml($output);
+        $this->assertCount(0, $xpath->query('//span[contains(concat(" ", normalize-space(@class), " "), " description ")]'));
+
+        $controls = array(
+            'opennow-appearance-background-color' => array(
+                'name' => 'opennow_config[appearance][background_color]',
+                'value' => '#000000',
+                'placeholder' => 'Example: #166534',
+            ),
+            'opennow-appearance-text-color' => array(
+                'name' => 'opennow_config[appearance][text_color]',
+                'value' => '#FFFFFF',
+                'placeholder' => 'Example: #FFFFFF',
+            ),
+            'opennow-cta-open-label' => array(
+                'name' => 'opennow_config[cta][open][label]',
+                'value' => 'Call Now',
+                'placeholder' => 'Example: Call now',
+            ),
+            'opennow-cta-open-action' => array(
+                'name' => 'opennow_config[cta][open][action]',
+                'value' => 'tel:+123456789',
+                'placeholder' => 'Example: tel:+123456789',
+            ),
+            'opennow-cta-open-status' => array(
+                'name' => 'opennow_config[cta][open][status]',
+                'value' => '',
+                'placeholder' => 'Example: Open now',
+            ),
+            'opennow-cta-closed-label' => array(
+                'name' => 'opennow_config[cta][closed][label]',
+                'value' => 'Book online',
+                'placeholder' => 'Example: Book online',
+            ),
+            'opennow-cta-closed-action' => array(
+                'name' => 'opennow_config[cta][closed][action]',
+                'value' => '/booking/',
+                'placeholder' => 'Example: /booking/',
+            ),
+            'opennow-cta-closed-status' => array(
+                'name' => 'opennow_config[cta][closed][status]',
+                'value' => '',
+                'placeholder' => 'Example: Reopens tomorrow at 09:00',
+            ),
+        );
+
+        foreach ($controls as $id => $control) {
+            $nodes = $xpath->query('//input[@id="' . $id . '"]');
+            $this->assertCount(1, $nodes);
+            $input = $nodes->item(0);
+            $this->assertSame($id, $input->getAttribute('id'));
+            $this->assertSame($control['name'], $input->getAttribute('name'));
+            $this->assertSame($control['value'], $input->getAttribute('value'));
+            $this->assertSame($control['placeholder'], $input->getAttribute('placeholder'));
+            $description_id = $id . '-description';
+            $this->assertSame($description_id, $input->getAttribute('aria-describedby'));
+
+            $description = $input->parentNode->nextSibling;
+            $this->assertInstanceOf(\DOMElement::class, $description);
+            $this->assertSame('p', $description->nodeName);
+            $this->assertSame('description', $description->getAttribute('class'));
+            $this->assertSame($description_id, $description->getAttribute('id'));
+
+            if (false !== strpos($id, 'opennow-cta-')) {
+                $labels = $xpath->query('//label[@for="' . $id . '"]');
+                $this->assertCount(1, $labels);
+                $this->assertSame($id, $labels->item(0)->getAttribute('for'));
+            }
+        }
+    }
+
+    public function testCtaValidationErrorsKeepFieldAssociationsAndAriaInvalid(): void
+    {
+        $config = $this->validConfig();
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $invalid = $config;
+        $invalid['cta']['open']['label'] = '<strong>Call Now</strong>';
+        $invalid['cta']['closed']['action'] = 'javascript:alert(1)';
+
+        (new Settings())->sanitize($invalid);
+        $settings = new Settings();
+        ob_start();
+        $settings->renderCtaField(array('state' => 'open'));
+        $settings->renderCtaField(array('state' => 'closed'));
+        $output = (string) ob_get_clean();
+        $xpath = $this->parseHtml($output);
+
+        $open_label = $xpath->query('//input[@id="opennow-cta-open-label"]')->item(0);
+        $this->assertSame('true', $open_label->getAttribute('aria-invalid'));
+        $this->assertSame(
+            'opennow-cta-open-label-description setting-error-opennow_cta_open_label',
+            $open_label->getAttribute('aria-describedby')
+        );
+
+        $closed_action = $xpath->query('//input[@id="opennow-cta-closed-action"]')->item(0);
+        $this->assertSame('true', $closed_action->getAttribute('aria-invalid'));
+        $this->assertSame(
+            'opennow-cta-closed-action-description setting-error-opennow_cta_closed_action',
+            $closed_action->getAttribute('aria-describedby')
+        );
+    }
+
     public function testUnauthorizedUserCannotRenderSettingsPage(): void
     {
         $settings = new Settings();
@@ -328,6 +546,8 @@ final class SettingsTest extends TestCase
             '/id="opennow-schedule-tuesday-opens"[^>]*disabled="disabled"/',
             $output
         );
+        $this->assertSame(7, substr_count($output, 'placeholder="Example: 09:00"'));
+        $this->assertSame(7, substr_count($output, 'placeholder="Example: 17:00"'));
         $this->assertStringContainsString('24-hour HH:MM local business time', $output);
     }
 
@@ -343,6 +563,14 @@ final class SettingsTest extends TestCase
         $this->assertSame('UTC', $result['timezone']);
         $this->assertSame('Book online', $result['cta']['closed']['label']);
         $this->assertSame(array(), $GLOBALS['opennow_test_settings_errors']);
+    }
+
+    private function parseHtml(string $html): \DOMXPath
+    {
+        $document = new \DOMDocument();
+        $this->assertTrue($document->loadHTML('<!DOCTYPE html><html><body>' . $html . '</body></html>'));
+
+        return new \DOMXPath($document);
     }
 
     /**

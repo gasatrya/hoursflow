@@ -21,6 +21,42 @@ $GLOBALS['opennow_test_enqueued_scripts'] = array();
 $GLOBALS['opennow_test_enqueued_styles'] = array();
 $GLOBALS['opennow_test_current_user_can'] = true;
 $GLOBALS['opennow_test_is_admin'] = false;
+$GLOBALS['opennow_test_current_screen'] = null;
+
+if (!class_exists('OpenNow_Test_Screen')) {
+    /**
+     * Minimal WP_Screen test double.
+     */
+    class OpenNow_Test_Screen
+    {
+        /**
+         * @var string
+         */
+        public $id;
+
+        /**
+         * @var array<int, array<string, mixed>>
+         */
+        public $help_tabs = array();
+
+        /**
+         * @param string $id
+         */
+        public function __construct($id = '')
+        {
+            $this->id = $id;
+        }
+
+        /**
+         * @param array<string, mixed> $help_tab
+         * @return void
+         */
+        public function add_help_tab($help_tab)
+        {
+            $this->help_tabs[] = $help_tab;
+        }
+    }
+}
 
 if (!class_exists('OpenNow_Test_Locale')) {
     /**
@@ -478,6 +514,13 @@ if (!function_exists('current_user_can')) {
     }
 }
 
+if (!function_exists('get_current_screen')) {
+    function get_current_screen()
+    {
+        return $GLOBALS['opennow_test_current_screen'];
+    }
+}
+
 if (!function_exists('wp_die')) {
     function wp_die($message = '')
     {
@@ -577,5 +620,6 @@ function opennow_reset_wp_stubs()
     $GLOBALS['opennow_test_enqueued_styles'] = array();
     $GLOBALS['opennow_test_current_user_can'] = true;
     $GLOBALS['opennow_test_is_admin'] = false;
+    $GLOBALS['opennow_test_current_screen'] = null;
     $GLOBALS['wp_locale'] = new OpenNow_Test_Locale();
 }
