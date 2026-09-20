@@ -350,11 +350,14 @@ final class Settings {
 		echo '<div class="wrap">';
 		echo '<h1>' . esc_html__( 'OpenNow Settings', 'opennow' ) . '</h1>';
 		$this->renderSettingsErrors();
+		echo '<div id="opennow-settings-layout">';
 		echo '<form action="options.php" method="post">';
 		settings_fields( 'opennow' );
 		do_settings_sections( self::PAGE_SLUG );
 		submit_button( __( 'Save Changes', 'opennow' ) );
 		echo '</form>';
+		$this->renderPreview();
+		echo '</div>';
 		echo '</div>';
 	}
 
@@ -684,6 +687,83 @@ final class Settings {
 			echo '</fieldset>';
 		}
 
+		echo '</div>';
+	}
+
+	/**
+	 * Render the non-submitting live CTA preview.
+	 *
+	 * @return void
+	 */
+	private function renderPreview() {
+		$config   = $this->getEditorConfig();
+		$defaults = Schema::defaultAppearance();
+		$cta      = isset( $config['cta'] ) && is_array( $config['cta'] )
+			? $config['cta']
+			: array();
+		$open     = isset( $cta['open'] ) && is_array( $cta['open'] )
+			? $cta['open']
+			: array();
+
+		$open_label  = isset( $open['label'] ) && is_string( $open['label'] ) ? $open['label'] : '';
+		$open_status = isset( $open['status'] ) && is_string( $open['status'] ) ? $open['status'] : '';
+		$background  = isset( $config['appearance']['background_color'] )
+			&& is_string( $config['appearance']['background_color'] )
+			&& preg_match( '/\\A#[0-9A-Fa-f]{6}\\z/', $config['appearance']['background_color'] )
+			? $config['appearance']['background_color']
+			: $defaults['background_color'];
+		$text_color  = isset( $config['appearance']['text_color'] )
+			&& is_string( $config['appearance']['text_color'] )
+			&& preg_match( '/\\A#[0-9A-Fa-f]{6}\\z/', $config['appearance']['text_color'] )
+			? $config['appearance']['text_color']
+			: $defaults['text_color'];
+		$style       = '--opennow-cta-background-color: ' . $background
+			. '; --opennow-cta-text-color: ' . $text_color . ';';
+
+		echo '<div id="opennow-cta-preview" role="region" aria-labelledby="opennow-cta-preview-heading"'
+			. ' data-opennow-preview="1" data-opennow-preview-state="open"'
+			. ' data-opennow-preview-default-background-color="'
+			. esc_attr( $defaults['background_color'] )
+			. '" data-opennow-preview-default-text-color="'
+			. esc_attr( $defaults['text_color'] )
+			. '">';
+		echo '<h2 id="opennow-cta-preview-heading">'
+			. esc_html__( 'Live CTA preview', 'opennow' )
+			. '</h2>';
+		echo '<p class="description" id="opennow-cta-preview-instructions">'
+			. esc_html__(
+				'Preview the open and closed CTA with unsaved settings changes. This visual preview never navigates or performs the configured action.',
+				'opennow'
+			)
+			. '</p>';
+		echo '<div class="opennow-cta-preview__state-group" role="group" aria-labelledby="opennow-cta-preview-state-label">';
+		echo '<span id="opennow-cta-preview-state-label" class="opennow-cta-preview__state-label">'
+			. esc_html__( 'Preview state', 'opennow' )
+			. '</span>';
+		echo '<button type="button" class="opennow-cta-preview__state-button"'
+			. ' data-opennow-preview-state-button="open" aria-pressed="true"'
+			. ' aria-controls="opennow-cta-preview-content">'
+			. esc_html__( 'Open', 'opennow' )
+			. '</button>';
+		echo '<button type="button" class="opennow-cta-preview__state-button"'
+			. ' data-opennow-preview-state-button="closed" aria-pressed="false"'
+			. ' aria-controls="opennow-cta-preview-content">'
+			. esc_html__( 'Closed', 'opennow' )
+			. '</button>';
+		echo '</div>';
+		echo '<div id="opennow-cta-preview-content" class="opennow-cta opennow-cta--open"'
+			. ' data-opennow-preview-content="1" data-opennow-preview-state="open" style="'
+			. esc_attr( $style ) . '">';
+		echo '<span class="opennow-cta__link" data-opennow-preview-label="1">'
+			. esc_html( $open_label )
+			. '</span>';
+		if ( '' === trim( $open_status ) ) {
+			echo '<span class="opennow-cta__status" data-opennow-preview-status="1" hidden="hidden">';
+		} else {
+			echo '<span class="opennow-cta__status" data-opennow-preview-status="1">';
+		}
+		echo esc_html( $open_status ) . '</span>';
+		echo '</div>';
 		echo '</div>';
 	}
 

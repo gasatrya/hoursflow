@@ -35,7 +35,10 @@ configuration is saved. Settings are validated atomically; an invalid save
 retains the last known-good configuration and reports field-specific errors.
 The weekly-hours editor uses one keyboard-operable fieldset per weekday with
 visible Open/Closed state text; Closed disables its time controls, and the time
-rows stack on narrow screens.
+rows stack on narrow screens. A live preview beside the form (stacked below it
+on narrow screens) lets administrators inspect either CTA state using current
+unsaved label, optional status, and color values without evaluating the
+schedule.
 
 == Usage ==
 
@@ -105,6 +108,12 @@ State is not communicated by color alone, and no fake button role or `aria-live`
 region is added. Stable styling hooks are `.opennow-cta`,
 `.opennow-cta--open`, `.opennow-cta--closed`, `.opennow-cta__link`, and
 `.opennow-cta__status`.
+
+The settings preview has keyboard-operable Open and Closed controls with an
+announced selected state. It immediately reflects unsaved label, optional
+status, and global color edits, uses `#166534` and `#FFFFFF` for blank colors,
+and is visual only: it never previews or activates the CTA action. Preview state
+selection neither predicts nor changes the schedule.
 
 == Caching and limitations ==
 

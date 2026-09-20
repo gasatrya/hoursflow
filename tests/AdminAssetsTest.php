@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 final class AdminAssetsTest extends TestCase
 {
-    public function testSettingsStylesheetKeepsTheScheduleScopedAndResponsive(): void
+    public function testSettingsStylesheetKeepsTheScheduleAndPreviewScopedAndResponsive(): void
     {
         $path = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets'
             . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'settings.css';
@@ -33,15 +33,35 @@ final class AdminAssetsTest extends TestCase
         $this->assertStringContainsString('min-width: 0;', $css);
         $this->assertStringContainsString('max-width: 100%;', $css);
         $this->assertStringContainsString('overflow-wrap: anywhere;', $css);
+
+        $this->assertStringContainsString('#opennow-settings-layout', $css);
+        $this->assertStringContainsString('grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);', $css);
+        $this->assertStringContainsString('#opennow-cta-preview', $css);
+        $this->assertStringContainsString('position: sticky;', $css);
+        $this->assertStringContainsString('.opennow-cta-preview__state-button[aria-pressed="true"]', $css);
+        $this->assertStringContainsString('.opennow-cta-preview__state-button:focus', $css);
+        $this->assertStringContainsString('outline: 2px solid #000000;', $css);
+        $this->assertStringContainsString('.opennow-cta__link', $css);
+        $this->assertStringContainsString('min-height: 44px;', $css);
+        $this->assertStringContainsString('min-width: 44px;', $css);
+        $this->assertStringContainsString('padding: 0.5em 1em;', $css);
+        $this->assertStringContainsString('border-radius: 0.25em;', $css);
+        $this->assertStringContainsString('.opennow-cta__status', $css);
+        $this->assertStringContainsString('margin-top: 0.5em;', $css);
+
         $this->assertStringContainsString('@media (max-width: 782px)', $css);
         $this->assertStringContainsString('grid-template-columns: minmax(0, 1fr);', $css);
+        $this->assertStringContainsString('position: static;', $css);
         $this->assertStringNotContainsString('#opennow-schedule *', $css);
         $this->assertStringNotContainsString('@import', $css);
         $this->assertStringNotContainsString('url(', $css);
 
         $this->assertSame(
             0,
-            preg_match('/(?m)^(?!\s*#opennow-schedule|\s*@media|\s*\})[^\s].*\{/', $css)
+            preg_match(
+                '/(?m)^(?!\s*(?:#opennow-schedule|#opennow-settings-layout|#opennow-cta-preview|@media|\}))[^\s].*\{/',
+                $css
+            )
         );
     }
 }

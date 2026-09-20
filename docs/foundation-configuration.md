@@ -54,6 +54,14 @@ pickers: a picker displays its corresponding plugin default when a persisted
 value is blank, while the legacy blank remains valid and is preserved by the
 validator until the administrator saves a color.
 
+The settings screen also renders a page-scoped live preview beside the form and
+stacks it below the form at narrow admin widths. Its keyboard-operable Open and
+Closed controls select a preview state independently of the weekly schedule.
+The preview reads current unsaved label, optional status, and global color
+fields, applies the default color pair when a color is blank, and inserts copy
+as text. It deliberately omits the action and uses non-link markup, so it cannot
+navigate or perform the configured action.
+
 `OpenNow\Config\Repository` revalidates every stored section in memory and
 never repairs the option. Missing or invalid days become closed, invalid CTA
 states become unavailable, invalid timezones make evaluation closed, and
@@ -106,7 +114,9 @@ The weekly-hours settings UI renders one semantic fieldset per weekday with
 visible translated Open/Closed state text, explicit opening and closing labels,
 and keyboard-orderable controls. Closed days disable and remove the required
 state from their time inputs; each day has its own bordered group and the time
-rows stack at narrow admin widths.
+rows stack at narrow admin widths. Schedule and preview initializers are
+independent: either interface remains functional when the other interface's
+markup is absent, and preview state changes never mutate schedule controls.
 
 The plugin has no browser polling, AJAX, REST polling, cache variation, or
 scheduled purge. Cached HTML can therefore be stale until the site's normal

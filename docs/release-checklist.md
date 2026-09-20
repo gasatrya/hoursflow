@@ -54,7 +54,12 @@ Use a clean single-site WordPress installation with `WP_DEBUG` enabled.
    `hideStatus: true` toggle, global fallback for omitted or invalid fields,
    hide priority over nonblank global/status overrides, explicit blank-status
    suppression, state isolation, and pruning back to the legacy empty
-   delimiter.
+   delimiter. On **Settings → OpenNow**, switch the live preview independently
+   between Open and Closed and confirm unsaved label, optional status, and color
+   edits update immediately. Blank colors must show `#166534` and `#FFFFFF`;
+   blank status must disappear. Confirm the preview does not evaluate the
+   schedule, expose or follow either action, submit the form, or alter weekly
+   hours.
 4. Check an exact opening instant, an exact closing instant, a closed weekday,
    an overnight carry into the next day, Sunday-to-Monday rollover, a different
    site/business timezone pair, and representative spring-forward and fall-back
@@ -86,21 +91,27 @@ a screen reader check is recommended for the release environment.
    closing controls become disabled or enabled without trapping focus, its
    `aria-controls` names both time IDs, and only that weekday's state text and
    modifier change.
-4. Tab to the frontend CTA. Confirm it is a native link with a visible,
+4. Operate the preview's Open and Closed buttons by keyboard. Confirm the
+   selected `aria-pressed` state is announced, both controls and the preview CTA
+   visual are at least 44x44 CSS pixels, and their focus indicators remain
+   visible. Enter HTML-looking label/status text and confirm it remains literal
+   text. Confirm preview switching leaves every schedule control unchanged.
+5. Tab to the frontend CTA. Confirm it is a native link with a visible,
    non-empty accessible name and an obvious focus indicator in default, hover,
    and focused states. Confirm the link target is at least 44x44 CSS pixels and
    the focus indicator remains visible and unclipped. Status text must remain
    visible text, have a clear separation gap, not be an `aria-live`
    announcement, and state must not be communicated by color alone.
-5. Confirm default colors and a representative accepted custom pair meet WCAG
+6. Confirm default colors and a representative accepted custom pair meet WCAG
    2.2 AA contrast for normal text (4.5:1). Check the focus indicator against
    surrounding light and dark content. Themes/custom CSS must be checked again
    because plugin validation cannot govern later overrides.
-6. At a 320px viewport and with text enlarged, confirm labels, errors, CTA
-   text, status text, and weekly-hours groups wrap within the viewport without
-   horizontal overflow. At the admin breakpoint of 782px or less, confirm
-   opening and closing rows stack. Focus indicators must remain perceivable and
-   no control may require pointer input.
+7. At a 320px viewport and with text enlarged, confirm labels, errors, CTA
+   text, status text, the settings preview, and weekly-hours groups wrap within
+   the viewport without horizontal overflow. Confirm the preview is beside the
+   form at wider widths and stacks at 782px or less, together with opening and
+   closing rows. Focus indicators must remain perceivable and no control may
+   require pointer input.
 
 ## Metadata and lifecycle
 

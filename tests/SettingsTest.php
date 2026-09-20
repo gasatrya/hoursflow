@@ -84,6 +84,98 @@ final class SettingsTest extends TestCase
         $this->assertStringNotContainsString('value="UTC+1"', $output);
     }
 
+    public function testSettingsPageRendersAnAccessibleNonNavigatingPreviewFromEditorValues(): void
+    {
+        $config = $this->validConfig();
+        $config['cta']['open']['label'] = 'Call & Go';
+        $config['cta']['open']['status'] = 'Open "today" & later';
+        $config['appearance'] = array(
+            'background_color' => '#000000',
+            'text_color' => '#FFFFFF',
+        );
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+
+        $settings = new Settings();
+        $settings->register();
+        do_action('admin_menu');
+        do_action('admin_init');
+
+        ob_start();
+        $settings->renderPage();
+        $output = (string) ob_get_clean();
+        $xpath = $this->parseHtml($output);
+
+        $layout = $xpath->query('//*[@id="opennow-settings-layout"]')->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $layout);
+        $this->assertCount(1, $xpath->query('./form', $layout));
+
+        $preview = $xpath->query('./div[@id="opennow-cta-preview"]', $layout)->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $preview);
+        $this->assertSame('region', $preview->getAttribute('role'));
+        $this->assertSame('opennow-cta-preview-heading', $preview->getAttribute('aria-labelledby'));
+        $this->assertSame('open', $preview->getAttribute('data-opennow-preview-state'));
+        $this->assertSame('#166534', $preview->getAttribute('data-opennow-preview-default-background-color'));
+        $this->assertSame('#FFFFFF', $preview->getAttribute('data-opennow-preview-default-text-color'));
+
+        $group = $xpath->query('.//*[@role="group"]', $preview)->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $group);
+        $this->assertSame('opennow-cta-preview-state-label', $group->getAttribute('aria-labelledby'));
+
+        $open_button = $xpath->query('.//button[@data-opennow-preview-state-button="open"]', $preview)->item(0);
+        $closed_button = $xpath->query('.//button[@data-opennow-preview-state-button="closed"]', $preview)->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $open_button);
+        $this->assertInstanceOf(\DOMElement::class, $closed_button);
+        $this->assertSame('button', $open_button->getAttribute('type'));
+        $this->assertSame('button', $closed_button->getAttribute('type'));
+        $this->assertSame('true', $open_button->getAttribute('aria-pressed'));
+        $this->assertSame('false', $closed_button->getAttribute('aria-pressed'));
+        $this->assertSame('opennow-cta-preview-content', $open_button->getAttribute('aria-controls'));
+        $this->assertSame('opennow-cta-preview-content', $closed_button->getAttribute('aria-controls'));
+        $this->assertSame('Open', trim($open_button->textContent));
+        $this->assertSame('Closed', trim($closed_button->textContent));
+
+        $content = $xpath->query('.//*[@id="opennow-cta-preview-content"]', $preview)->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $content);
+        $this->assertStringContainsString('opennow-cta--open', $content->getAttribute('class'));
+        $this->assertStringContainsString('--opennow-cta-background-color: #000000;', $content->getAttribute('style'));
+        $this->assertStringContainsString('--opennow-cta-text-color: #FFFFFF;', $content->getAttribute('style'));
+
+        $label = $xpath->query('.//*[@data-opennow-preview-label="1"]', $preview)->item(0);
+        $status = $xpath->query('.//*[@data-opennow-preview-status="1"]', $preview)->item(0);
+        $this->assertSame('Call & Go', $label->textContent);
+        $this->assertSame('Open "today" & later', $status->textContent);
+        $this->assertFalse($status->hasAttribute('hidden'));
+        $this->assertStringContainsString('Call &amp; Go', $output);
+        $this->assertCount(0, $xpath->query('.//a | .//*[@href]', $preview));
+        $this->assertCount(0, $xpath->query('.//*[@name]', $preview));
+        $this->assertStringNotContainsString('tel:+123456789', $preview->textContent);
+    }
+
+    public function testSettingsPreviewUsesDefaultColorsAndHidesABlankStatus(): void
+    {
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->validConfig();
+        $settings = new Settings();
+        $settings->register();
+        do_action('admin_menu');
+        do_action('admin_init');
+
+        ob_start();
+        $settings->renderPage();
+        $output = (string) ob_get_clean();
+        $xpath = $this->parseHtml($output);
+
+        $preview = $xpath->query('//*[@id="opennow-cta-preview"]')->item(0);
+        $content = $xpath->query('.//*[@id="opennow-cta-preview-content"]', $preview)->item(0);
+        $status = $xpath->query('.//*[@data-opennow-preview-status="1"]', $preview)->item(0);
+
+        $this->assertStringContainsString('--opennow-cta-background-color: #166534;', $content->getAttribute('style'));
+        $this->assertStringContainsString('--opennow-cta-text-color: #FFFFFF;', $content->getAttribute('style'));
+        $this->assertTrue($status->hasAttribute('hidden'));
+        $this->assertSame('', $status->textContent);
+        $this->assertStringContainsString('unsaved settings changes', $preview->textContent);
+        $this->assertStringContainsString('never navigates', $preview->textContent);
+    }
+
     public function testAuthorizedSettingsPageLoadsExactlyFiveContextualHelpTabs(): void
     {
         $settings = new Settings();
