@@ -144,8 +144,6 @@
 #opennow-settings-layout > .opennow-settings-sidebar {
     display: grid;
     gap: 1rem;
-    position: sticky;
-    top: 2rem;
 }
 
 #opennow-settings-layout > .opennow-settings-sidebar > #opennow-cta-preview,
@@ -155,6 +153,11 @@
     border-radius: 0.2rem;
     overflow-wrap: anywhere;
     padding: 1rem;
+}
+
+#opennow-settings-layout > .opennow-settings-sidebar > #opennow-cta-preview {
+    position: sticky;
+    top: 2rem;
 }
 
 #opennow-cta-preview h2 {
@@ -297,7 +300,7 @@
         grid-template-columns: minmax(0, 1fr);
     }
 
-    #opennow-settings-layout > .opennow-settings-sidebar {
+    #opennow-settings-layout > .opennow-settings-sidebar > #opennow-cta-preview {
         position: static;
     }
 }

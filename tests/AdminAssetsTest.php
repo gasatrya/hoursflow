@@ -39,7 +39,14 @@ final class AdminAssetsTest extends TestCase
         $this->assertStringContainsString('.opennow-settings-sidebar', $css);
         $this->assertStringContainsString('#opennow-cta-preview', $css);
         $this->assertStringContainsString('.opennow-developer-promotion', $css);
-        $this->assertStringContainsString('position: sticky;', $css);
+        $this->assertMatchesRegularExpression(
+            '/#opennow-settings-layout > \.opennow-settings-sidebar > #opennow-cta-preview\s*\{[^}]*position: sticky;[^}]*top: 2rem;[^}]*\}/s',
+            $css
+        );
+        $this->assertDoesNotMatchRegularExpression(
+            '/#opennow-settings-layout > \.opennow-settings-sidebar\s*\{[^}]*position: sticky;/s',
+            $css
+        );
         $this->assertStringContainsString('.opennow-cta-preview__state-button[aria-pressed="true"]', $css);
         $this->assertStringContainsString('background: transparent;', $css);
         $this->assertStringContainsString('border-bottom: 3px solid transparent;', $css);
@@ -72,7 +79,7 @@ final class AdminAssetsTest extends TestCase
         $this->assertStringContainsString('#opennow-settings-layout > .opennow-settings-sidebar', $css);
         $this->assertStringContainsString('position: static;', $css);
         $this->assertMatchesRegularExpression(
-            '/@media \(max-width: 782px\)\s*\{.*?#opennow-settings-layout > \.opennow-settings-sidebar\s*\{\s*position: static;\s*\}/s',
+            '/@media \(max-width: 782px\)\s*\{.*?#opennow-settings-layout > \.opennow-settings-sidebar > #opennow-cta-preview\s*\{\s*position: static;\s*\}/s',
             $css
         );
         $this->assertStringNotContainsString('#opennow-schedule *', $css);
