@@ -109,12 +109,7 @@ final class SettingsTest extends TestCase
         $this->assertInstanceOf(\DOMElement::class, $layout);
         $this->assertCount(1, $xpath->query('./form', $layout));
 
-        $sidebar = $xpath->query('./div[contains(@class, "opennow-settings-sidebar")]', $layout)->item(0);
-        $this->assertInstanceOf(\DOMElement::class, $sidebar);
-        $this->assertSame('complementary', $sidebar->getAttribute('role'));
-        $this->assertSame('OpenNow settings sidebar', $sidebar->getAttribute('aria-label'));
-
-        $preview = $xpath->query('./div[@id="opennow-cta-preview"]', $sidebar)->item(0);
+        $preview = $xpath->query('./div[@id="opennow-cta-preview"]', $layout)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $preview);
         $this->assertSame('region', $preview->getAttribute('role'));
         $this->assertSame('opennow-cta-preview-heading', $preview->getAttribute('aria-labelledby'));
@@ -193,14 +188,15 @@ final class SettingsTest extends TestCase
         $output = (string) ob_get_clean();
         $xpath = $this->parseHtml($output);
 
-        $sidebar = $xpath->query('//div[contains(@class, "opennow-settings-sidebar")]')->item(0);
-        $this->assertInstanceOf(\DOMElement::class, $sidebar);
-        $this->assertCount(2, $xpath->query('./*', $sidebar));
-        $this->assertSame('opennow-cta-preview', $xpath->query('./*[1]', $sidebar)->item(0)->getAttribute('id'));
+        $layout = $xpath->query('//*[@id="opennow-settings-layout"]')->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $layout);
+        $this->assertCount(3, $xpath->query('./*', $layout));
+        $this->assertSame('form', $xpath->query('./*[1]', $layout)->item(0)->nodeName);
+        $this->assertSame('opennow-cta-preview', $xpath->query('./*[2]', $layout)->item(0)->getAttribute('id'));
 
-        $promotion = $xpath->query('./div[contains(@class, "opennow-developer-promotion")]', $sidebar)->item(0);
+        $promotion = $xpath->query('./div[contains(@class, "opennow-developer-promotion")]', $layout)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $promotion);
-        $this->assertSame($promotion, $xpath->query('./*[2]', $sidebar)->item(0));
+        $this->assertSame($promotion, $xpath->query('./*[3]', $layout)->item(0));
         $this->assertSame('region', $promotion->getAttribute('role'));
         $this->assertSame('opennow-developer-promotion-heading', $promotion->getAttribute('aria-labelledby'));
         $this->assertStringContainsString('Need a WordPress Developer?', $promotion->textContent);

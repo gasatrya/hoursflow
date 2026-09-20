@@ -372,12 +372,8 @@ final class Settings {
 		do_settings_sections( self::PAGE_SLUG );
 		submit_button( __( 'Save Changes', 'opennow' ) );
 		echo '</form>';
-		echo '<div class="opennow-settings-sidebar" role="complementary" aria-label="'
-			. esc_attr__( 'OpenNow settings sidebar', 'opennow' )
-			. '">';
 		$this->renderPreview();
 		$this->renderDeveloperPromotion();
-		echo '</div>';
 		echo '</div>';
 		echo '</div>';
 	}

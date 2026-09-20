@@ -120,9 +120,8 @@
 
 #opennow-settings-layout,
 #opennow-settings-layout > form,
-#opennow-settings-layout > .opennow-settings-sidebar,
-#opennow-settings-layout > .opennow-settings-sidebar > #opennow-cta-preview,
-#opennow-settings-layout > .opennow-settings-sidebar > .opennow-developer-promotion {
+#opennow-settings-layout > #opennow-cta-preview,
+#opennow-settings-layout > .opennow-developer-promotion {
     box-sizing: border-box;
     max-width: 100%;
     min-width: 0;
@@ -131,33 +130,38 @@
 #opennow-settings-layout {
     align-items: start;
     display: grid;
-    gap: 2rem;
+    gap: 1rem 2rem;
     grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+    grid-template-rows: auto minmax(0, 1fr);
     max-width: 100%;
     overflow-wrap: anywhere;
 }
 
 #opennow-settings-layout > form {
+    grid-column: 1;
+    grid-row: 1 / span 2;
     overflow-wrap: anywhere;
 }
 
-#opennow-settings-layout > .opennow-settings-sidebar {
-    display: grid;
-    gap: 1rem;
-}
-
-#opennow-settings-layout > .opennow-settings-sidebar > #opennow-cta-preview,
-#opennow-settings-layout > .opennow-settings-sidebar > .opennow-developer-promotion {
+#opennow-settings-layout > #opennow-cta-preview,
+#opennow-settings-layout > .opennow-developer-promotion {
     background: #FFFFFF;
     border: 1px solid #8C8F94;
     border-radius: 0.2rem;
+    grid-column: 2;
     overflow-wrap: anywhere;
     padding: 1rem;
 }
 
-#opennow-settings-layout > .opennow-settings-sidebar > #opennow-cta-preview {
+#opennow-settings-layout > #opennow-cta-preview {
+    grid-row: 1;
     position: sticky;
     top: 2rem;
+    z-index: 1;
+}
+
+#opennow-settings-layout > .opennow-developer-promotion {
+    grid-row: 2;
 }
 
 #opennow-cta-preview h2 {
@@ -297,10 +301,19 @@
 @media (max-width: 782px) {
 
     #opennow-settings-layout {
+        gap: 2rem;
         grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto;
     }
 
-    #opennow-settings-layout > .opennow-settings-sidebar > #opennow-cta-preview {
+    #opennow-settings-layout > form,
+    #opennow-settings-layout > #opennow-cta-preview,
+    #opennow-settings-layout > .opennow-developer-promotion {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    #opennow-settings-layout > #opennow-cta-preview {
         position: static;
     }
 }

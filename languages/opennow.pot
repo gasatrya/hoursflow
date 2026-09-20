@@ -34,21 +34,21 @@ msgid "OpenNow"
 msgstr ""
 
 #: src/Admin/Settings.php:137
-#: src/Admin/Settings.php:917
-#: src/Admin/Settings.php:1104
+#: src/Admin/Settings.php:913
+#: src/Admin/Settings.php:1100
 msgid "open"
 msgstr ""
 
 #: src/Admin/Settings.php:138
-#: src/Admin/Settings.php:917
-#: src/Admin/Settings.php:1105
+#: src/Admin/Settings.php:913
+#: src/Admin/Settings.php:1101
 msgid "closed"
 msgstr ""
 
 #: src/Admin/Settings.php:143
 #: src/Admin/Settings.php:254
 #: src/Admin/Settings.php:261
-#: src/Admin/Settings.php:1208
+#: src/Admin/Settings.php:1204
 msgid "Business timezone"
 msgstr ""
 
@@ -109,12 +109,12 @@ msgid "CTA while closed"
 msgstr ""
 
 #: src/Admin/Settings.php:279
-#: src/Admin/Settings.php:1279
+#: src/Admin/Settings.php:1275
 msgid "Background color"
 msgstr ""
 
 #: src/Admin/Settings.php:291
-#: src/Admin/Settings.php:1280
+#: src/Admin/Settings.php:1276
 msgid "Text color"
 msgstr ""
 
@@ -123,13 +123,13 @@ msgid "Monday to Sunday"
 msgstr ""
 
 #: src/Admin/Settings.php:325
-#: src/Admin/Settings.php:1251
+#: src/Admin/Settings.php:1247
 #: src/blocks/cta/index.js:276
 msgid "Open CTA"
 msgstr ""
 
 #: src/Admin/Settings.php:344
-#: src/Admin/Settings.php:1252
+#: src/Admin/Settings.php:1248
 #: src/blocks/cta/index.js:283
 msgid "Closed CTA"
 msgstr ""
@@ -142,267 +142,263 @@ msgstr ""
 msgid "Save Changes"
 msgstr ""
 
-#: src/Admin/Settings.php:376
-msgid "OpenNow settings sidebar"
-msgstr ""
-
-#: src/Admin/Settings.php:435
+#: src/Admin/Settings.php:431
 msgid "OpenNow settings errors"
 msgstr ""
 
-#: src/Admin/Settings.php:448
+#: src/Admin/Settings.php:444
 msgid "Choose the named timezone used for all weekly hours. Times are entered as local business time."
 msgstr ""
 
-#: src/Admin/Settings.php:462
+#: src/Admin/Settings.php:458
 msgid "Set each day to closed or one period. A closing time earlier than the opening time is an overnight period."
 msgstr ""
 
-#: src/Admin/Settings.php:511
+#: src/Admin/Settings.php:507
 msgid "Select UTC or a named IANA region/city timezone. Manual UTC offsets are not supported."
 msgstr ""
 
-#: src/Admin/Settings.php:525
+#: src/Admin/Settings.php:521
 msgid "Choose optional global CTA colors shared by the shortcode and every OpenNow block. The native color picker displays the plugin default when a legacy stored value is blank. Legacy blank values remain valid and use the same default at runtime. The effective color pair must meet WCAG 2.2 AA contrast for normal text."
 msgstr ""
 
-#: src/Admin/Settings.php:556
+#: src/Admin/Settings.php:552
 msgid "Optional global CTA link background color. Choose a six-digit color with the native picker. When the stored value is blank, the picker displays the plugin default #166534; the legacy blank remains valid and uses that default at runtime."
 msgstr ""
 
-#: src/Admin/Settings.php:557
+#: src/Admin/Settings.php:553
 msgid "Optional global CTA link text color. Choose a six-digit color with the native picker. When the stored value is blank, the picker displays the plugin default #FFFFFF; the legacy blank remains valid and uses that default at runtime."
 msgstr ""
 
-#: src/Admin/Settings.php:586
+#: src/Admin/Settings.php:582
 msgid "Check Closed all day to omit period times for a closed day."
 msgstr ""
 
-#: src/Admin/Settings.php:592
+#: src/Admin/Settings.php:588
 msgid "Enter exact 24-hour HH:MM local business time, for example 09:30. A closing time earlier than the opening time means overnight."
 msgstr ""
 
-#: src/Admin/Settings.php:607
-#: src/Admin/Settings.php:767
+#: src/Admin/Settings.php:603
+#: src/Admin/Settings.php:763
 msgid "Open"
 msgstr ""
 
-#: src/Admin/Settings.php:608
-#: src/Admin/Settings.php:772
+#: src/Admin/Settings.php:604
+#: src/Admin/Settings.php:768
 msgid "Closed"
 msgstr ""
 
-#: src/Admin/Settings.php:660
+#: src/Admin/Settings.php:656
 msgid "Closed all day"
 msgstr ""
 
-#: src/Admin/Settings.php:667
-#: src/Admin/Settings.php:1227
+#: src/Admin/Settings.php:663
+#: src/Admin/Settings.php:1223
 msgid "Opening time"
 msgstr ""
 
-#: src/Admin/Settings.php:673
+#: src/Admin/Settings.php:669
 msgid "Example: 09:00"
 msgstr ""
 
-#: src/Admin/Settings.php:688
-#: src/Admin/Settings.php:1228
+#: src/Admin/Settings.php:684
+#: src/Admin/Settings.php:1224
 msgid "Closing time"
 msgstr ""
 
-#: src/Admin/Settings.php:694
+#: src/Admin/Settings.php:690
 msgid "Example: 17:00"
 msgstr ""
 
-#: src/Admin/Settings.php:752
+#: src/Admin/Settings.php:748
 msgid "Live CTA preview"
 msgstr ""
 
-#: src/Admin/Settings.php:755
+#: src/Admin/Settings.php:751
 msgid "Preview the open and closed CTA with unsaved settings changes. This visual preview never navigates or performs the configured action."
 msgstr ""
 
-#: src/Admin/Settings.php:762
+#: src/Admin/Settings.php:758
 msgid "Preview state"
 msgstr ""
 
-#: src/Admin/Settings.php:803
+#: src/Admin/Settings.php:799
 msgid "Need a WordPress Developer?"
 msgstr ""
 
-#: src/Admin/Settings.php:806
+#: src/Admin/Settings.php:802
 msgid "Get help with custom plugins, themes, and WordPress development tailored to your project."
 msgstr ""
 
-#: src/Admin/Settings.php:815
+#: src/Admin/Settings.php:811
 msgid "Hire a WordPress developer (opens in a new tab)"
 msgstr ""
 
-#: src/Admin/Settings.php:817
+#: src/Admin/Settings.php:813
 msgid "Hire Me"
 msgstr ""
 
-#: src/Admin/Settings.php:822
+#: src/Admin/Settings.php:818
 msgid "Buy me a coffee to support OpenNow (opens in a new tab)"
 msgstr ""
 
-#: src/Admin/Settings.php:824
+#: src/Admin/Settings.php:820
 msgid "Buy me a coffee"
 msgstr ""
 
-#: src/Admin/Settings.php:831
+#: src/Admin/Settings.php:827
 msgid "Rate OpenNow on WordPress.org (opens in a new tab)"
 msgstr ""
 
-#: src/Admin/Settings.php:833
+#: src/Admin/Settings.php:829
 msgid "Rate this plugin"
 msgstr ""
 
-#: src/Admin/Settings.php:901
+#: src/Admin/Settings.php:897
 msgid "Example: Call now"
 msgstr ""
 
-#: src/Admin/Settings.php:902
+#: src/Admin/Settings.php:898
 msgid "Example: Book online"
 msgstr ""
 
-#: src/Admin/Settings.php:904
+#: src/Admin/Settings.php:900
 msgid "Example: tel:+123456789"
 msgstr ""
 
-#: src/Admin/Settings.php:905
+#: src/Admin/Settings.php:901
 msgid "Example: /booking/"
 msgstr ""
 
-#: src/Admin/Settings.php:907
+#: src/Admin/Settings.php:903
 msgid "Example: Open now"
 msgstr ""
 
-#: src/Admin/Settings.php:908
+#: src/Admin/Settings.php:904
 msgid "Example: Reopens tomorrow at 09:00"
 msgstr ""
 
 #. translators: %s: the business state, either open or closed.
-#: src/Admin/Settings.php:916
+#: src/Admin/Settings.php:912
 #, php-format
 msgid "Configure the CTA shown when the business is %s. Enter administrator content as plain text."
 msgstr ""
 
-#: src/Admin/Settings.php:923
+#: src/Admin/Settings.php:919
 msgid "CTA label"
 msgstr ""
 
-#: src/Admin/Settings.php:939
+#: src/Admin/Settings.php:935
 msgid "Required plain-text button label; angle brackets are not allowed."
 msgstr ""
 
-#: src/Admin/Settings.php:943
+#: src/Admin/Settings.php:939
 msgid "CTA action"
 msgstr ""
 
-#: src/Admin/Settings.php:959
+#: src/Admin/Settings.php:955
 msgid "Required root-relative URL, HTTPS URL, or telephone action (tel:)."
 msgstr ""
 
-#: src/Admin/Settings.php:963
+#: src/Admin/Settings.php:959
 msgid "CTA status"
 msgstr ""
 
-#: src/Admin/Settings.php:979
+#: src/Admin/Settings.php:975
 msgid "Optional plain-text status shown with this CTA."
 msgstr ""
 
 #. translators: %s: the business state, either open or closed.
-#: src/Admin/Settings.php:1111
+#: src/Admin/Settings.php:1107
 #, php-format
 msgid "Set the label, action, and optional status for the CTA used while the business is %s."
 msgstr ""
 
-#: src/Admin/Settings.php:1149
+#: src/Admin/Settings.php:1145
 msgid "Monday"
 msgstr ""
 
-#: src/Admin/Settings.php:1150
+#: src/Admin/Settings.php:1146
 msgid "Tuesday"
 msgstr ""
 
-#: src/Admin/Settings.php:1151
+#: src/Admin/Settings.php:1147
 msgid "Wednesday"
 msgstr ""
 
-#: src/Admin/Settings.php:1152
+#: src/Admin/Settings.php:1148
 msgid "Thursday"
 msgstr ""
 
-#: src/Admin/Settings.php:1153
+#: src/Admin/Settings.php:1149
 msgid "Friday"
 msgstr ""
 
-#: src/Admin/Settings.php:1154
+#: src/Admin/Settings.php:1150
 msgid "Saturday"
 msgstr ""
 
-#: src/Admin/Settings.php:1155
+#: src/Admin/Settings.php:1151
 msgid "Sunday"
 msgstr ""
 
 #. translators: 1: field label, 2: validation message.
-#: src/Admin/Settings.php:1207
-#: src/Admin/Settings.php:1222
-#: src/Admin/Settings.php:1232
-#: src/Admin/Settings.php:1255
-#: src/Admin/Settings.php:1265
-#: src/Admin/Settings.php:1285
+#: src/Admin/Settings.php:1203
+#: src/Admin/Settings.php:1218
+#: src/Admin/Settings.php:1228
+#: src/Admin/Settings.php:1251
+#: src/Admin/Settings.php:1261
+#: src/Admin/Settings.php:1281
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
 
 #. translators: %s: validation message.
-#: src/Admin/Settings.php:1216
+#: src/Admin/Settings.php:1212
 #, php-format
 msgid "Weekly hours: %s"
 msgstr ""
 
-#: src/Admin/Settings.php:1226
+#: src/Admin/Settings.php:1222
 msgid "Day status"
 msgstr ""
 
 #. translators: 1: section label, 2: field label, 3: validation message.
-#: src/Admin/Settings.php:1237
-#: src/Admin/Settings.php:1270
+#: src/Admin/Settings.php:1233
+#: src/Admin/Settings.php:1266
 #, php-format
 msgid "%1$s — %2$s: %3$s"
 msgstr ""
 
 #. translators: %s: validation message.
-#: src/Admin/Settings.php:1247
+#: src/Admin/Settings.php:1243
 #, php-format
 msgid "CTA settings: %s"
 msgstr ""
 
-#: src/Admin/Settings.php:1259
+#: src/Admin/Settings.php:1255
 #: src/blocks/cta/index.js:152
 msgid "Label"
 msgstr ""
 
-#: src/Admin/Settings.php:1260
+#: src/Admin/Settings.php:1256
 #: src/blocks/cta/index.js:186
 msgid "Action"
 msgstr ""
 
-#: src/Admin/Settings.php:1261
+#: src/Admin/Settings.php:1257
 #: src/blocks/cta/index.js:220
 msgid "Status"
 msgstr ""
 
 #. translators: %s: validation message.
-#: src/Admin/Settings.php:1292
+#: src/Admin/Settings.php:1288
 #, php-format
 msgid "Appearance: %s"
 msgstr ""
 
 #. translators: %s: validation message.
-#: src/Admin/Settings.php:1297
+#: src/Admin/Settings.php:1293
 #, php-format
 msgid "Configuration: %s"
 msgstr ""

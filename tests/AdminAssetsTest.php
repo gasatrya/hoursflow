@@ -36,15 +36,16 @@ final class AdminAssetsTest extends TestCase
 
         $this->assertStringContainsString('#opennow-settings-layout', $css);
         $this->assertStringContainsString('grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);', $css);
-        $this->assertStringContainsString('.opennow-settings-sidebar', $css);
+        $this->assertStringContainsString('grid-template-rows: auto minmax(0, 1fr);', $css);
         $this->assertStringContainsString('#opennow-cta-preview', $css);
         $this->assertStringContainsString('.opennow-developer-promotion', $css);
+        $this->assertStringNotContainsString('.opennow-settings-sidebar', $css);
         $this->assertMatchesRegularExpression(
-            '/#opennow-settings-layout > \.opennow-settings-sidebar > #opennow-cta-preview\s*\{[^}]*position: sticky;[^}]*top: 2rem;[^}]*\}/s',
+            '/#opennow-settings-layout > #opennow-cta-preview\s*\{[^}]*position: sticky;[^}]*top: 2rem;[^}]*z-index: 1;[^}]*\}/s',
             $css
         );
         $this->assertDoesNotMatchRegularExpression(
-            '/#opennow-settings-layout > \.opennow-settings-sidebar\s*\{[^}]*position: sticky;/s',
+            '/#opennow-settings-layout > \.opennow-developer-promotion\s*\{[^}]*position: sticky;/s',
             $css
         );
         $this->assertStringContainsString('.opennow-cta-preview__state-button[aria-pressed="true"]', $css);
@@ -76,10 +77,9 @@ final class AdminAssetsTest extends TestCase
 
         $this->assertStringContainsString('@media (max-width: 782px)', $css);
         $this->assertStringContainsString('grid-template-columns: minmax(0, 1fr);', $css);
-        $this->assertStringContainsString('#opennow-settings-layout > .opennow-settings-sidebar', $css);
         $this->assertStringContainsString('position: static;', $css);
         $this->assertMatchesRegularExpression(
-            '/@media \(max-width: 782px\)\s*\{.*?#opennow-settings-layout > \.opennow-settings-sidebar > #opennow-cta-preview\s*\{\s*position: static;\s*\}/s',
+            '/@media \(max-width: 782px\)\s*\{.*?#opennow-settings-layout > #opennow-cta-preview\s*\{\s*position: static;\s*\}/s',
             $css
         );
         $this->assertStringNotContainsString('#opennow-schedule *', $css);
