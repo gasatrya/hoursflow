@@ -39,6 +39,9 @@ final class AdminAssetsTest extends TestCase
         $this->assertStringContainsString('#opennow-cta-preview', $css);
         $this->assertStringContainsString('position: sticky;', $css);
         $this->assertStringContainsString('.opennow-cta-preview__state-button[aria-pressed="true"]', $css);
+        $this->assertStringContainsString('background: transparent;', $css);
+        $this->assertStringContainsString('border-bottom: 3px solid transparent;', $css);
+        $this->assertStringContainsString('border-bottom-color: #2271B1;', $css);
         $this->assertStringContainsString('.opennow-cta-preview__state-button:focus', $css);
         $this->assertStringContainsString('outline: 2px solid #000000;', $css);
         $this->assertStringContainsString('.opennow-cta__link', $css);
