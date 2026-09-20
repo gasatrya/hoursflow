@@ -120,7 +120,9 @@
 
 #opennow-settings-layout,
 #opennow-settings-layout > form,
-#opennow-settings-layout > #opennow-cta-preview {
+#opennow-settings-layout > .opennow-settings-sidebar,
+#opennow-settings-layout > .opennow-settings-sidebar > #opennow-cta-preview,
+#opennow-settings-layout > .opennow-settings-sidebar > .opennow-developer-promotion {
     box-sizing: border-box;
     max-width: 100%;
     min-width: 0;
@@ -139,14 +141,20 @@
     overflow-wrap: anywhere;
 }
 
-#opennow-settings-layout > #opennow-cta-preview {
+#opennow-settings-layout > .opennow-settings-sidebar {
+    display: grid;
+    gap: 1rem;
+    position: sticky;
+    top: 2rem;
+}
+
+#opennow-settings-layout > .opennow-settings-sidebar > #opennow-cta-preview,
+#opennow-settings-layout > .opennow-settings-sidebar > .opennow-developer-promotion {
     background: #FFFFFF;
     border: 1px solid #8C8F94;
     border-radius: 0.2rem;
     overflow-wrap: anywhere;
     padding: 1rem;
-    position: sticky;
-    top: 2rem;
 }
 
 #opennow-cta-preview h2 {
@@ -232,13 +240,64 @@
     display: none;
 }
 
+#opennow-settings-layout .opennow-developer-promotion h2 {
+    margin-top: 0;
+}
+
+#opennow-settings-layout .opennow-developer-promotion__links {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 100%;
+    min-width: 0;
+}
+
+#opennow-settings-layout .opennow-developer-promotion__links a {
+    align-items: center;
+    box-sizing: border-box;
+    display: inline-flex;
+    min-height: 44px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+#opennow-settings-layout .opennow-developer-promotion__hire {
+    background: #2271B1;
+    border: 1px solid #2271B1;
+    border-radius: 0.2rem;
+    color: #FFFFFF;
+    font-weight: 600;
+    justify-content: center;
+    min-width: 44px;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+}
+
+#opennow-settings-layout .opennow-developer-promotion__hire:hover {
+    background: #135E96;
+    border-color: #135E96;
+    color: #FFFFFF;
+}
+
+#opennow-settings-layout .opennow-developer-promotion__support,
+#opennow-settings-layout .opennow-developer-promotion__review {
+    padding: 0.5rem 0;
+}
+
+#opennow-settings-layout .opennow-developer-promotion__links a:focus {
+    box-shadow: 0 0 0 4px #FFFFFF;
+    outline: 2px solid #000000;
+    outline-offset: 2px;
+}
+
 @media (max-width: 782px) {
 
     #opennow-settings-layout {
         grid-template-columns: minmax(0, 1fr);
     }
 
-    #opennow-settings-layout > #opennow-cta-preview {
+    #opennow-settings-layout > .opennow-settings-sidebar {
         position: static;
     }
 }

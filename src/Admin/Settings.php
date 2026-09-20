@@ -19,6 +19,9 @@ final class Settings {
 	const OPEN_CTA_SECTION   = 'opennow_open_cta_section';
 	const CLOSED_CTA_SECTION = 'opennow_closed_cta_section';
 
+	private const HIRE_URL     = 'https://gasatrya.com/?utm_source=plugin&utm_medium=opennow-sidebar';
+	private const DONATION_URL = 'https://gasatrya.com/donate/?utm_source=plugin&utm_medium=opennow-sidebar';
+
 	/**
 	 * @var string|false|null
 	 */
@@ -29,9 +32,22 @@ final class Settings {
 	 */
 	private $editor_config;
 
-	public function __construct() {
+	/**
+	 * @var string
+	 */
+	private $review_url;
+
+	/**
+	 * Create the settings controller.
+	 *
+	 * The optional review URL is for a trusted, confirmed OpenNow listing only.
+	 *
+	 * @param string $review_url Confirmed OpenNow WordPress.org review URL, if available.
+	 */
+	public function __construct( $review_url = '' ) {
 		$this->page_hook     = null;
 		$this->editor_config = null;
+		$this->review_url    = $this->getConfirmedReviewUrl( $review_url );
 	}
 
 	/**
@@ -356,7 +372,12 @@ final class Settings {
 		do_settings_sections( self::PAGE_SLUG );
 		submit_button( __( 'Save Changes', 'opennow' ) );
 		echo '</form>';
+		echo '<div class="opennow-settings-sidebar" role="complementary" aria-label="'
+			. esc_attr__( 'OpenNow settings sidebar', 'opennow' )
+			. '">';
 		$this->renderPreview();
+		$this->renderDeveloperPromotion();
+		echo '</div>';
 		echo '</div>';
 		echo '</div>';
 	}
@@ -765,6 +786,86 @@ final class Settings {
 		echo esc_html( $open_status ) . '</span>';
 		echo '</div>';
 		echo '</div>';
+	}
+
+	/**
+	 * Render the settings-page developer promotion.
+	 *
+	 * A review URL must be configured only after the OpenNow listing is confirmed.
+	 *
+	 * @return void
+	 */
+	private function renderDeveloperPromotion() {
+		$review_url = $this->review_url;
+
+		echo '<div class="opennow-developer-promotion" role="region" aria-labelledby="opennow-developer-promotion-heading">';
+		echo '<h2 id="opennow-developer-promotion-heading">'
+			. esc_html__( 'Need a WordPress Developer?', 'opennow' )
+			. '</h2>';
+		echo '<p>'
+			. esc_html__(
+				'Get help with custom plugins, themes, and WordPress development tailored to your project.',
+				'opennow'
+			)
+			. '</p>';
+		echo '<div class="opennow-developer-promotion__links">';
+		echo '<a class="opennow-developer-promotion__hire" href="'
+			. esc_url( self::HIRE_URL, array( 'https' ) )
+			. '" target="_blank" rel="noopener noreferrer" aria-label="'
+			. esc_attr__( 'Hire a WordPress developer (opens in a new tab)', 'opennow' )
+			. '">'
+			. esc_html__( 'Hire Me', 'opennow' )
+			. '</a>';
+		echo '<a class="opennow-developer-promotion__support" href="'
+			. esc_url( self::DONATION_URL, array( 'https' ) )
+			. '" target="_blank" rel="noopener noreferrer" aria-label="'
+			. esc_attr__( 'Buy me a coffee to support OpenNow (opens in a new tab)', 'opennow' )
+			. '">'
+			. esc_html__( 'Buy me a coffee', 'opennow' )
+			. '</a>';
+
+		if ( '' !== $review_url ) {
+			echo '<a class="opennow-developer-promotion__review" href="'
+				. esc_url( $review_url, array( 'https' ) )
+				. '" target="_blank" rel="noopener noreferrer" aria-label="'
+				. esc_attr__( 'Rate OpenNow on WordPress.org (opens in a new tab)', 'opennow' )
+				. '">'
+				. esc_html__( 'Rate this plugin', 'opennow' )
+				. '</a>';
+		}
+
+		echo '</div>';
+		echo '</div>';
+	}
+
+	/**
+	 * Accept only the canonical OpenNow WordPress.org review destination.
+	 *
+	 * @param mixed $review_url Candidate review URL.
+	 * @return string
+	 */
+	private function getConfirmedReviewUrl( $review_url ) {
+		if ( ! is_string( $review_url ) || '' === trim( $review_url ) ) {
+			return '';
+		}
+
+		$review_url = trim( $review_url );
+		$parts      = wp_parse_url( $review_url );
+		if ( ! is_array( $parts )
+			|| ! isset( $parts['scheme'], $parts['host'], $parts['path'] )
+			|| 'https' !== strtolower( $parts['scheme'] )
+			|| 'wordpress.org' !== strtolower( $parts['host'] )
+			|| '/support/plugin/opennow/reviews/' !== $parts['path']
+			|| isset( $parts['user'] )
+			|| isset( $parts['pass'] )
+			|| isset( $parts['port'] )
+			|| isset( $parts['query'] )
+			|| ( isset( $parts['fragment'] ) && 'new-post' !== $parts['fragment'] )
+		) {
+			return '';
+		}
+
+		return $review_url;
 	}
 
 	/**

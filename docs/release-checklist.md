@@ -71,9 +71,14 @@ Use a clean single-site WordPress installation with `WP_DEBUG` enabled.
    frontend CTA stylesheet is loaded. In the editor, confirm the generated
    editor stylesheet disables CTA navigation without changing public CSS.
    Confirm the settings script and page-scoped settings stylesheet appear only
-   on **Settings → OpenNow** for a user with `manage_options`.
-7. Inspect browser network/storage panels and confirm no plugin-originated remote
-   requests, cookies, local storage, tracking, polling, or telemetry.
+   on **Settings → OpenNow** for a user with `manage_options`. Confirm the
+   developer card follows the preview, links only to the documented Gasatrya
+   destinations, and shows no review link unless the OpenNow WordPress.org
+   review page has been confirmed.
+7. Inspect browser network/storage panels and confirm no plugin-originated
+   background remote requests, remote assets, cookies, local storage, tracking,
+   polling, or telemetry. Confirm the developer card makes a request only after
+   an administrator activates one of its external links.
 
 ## Manual accessibility checks
 
@@ -96,19 +101,23 @@ a screen reader check is recommended for the release environment.
    visual are at least 44x44 CSS pixels, and their focus indicators remain
    visible. Enter HTML-looking label/status text and confirm it remains literal
    text. Confirm preview switching leaves every schedule control unchanged.
-5. Tab to the frontend CTA. Confirm it is a native link with a visible,
+5. Tab through the developer card after the preview. Confirm each visible link
+   has an understandable accessible name, at least a 44 CSS-pixel-high target,
+   a visible focus indicator, and opens in a protected new browsing context.
+   At narrow widths, confirm the sidebar stacks below the form without overflow.
+6. Tab to the frontend CTA. Confirm it is a native link with a visible,
    non-empty accessible name and an obvious focus indicator in default, hover,
    and focused states. Confirm the link target is at least 44x44 CSS pixels and
    the focus indicator remains visible and unclipped. Status text must remain
    visible text, have a clear separation gap, not be an `aria-live`
    announcement, and state must not be communicated by color alone.
-6. Confirm default colors and a representative accepted custom pair meet WCAG
+7. Confirm default colors and a representative accepted custom pair meet WCAG
    2.2 AA contrast for normal text (4.5:1). Check the focus indicator against
    surrounding light and dark content. Themes/custom CSS must be checked again
    because plugin validation cannot govern later overrides.
-7. At a 320px viewport and with text enlarged, confirm labels, errors, CTA
-   text, status text, the settings preview, and weekly-hours groups wrap within
-   the viewport without horizontal overflow. Confirm the preview is beside the
+8. At a 320px viewport and with text enlarged, confirm labels, errors, CTA
+   text, status text, the settings sidebar, and weekly-hours groups wrap within
+   the viewport without horizontal overflow. Confirm the sidebar is beside the
    form at wider widths and stacks at 782px or less, together with opening and
    closing rows. Focus indicators must remain perceivable and no control may
    require pointer input.

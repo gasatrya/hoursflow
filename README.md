@@ -29,7 +29,10 @@ uses one keyboard-operable fieldset per weekday with visible Open/Closed state
 text; Closed disables its time controls, and the time rows stack on narrow
 screens. A live preview beside the form (stacked below it on narrow screens)
 lets administrators inspect either CTA state using current unsaved label,
-optional status, and color values without evaluating the schedule.
+optional status, and color values without evaluating the schedule. Beneath the
+preview, a page-scoped developer card offers explicit links to hire Gasatrya or
+support OpenNow; it does not load remote content or make a request until an
+administrator follows a link.
 
 ## Add a CTA
 
@@ -138,9 +141,11 @@ systems.
 OpenNow makes no external requests and loads no remote scripts, fonts, images,
 stylesheets, or other assets. It collects no visitor data, sets no cookies, and
 performs no analytics, tracking, telemetry, scheduled network activity, or
-remote license checks. A visitor following an administrator-configured HTTPS
-or telephone action is ordinary user-initiated navigation and is the only
-outbound behavior.
+remote license checks. Ordinary user-initiated navigation is the only outbound
+behavior: a visitor may follow an administrator-configured HTTPS or telephone
+CTA, and an administrator may follow the clearly labeled Gasatrya hire or
+donation links on **Settings → OpenNow**. The settings card loads no remote
+content before a link is activated.
 
 ## Deactivation and uninstall
 

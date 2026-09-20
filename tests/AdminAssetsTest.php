@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 final class AdminAssetsTest extends TestCase
 {
-    public function testSettingsStylesheetKeepsTheScheduleAndPreviewScopedAndResponsive(): void
+    public function testSettingsStylesheetKeepsTheSchedulePreviewAndPromotionScopedAndResponsive(): void
     {
         $path = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets'
             . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'settings.css';
@@ -36,7 +36,9 @@ final class AdminAssetsTest extends TestCase
 
         $this->assertStringContainsString('#opennow-settings-layout', $css);
         $this->assertStringContainsString('grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);', $css);
+        $this->assertStringContainsString('.opennow-settings-sidebar', $css);
         $this->assertStringContainsString('#opennow-cta-preview', $css);
+        $this->assertStringContainsString('.opennow-developer-promotion', $css);
         $this->assertStringContainsString('position: sticky;', $css);
         $this->assertStringContainsString('.opennow-cta-preview__state-button[aria-pressed="true"]', $css);
         $this->assertStringContainsString('background: transparent;', $css);
@@ -52,9 +54,27 @@ final class AdminAssetsTest extends TestCase
         $this->assertStringContainsString('.opennow-cta__status', $css);
         $this->assertStringContainsString('margin-top: 0.5em;', $css);
 
+        $this->assertStringContainsString('.opennow-developer-promotion__links', $css);
+        $this->assertStringContainsString('flex-direction: column;', $css);
+        $this->assertStringContainsString('.opennow-developer-promotion__hire', $css);
+        $this->assertStringContainsString('background: #2271B1;', $css);
+        $this->assertStringContainsString('.opennow-developer-promotion__support', $css);
+        $this->assertStringContainsString('.opennow-developer-promotion__review', $css);
+        $this->assertStringContainsString('.opennow-developer-promotion__links a:focus', $css);
+        $this->assertStringContainsString('outline-offset: 2px;', $css);
+        $this->assertMatchesRegularExpression(
+            '/#opennow-settings-layout \.opennow-developer-promotion__links a:focus\s*\{[^}]*outline: 2px solid #000000;[^}]*\}/s',
+            $css
+        );
+
         $this->assertStringContainsString('@media (max-width: 782px)', $css);
         $this->assertStringContainsString('grid-template-columns: minmax(0, 1fr);', $css);
+        $this->assertStringContainsString('#opennow-settings-layout > .opennow-settings-sidebar', $css);
         $this->assertStringContainsString('position: static;', $css);
+        $this->assertMatchesRegularExpression(
+            '/@media \(max-width: 782px\)\s*\{.*?#opennow-settings-layout > \.opennow-settings-sidebar\s*\{\s*position: static;\s*\}/s',
+            $css
+        );
         $this->assertStringNotContainsString('#opennow-schedule *', $css);
         $this->assertStringNotContainsString('@import', $css);
         $this->assertStringNotContainsString('url(', $css);

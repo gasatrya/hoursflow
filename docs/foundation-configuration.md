@@ -60,7 +60,12 @@ Closed controls select a preview state independently of the weekly schedule.
 The preview reads current unsaved label, optional status, and global color
 fields, applies the default color pair when a color is blank, and inserts copy
 as text. It deliberately omits the action and uses non-link markup, so it cannot
-navigate or perform the configured action.
+navigate or perform the configured action. The same page-scoped sidebar places
+a distinct developer promotion after the preview in DOM and visual order. Its
+translated, escaped Hire Me and donation links open only after administrator
+activation, use protected new browsing contexts, and load no remote assets or
+embedded content. A WordPress.org review link remains absent until the OpenNow
+listing and canonical review destination are confirmed.
 
 `OpenNow\Config\Repository` revalidates every stored section in memory and
 never repairs the option. Missing or invalid days become closed, invalid CTA

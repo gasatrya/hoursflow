@@ -109,7 +109,12 @@ final class SettingsTest extends TestCase
         $this->assertInstanceOf(\DOMElement::class, $layout);
         $this->assertCount(1, $xpath->query('./form', $layout));
 
-        $preview = $xpath->query('./div[@id="opennow-cta-preview"]', $layout)->item(0);
+        $sidebar = $xpath->query('./div[contains(@class, "opennow-settings-sidebar")]', $layout)->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $sidebar);
+        $this->assertSame('complementary', $sidebar->getAttribute('role'));
+        $this->assertSame('OpenNow settings sidebar', $sidebar->getAttribute('aria-label'));
+
+        $preview = $xpath->query('./div[@id="opennow-cta-preview"]', $sidebar)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $preview);
         $this->assertSame('region', $preview->getAttribute('role'));
         $this->assertSame('opennow-cta-preview-heading', $preview->getAttribute('aria-labelledby'));
@@ -174,6 +179,98 @@ final class SettingsTest extends TestCase
         $this->assertSame('', $status->textContent);
         $this->assertStringContainsString('unsaved settings changes', $preview->textContent);
         $this->assertStringContainsString('never navigates', $preview->textContent);
+    }
+
+    public function testSettingsPageRendersASecureDeveloperPromotionAfterThePreview(): void
+    {
+        $settings = new Settings();
+        $settings->register();
+        do_action('admin_menu');
+        do_action('admin_init');
+
+        ob_start();
+        $settings->renderPage();
+        $output = (string) ob_get_clean();
+        $xpath = $this->parseHtml($output);
+
+        $sidebar = $xpath->query('//div[contains(@class, "opennow-settings-sidebar")]')->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $sidebar);
+        $this->assertCount(2, $xpath->query('./*', $sidebar));
+        $this->assertSame('opennow-cta-preview', $xpath->query('./*[1]', $sidebar)->item(0)->getAttribute('id'));
+
+        $promotion = $xpath->query('./div[contains(@class, "opennow-developer-promotion")]', $sidebar)->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $promotion);
+        $this->assertSame($promotion, $xpath->query('./*[2]', $sidebar)->item(0));
+        $this->assertSame('region', $promotion->getAttribute('role'));
+        $this->assertSame('opennow-developer-promotion-heading', $promotion->getAttribute('aria-labelledby'));
+        $this->assertStringContainsString('Need a WordPress Developer?', $promotion->textContent);
+        $this->assertStringContainsString('custom plugins, themes, and WordPress development', $promotion->textContent);
+
+        $hire = $xpath->query('.//a[contains(@class, "opennow-developer-promotion__hire")]', $promotion)->item(0);
+        $donation = $xpath->query('.//a[contains(@class, "opennow-developer-promotion__support")]', $promotion)->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $hire);
+        $this->assertInstanceOf(\DOMElement::class, $donation);
+        $this->assertSame(
+            'https://gasatrya.com/?utm_source=plugin&utm_medium=opennow-sidebar',
+            $hire->getAttribute('href')
+        );
+        $this->assertSame(
+            'https://gasatrya.com/donate/?utm_source=plugin&utm_medium=opennow-sidebar',
+            $donation->getAttribute('href')
+        );
+        $this->assertSame('Hire Me', trim($hire->textContent));
+        $this->assertSame('Buy me a coffee', trim($donation->textContent));
+
+        foreach (array($hire, $donation) as $link) {
+            $this->assertSame('_blank', $link->getAttribute('target'));
+            $this->assertSame('noopener noreferrer', $link->getAttribute('rel'));
+            $this->assertStringContainsString('opens in a new tab', $link->getAttribute('aria-label'));
+        }
+
+        $this->assertStringContainsString('utm_source=plugin&amp;utm_medium=opennow-sidebar', $output);
+        $this->assertCount(0, $xpath->query('.//a[contains(@class, "opennow-developer-promotion__review")]', $promotion));
+        $this->assertStringNotContainsString('Rate this plugin', $promotion->textContent);
+        $this->assertStringNotContainsString('wordpress.org', $promotion->textContent);
+        $this->assertStringNotContainsString('buttonflow', strtolower($output));
+        $this->assertCount(0, $xpath->query('.//*[@style]', $promotion));
+        $this->assertCount(0, $xpath->query('.//img | .//script | .//iframe | .//link | .//object | .//embed', $promotion));
+    }
+
+    public function testDeveloperPromotionRendersOnlyAConfirmedOpenNowReviewDestination(): void
+    {
+        $confirmed_settings = new Settings(
+            'https://wordpress.org/support/plugin/opennow/reviews/#new-post'
+        );
+
+        ob_start();
+        $confirmed_settings->renderPage();
+        $confirmed_output = (string) ob_get_clean();
+        $confirmed_xpath = $this->parseHtml($confirmed_output);
+        $review = $confirmed_xpath->query('//a[contains(@class, "opennow-developer-promotion__review")]')->item(0);
+
+        $this->assertInstanceOf(\DOMElement::class, $review);
+        $this->assertSame(
+            'https://wordpress.org/support/plugin/opennow/reviews/#new-post',
+            $review->getAttribute('href')
+        );
+        $this->assertSame('_blank', $review->getAttribute('target'));
+        $this->assertSame('noopener noreferrer', $review->getAttribute('rel'));
+        $this->assertStringContainsString('OpenNow', $review->getAttribute('aria-label'));
+        $this->assertSame('Rate this plugin', trim($review->textContent));
+
+        $unconfirmed_settings = new Settings(
+            'https://wordpress.org/support/plugin/buttonflow/reviews/#new-post'
+        );
+        ob_start();
+        $unconfirmed_settings->renderPage();
+        $unconfirmed_output = (string) ob_get_clean();
+        $unconfirmed_xpath = $this->parseHtml($unconfirmed_output);
+
+        $this->assertCount(
+            0,
+            $unconfirmed_xpath->query('//a[contains(@class, "opennow-developer-promotion__review")]')
+        );
+        $this->assertStringNotContainsString('buttonflow', strtolower($unconfirmed_output));
     }
 
     public function testAuthorizedSettingsPageLoadsExactlyFiveContextualHelpTabs(): void

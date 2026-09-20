@@ -38,7 +38,9 @@ visible Open/Closed state text; Closed disables its time controls, and the time
 rows stack on narrow screens. A live preview beside the form (stacked below it
 on narrow screens) lets administrators inspect either CTA state using current
 unsaved label, optional status, and color values without evaluating the
-schedule.
+schedule. Beneath the preview, a page-scoped developer card offers explicit
+links to hire Gasatrya or support OpenNow; it loads no remote content or makes a
+request until an administrator follows a link.
 
 == Usage ==
 
@@ -129,8 +131,10 @@ does neither. Administrators are responsible for the accuracy of status copy.
 OpenNow makes no external requests and loads no remote scripts, fonts, images,
 stylesheets, or other assets. It collects no visitor data, sets no cookies, and
 performs no tracking, analytics, telemetry, scheduled network activity, or
-remote license checks. A visitor following an administrator-configured CTA is
-ordinary user-initiated navigation and the sole outbound behavior.
+remote license checks. Ordinary user-initiated navigation is the only outbound
+behavior: a visitor may follow an administrator-configured CTA, and an
+administrator may follow the clearly labeled Gasatrya hire or donation links on
+Settings > OpenNow. The settings card loads no remote content before activation.
 
 == Deactivation and uninstall ==
 
