@@ -24,6 +24,7 @@ const REQUIRED_ENTRIES = [
 	'LICENSE',
 	'README.md',
 	'assets/admin/settings.js',
+	'assets/admin/settings.css',
 	'assets/public/cta.css',
 	'build/blocks/cta/block.json',
 	'build/blocks/cta/index.asset.php',

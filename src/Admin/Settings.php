@@ -142,12 +142,12 @@ final class Settings {
 				'title'   => __( 'CTA appearance', 'opennow' ),
 				'content' => '<p>'
 					. esc_html__(
-						'Enter optional six-digit hexadecimal colors in #RRGGBB form, for example #166534 or #FFFFFF.',
+						'Use the native color picker to choose optional six-digit hexadecimal colors such as #166534 or #FFFFFF.',
 						'opennow'
 					)
 					. '</p><p>'
 					. esc_html__(
-						'Leave a field blank to use the plugin default. These global CTA colors are shared by the shortcode and every OpenNow block. The effective background and text colors must meet WCAG 2.2 AA contrast for normal text.',
+						'When a legacy stored value is blank, its picker shows the plugin default (#166534 for the background or #FFFFFF for the text). Legacy blanks remain valid and use that default at runtime; saving the displayed picker value stores an explicit color. These global CTA colors are shared by the shortcode and every OpenNow block. The effective background and text colors must meet WCAG 2.2 AA contrast for normal text.',
 						'opennow'
 					)
 					. '</p>',
@@ -369,7 +369,9 @@ final class Settings {
 			return;
 		}
 
-		if ( ! function_exists( 'wp_enqueue_script' ) || ! function_exists( 'plugins_url' ) ) {
+		if ( ! function_exists( 'wp_enqueue_script' ) || ! function_exists( 'wp_enqueue_style' )
+			|| ! function_exists( 'plugins_url' )
+		) {
 			return;
 		}
 
@@ -384,6 +386,13 @@ final class Settings {
 			array(),
 			$version,
 			true
+		);
+
+		wp_enqueue_style(
+			'opennow-admin-settings-style',
+			plugins_url( 'assets/admin/settings.css', $plugin_file ),
+			array(),
+			$version
 		);
 	}
 
@@ -490,7 +499,7 @@ final class Settings {
 	public function renderAppearanceSection() {
 		echo '<p class="description">'
 			. esc_html__(
-				'Choose optional global CTA colors shared by the shortcode and every OpenNow block. Leave a field blank to use the plugin default. The effective color pair must meet WCAG 2.2 AA contrast for normal text.',
+				'Choose optional global CTA colors shared by the shortcode and every OpenNow block. The native color picker displays the plugin default when a legacy stored value is blank. Legacy blank values remain valid and use the same default at runtime. The effective color pair must meet WCAG 2.2 AA contrast for normal text.',
 				'opennow'
 			)
 			. '</p>';
@@ -514,22 +523,20 @@ final class Settings {
 		$value          = isset( $config['appearance'][ $color ] ) && is_string( $config['appearance'][ $color ] )
 			? $config['appearance'][ $color ]
 			: '';
+		$defaults       = Schema::defaultAppearance();
+		$display_value  = '' === $value ? $defaults[ $color ] : $value;
 		$id             = 'opennow-appearance-' . str_replace( '_', '-', $color );
 		$description_id = $id . '-description';
 		$error_code     = 'opennow_appearance_' . $color;
 		$description    = 'background_color' === $color
-			? __( 'Optional global CTA link background color. Enter a six-digit hexadecimal value such as #166534, or leave it blank for the plugin default.', 'opennow' )
-			: __( 'Optional global CTA link text color. Enter a six-digit hexadecimal value such as #FFFFFF, or leave it blank for the plugin default.', 'opennow' );
-		$placeholder    = 'background_color' === $color
-			? __( 'Example: #166534', 'opennow' )
-			: __( 'Example: #FFFFFF', 'opennow' );
+			? __( 'Optional global CTA link background color. Choose a six-digit color with the native picker. When the stored value is blank, the picker displays the plugin default #166534; the legacy blank remains valid and uses that default at runtime.', 'opennow' )
+			: __( 'Optional global CTA link text color. Choose a six-digit color with the native picker. When the stored value is blank, the picker displays the plugin default #FFFFFF; the legacy blank remains valid and uses that default at runtime.', 'opennow' );
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Every dynamic attribute in this control is escaped.
-		echo '<p><input type="text" class="regular-text" id="' . esc_attr( $id )
+		echo '<p><input type="color" id="' . esc_attr( $id )
 			. '" name="opennow_config[appearance][' . esc_attr( $color ) . ']" value="'
-			. esc_attr( $value )
-			. '" placeholder="' . esc_attr( $placeholder )
-			. '" maxlength="7" pattern="#[0-9A-Fa-f]{6}" inputmode="text" autocomplete="off"'
+			. esc_attr( $display_value )
+			. '"'
 			. $this->getErrorAttributes( $description_id, array( $error_code ) )
 			. ' />';
 		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -559,12 +566,12 @@ final class Settings {
 			. '</p>';
 		echo '<p class="description" id="opennow-schedule-time-description">'
 			. esc_html__(
-				'Enter exact 24-hour HH:MM local business time, for example 09:30. Overnight periods are allowed.',
+				'Enter exact 24-hour HH:MM local business time, for example 09:30. A closing time earlier than the opening time means overnight.',
 				'opennow'
 			)
 			. '</p>';
 
-		$day_numbers = array(
+		$day_numbers  = array(
 			'monday'    => 1,
 			'tuesday'   => 2,
 			'wednesday' => 3,
@@ -573,24 +580,36 @@ final class Settings {
 			'saturday'  => 6,
 			'sunday'    => 0,
 		);
+		$open_label   = __( 'Open', 'opennow' );
+		$closed_label = __( 'Closed', 'opennow' );
 
 		foreach ( Schema::days() as $day ) {
-			$entry     = $config['schedule'][ $day ];
-			$is_closed = 'closed' === $entry['type'];
-			$opens     = $is_closed ? '' : $entry['opens'];
-			$closes    = $is_closed ? '' : $entry['closes'];
-			$opens_id  = 'opennow-schedule-' . $day . '-opens';
-			$closes_id = 'opennow-schedule-' . $day . '-closes';
-			$closed_id = 'opennow-schedule-' . $day . '-closed';
-			$disabled  = $is_closed ? ' disabled="disabled"' : '';
-			$required  = $is_closed ? '' : ' required="required"';
+			$entry       = $config['schedule'][ $day ];
+			$is_closed   = 'closed' === $entry['type'];
+			$state       = $is_closed ? 'closed' : 'open';
+			$state_label = $is_closed ? $closed_label : $open_label;
+			$opens       = $is_closed ? '' : $entry['opens'];
+			$closes      = $is_closed ? '' : $entry['closes'];
+			$opens_id    = 'opennow-schedule-' . $day . '-opens';
+			$closes_id   = 'opennow-schedule-' . $day . '-closes';
+			$closed_id   = 'opennow-schedule-' . $day . '-closed';
+			$disabled    = $is_closed ? ' disabled="disabled"' : '';
+			$required    = $is_closed ? '' : ' required="required"';
 
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The weekday attribute is escaped below.
-			echo '<fieldset class="opennow-schedule-day" data-opennow-schedule-day="'
-				. esc_attr( $day )
+			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- All fieldset attributes are escaped below.
+			echo '<fieldset class="opennow-schedule-day opennow-schedule-day--' . esc_attr( $state )
+				. '" data-opennow-schedule-day="' . esc_attr( $day )
+				. '" data-opennow-schedule-state="' . esc_attr( $state )
+				. '" data-opennow-open-label="' . esc_attr( $open_label )
+				. '" data-opennow-closed-label="' . esc_attr( $closed_label )
 				. '">';
+			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The localized weekday label is escaped.
 			echo '<legend>' . esc_html( $this->getWeekdayLabel( $day, $day_numbers ) ) . '</legend>';
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The localized state label is escaped.
+			echo '<span class="opennow-schedule-state" data-opennow-schedule-state-text="1">'
+				. esc_html( $state_label )
+				. '</span>';
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The schedule key is escaped.
 			echo '<input type="hidden" name="opennow_config[schedule]['
 				. esc_attr( $day )
@@ -617,6 +636,7 @@ final class Settings {
 			echo '</label>';
 
 			echo '<div class="opennow-schedule-period">';
+			echo '<div class="opennow-schedule-row opennow-schedule-row--opening">';
 			echo '<label for="' . esc_attr( $opens_id ) . '">'
 				. esc_html__( 'Opening time', 'opennow' )
 				. '</label>';
@@ -636,6 +656,8 @@ final class Settings {
 				)
 				. $disabled . $required . ' />';
 			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '</div>';
+			echo '<div class="opennow-schedule-row opennow-schedule-row--closing">';
 			echo '<label for="' . esc_attr( $closes_id ) . '">'
 				. esc_html__( 'Closing time', 'opennow' )
 				. '</label>';
@@ -655,6 +677,7 @@ final class Settings {
 				)
 				. $disabled . $required . ' />';
 			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '</div>';
 			echo '</div>';
 			echo '</fieldset>';
 		}

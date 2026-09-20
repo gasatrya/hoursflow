@@ -42,16 +42,19 @@ Use a clean single-site WordPress installation with `WP_DEBUG` enabled.
    Confirm there are no PHP warnings, missing-asset requests, or debug-log
    entries.
 2. Confirm a fresh activation renders no CTA before settings are saved.
-3. Save a valid timezone, all seven weekdays, both CTA states, and blank default
-   colors. Confirm `[opennow_cta]` and an override-free block show equivalent
-   markup and state. Confirm `[opennow_cta hide_status="1"]` hides the selected
-   status, while non-exact values are no-ops and all other shortcode attributes
-   and content remain ignored. In the block editor, verify the real
-   server-rendered preview, independent open/closed field overrides, the
-   per-state `hideStatus: true` toggle, global fallback for omitted or invalid
-   fields, hide priority over nonblank global/status overrides, explicit
-   blank-status suppression, state isolation, and pruning back to the legacy
-   empty delimiter.
+3. Begin with fresh or legacy blank appearance values and confirm the native
+   pickers display `#166534` and `#FFFFFF`. Save a valid timezone, all seven
+   weekdays, both CTA states, and the displayed default colors, then confirm a
+   valid custom pair is preserved. Confirm
+   `[opennow_cta]` and an override-free block show equivalent markup and state.
+   Confirm `[opennow_cta hide_status="1"]` hides the selected status, while
+   non-exact values are no-ops and all other shortcode attributes and content
+   remain ignored. In the block editor, verify the real server-rendered
+   preview, independent open/closed field overrides, the per-state
+   `hideStatus: true` toggle, global fallback for omitted or invalid fields,
+   hide priority over nonblank global/status overrides, explicit blank-status
+   suppression, state isolation, and pruning back to the legacy empty
+   delimiter.
 4. Check an exact opening instant, an exact closing instant, a closed weekday,
    an overnight carry into the next day, Sunday-to-Monday rollover, a different
    site/business timezone pair, and representative spring-forward and fall-back
@@ -62,8 +65,8 @@ Use a clean single-site WordPress installation with `WP_DEBUG` enabled.
    page with a valid shortcode or block and confirm only the unchanged local
    frontend CTA stylesheet is loaded. In the editor, confirm the generated
    editor stylesheet disables CTA navigation without changing public CSS.
-   Confirm the settings script appears only on **Settings → OpenNow** for a user
-   with `manage_options`.
+   Confirm the settings script and page-scoped settings stylesheet appear only
+   on **Settings → OpenNow** for a user with `manage_options`.
 7. Inspect browser network/storage panels and confirm no plugin-originated remote
    requests, cookies, local storage, tracking, polling, or telemetry.
 
@@ -73,12 +76,16 @@ Test the settings screen and frontend with keyboard-only navigation at minimum;
 a screen reader check is recommended for the release environment.
 
 1. Reach every settings control in a logical keyboard order. Confirm each
-   control has a programmatic label and its instructions are announced.
+   control has a programmatic label and its instructions are announced. Confirm
+   every weekday is a semantic fieldset with a localized legend, explicit time
+   labels, and visible translated Open/Closed text.
 2. Submit representative errors. Confirm focus remains usable, errors are
    visible and announced as an alert, invalid controls expose `aria-invalid`,
    and descriptions/errors are associated with those controls.
 3. Toggle each **Closed all day** checkbox by keyboard. Confirm its opening and
-   closing controls become disabled or enabled without trapping focus.
+   closing controls become disabled or enabled without trapping focus, its
+   `aria-controls` names both time IDs, and only that weekday's state text and
+   modifier change.
 4. Tab to the frontend CTA. Confirm it is a native link with a visible,
    non-empty accessible name and an obvious focus indicator in default, hover,
    and focused states. Confirm the link target is at least 44x44 CSS pixels and
@@ -90,9 +97,10 @@ a screen reader check is recommended for the release environment.
    surrounding light and dark content. Themes/custom CSS must be checked again
    because plugin validation cannot govern later overrides.
 6. At a 320px viewport and with text enlarged, confirm labels, errors, CTA
-   text, and status text wrap within the viewport without horizontal overflow.
-   Focus indicators must remain perceivable and no control may require pointer
-   input.
+   text, status text, and weekly-hours groups wrap within the viewport without
+   horizontal overflow. At the admin breakpoint of 782px or less, confirm
+   opening and closing rows stack. Focus indicators must remain perceivable and
+   no control may require pointer input.
 
 ## Metadata and lifecycle
 

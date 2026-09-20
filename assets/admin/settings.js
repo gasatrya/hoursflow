@@ -13,9 +13,32 @@
 			'[data-opennow-time-input]'
 		);
 		const isClosed = closedToggle.checked;
+		const state = isClosed ? 'closed' : 'open';
+		const stateLabelAttribute = isClosed
+			? 'data-opennow-closed-label'
+			: 'data-opennow-open-label';
+		const stateText = dayFieldset.querySelector(
+			'[data-opennow-schedule-state-text]'
+		);
+
 		for ( let index = 0; index < timeInputs.length; index += 1 ) {
 			timeInputs[ index ].disabled = isClosed;
 			timeInputs[ index ].required = ! isClosed;
+		}
+
+		dayFieldset.classList.toggle(
+			'opennow-schedule-day--closed',
+			isClosed
+		);
+		dayFieldset.classList.toggle(
+			'opennow-schedule-day--open',
+			! isClosed
+		);
+		dayFieldset.setAttribute( 'data-opennow-schedule-state', state );
+
+		if ( stateText ) {
+			stateText.textContent =
+				dayFieldset.getAttribute( stateLabelAttribute ) || '';
 		}
 	}
 
@@ -25,13 +48,15 @@
 		);
 
 		for ( let index = 0; index < dayFieldsets.length; index += 1 ) {
-			updateDay( dayFieldsets[ index ] );
-			const closedToggle = dayFieldsets[ index ].querySelector(
+			const dayFieldset = dayFieldsets[ index ];
+			const closedToggle = dayFieldset.querySelector(
 				'[data-opennow-closed-toggle]'
 			);
+
+			updateDay( dayFieldset );
 			if ( closedToggle ) {
 				closedToggle.addEventListener( 'change', function () {
-					updateDay( this.closest( '[data-opennow-schedule-day]' ) );
+					updateDay( dayFieldset );
 				} );
 			}
 		}

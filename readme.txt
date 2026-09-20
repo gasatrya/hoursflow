@@ -33,6 +33,9 @@ integration.
 A new activation is unconfigured and renders nothing until a complete valid
 configuration is saved. Settings are validated atomically; an invalid save
 retains the last known-good configuration and reports field-specific errors.
+The weekly-hours editor uses one keyboard-operable fieldset per weekday with
+visible Open/Closed state text; Closed disables its time controls, and the time
+rows stack on narrow screens.
 
 == Usage ==
 
@@ -84,11 +87,13 @@ or date ranges.
 == Appearance and accessibility ==
 
 Only two global appearance controls exist: CTA link background and text color.
-Content overrides do not affect appearance. Blank values use the defaults
-`#166534` and `#FFFFFF`. Nonblank values must be six-digit hexadecimal colors
-and the effective pair must meet WCAG 2.2 AA contrast for normal text. Invalid
-colors or low contrast use the complete plugin default pair. There are no
-per-block or per-state style controls.
+Content overrides do not affect appearance. The native color pickers display
+`#166534` and `#FFFFFF` when their corresponding saved values are blank.
+Legacy blank values remain valid and use those defaults at runtime; saving the
+displayed picker value stores an explicit color. Nonblank values must be
+six-digit hexadecimal colors and the effective pair must meet WCAG 2.2 AA
+contrast for normal text. Invalid colors or low contrast use the complete
+plugin default pair. There are no per-block or per-state style controls.
 
 Plugin styling uses the theme's inherited typography and a compact, button-like
 baseline: the link has a minimum 44x44 CSS-pixel target, modest rounding, and

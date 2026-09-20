@@ -128,7 +128,8 @@ final class SettingsTest extends TestCase
         $this->assertStringContainsString('America/New_York', $tabs[0]['content']);
         $this->assertStringContainsString('visitor, browser, server, or WordPress site timezone', $tabs[0]['content']);
         $this->assertStringContainsString('Raw UTC offsets', $tabs[0]['content']);
-        $this->assertStringContainsString('#RRGGBB', $tabs[1]['content']);
+        $this->assertStringContainsString('native color picker', $tabs[1]['content']);
+        $this->assertStringContainsString('legacy stored value is blank', $tabs[1]['content']);
         $this->assertStringContainsString('plugin default', $tabs[1]['content']);
         $this->assertStringContainsString('shortcode and every OpenNow block', $tabs[1]['content']);
         $this->assertStringContainsString('WCAG 2.2 AA', $tabs[1]['content']);
@@ -207,12 +208,12 @@ final class SettingsTest extends TestCase
             'opennow-appearance-background-color' => array(
                 'name' => 'opennow_config[appearance][background_color]',
                 'value' => '#000000',
-                'placeholder' => 'Example: #166534',
+                'type' => 'color',
             ),
             'opennow-appearance-text-color' => array(
                 'name' => 'opennow_config[appearance][text_color]',
                 'value' => '#FFFFFF',
-                'placeholder' => 'Example: #FFFFFF',
+                'type' => 'color',
             ),
             'opennow-cta-open-label' => array(
                 'name' => 'opennow_config[cta][open][label]',
@@ -253,7 +254,16 @@ final class SettingsTest extends TestCase
             $this->assertSame($id, $input->getAttribute('id'));
             $this->assertSame($control['name'], $input->getAttribute('name'));
             $this->assertSame($control['value'], $input->getAttribute('value'));
-            $this->assertSame($control['placeholder'], $input->getAttribute('placeholder'));
+            if (isset($control['type'])) {
+                $this->assertSame($control['type'], $input->getAttribute('type'));
+                $this->assertFalse($input->hasAttribute('placeholder'));
+                $this->assertFalse($input->hasAttribute('maxlength'));
+                $this->assertFalse($input->hasAttribute('pattern'));
+                $this->assertFalse($input->hasAttribute('inputmode'));
+                $this->assertFalse($input->hasAttribute('autocomplete'));
+            } else {
+                $this->assertSame($control['placeholder'], $input->getAttribute('placeholder'));
+            }
             $description_id = $id . '-description';
             $this->assertSame($description_id, $input->getAttribute('aria-describedby'));
 
@@ -321,10 +331,12 @@ final class SettingsTest extends TestCase
 
         do_action('admin_enqueue_scripts', 'settings_page_other');
         $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_scripts']);
+        $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
 
         $GLOBALS['opennow_test_current_user_can'] = false;
         do_action('admin_enqueue_scripts', 'settings_page_opennow');
         $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_scripts']);
+        $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
 
         $GLOBALS['opennow_test_current_user_can'] = true;
         do_action('admin_enqueue_scripts', 'settings_page_opennow');
@@ -335,9 +347,16 @@ final class SettingsTest extends TestCase
         $this->assertFileExists(dirname(__DIR__) . '/assets/admin/settings.js');
         $this->assertSame(array(), $script['deps']);
         $this->assertTrue($script['args']);
+
+        $this->assertArrayHasKey('opennow-admin-settings-style', $GLOBALS['opennow_test_enqueued_styles']);
+        $style = $GLOBALS['opennow_test_enqueued_styles']['opennow-admin-settings-style'];
+        $this->assertStringEndsWith('/assets/admin/settings.css', $style['src']);
+        $this->assertFileExists(dirname(__DIR__) . '/assets/admin/settings.css');
+        $this->assertSame(array(), $style['deps']);
+        $this->assertSame('all', $style['media']);
     }
 
-    public function testAppearanceFieldsAreVisibleBlankCapableAndTranslated(): void
+    public function testAppearanceFieldsUseNativePickersAndDisplayEffectiveDefaults(): void
     {
         $settings = new Settings();
 
@@ -345,7 +364,8 @@ final class SettingsTest extends TestCase
         $settings->renderAppearanceSection();
         $section = (string) ob_get_clean();
         $this->assertStringContainsString('global CTA colors shared by the shortcode and every OpenNow block', $section);
-        $this->assertStringContainsString('Leave a field blank to use the plugin default.', $section);
+        $this->assertStringContainsString('native color picker displays the plugin default', $section);
+        $this->assertStringContainsString('Legacy blank values remain valid', $section);
         $this->assertStringContainsString('must meet WCAG 2.2 AA contrast for normal text', $section);
 
         ob_start();
@@ -353,13 +373,28 @@ final class SettingsTest extends TestCase
         $settings->renderAppearanceField(array('color' => 'text_color'));
         $output = (string) ob_get_clean();
 
-        $this->assertStringContainsString('type="text"', $output);
-        $this->assertStringContainsString('name="opennow_config[appearance][background_color]" value=""', $output);
-        $this->assertStringContainsString('name="opennow_config[appearance][text_color]" value=""', $output);
-        $this->assertStringContainsString('six-digit hexadecimal value such as #166534', $output);
-        $this->assertStringContainsString('six-digit hexadecimal value such as #FFFFFF', $output);
+        $this->assertSame(2, substr_count($output, 'type="color"'));
+        $this->assertStringContainsString('name="opennow_config[appearance][background_color]" value="#166534"', $output);
+        $this->assertStringContainsString('name="opennow_config[appearance][text_color]" value="#FFFFFF"', $output);
+        $this->assertStringContainsString('legacy blank remains valid and uses that default at runtime', $output);
+        $this->assertStringNotContainsString('type="text"', $output);
+        $this->assertStringNotContainsString('placeholder=', $output);
+        $this->assertStringNotContainsString('maxlength=', $output);
+        $this->assertStringNotContainsString('pattern=', $output);
+        $this->assertStringNotContainsString('inputmode=', $output);
+        $this->assertStringNotContainsString('autocomplete=', $output);
 
         $config = $this->validConfig();
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $settings = new Settings();
+
+        ob_start();
+        $settings->renderAppearanceField(array('color' => 'background_color'));
+        $settings->renderAppearanceField(array('color' => 'text_color'));
+        $legacy_blank_output = (string) ob_get_clean();
+        $this->assertStringContainsString('name="opennow_config[appearance][background_color]" value="#166534"', $legacy_blank_output);
+        $this->assertStringContainsString('name="opennow_config[appearance][text_color]" value="#FFFFFF"', $legacy_blank_output);
+
         $config['appearance'] = array(
             'background_color' => '#000000',
             'text_color' => '#FFFFFF',
@@ -508,7 +543,7 @@ final class SettingsTest extends TestCase
         $this->assertSame(array(), $GLOBALS['opennow_test_settings_errors']);
     }
 
-    public function testScheduleMarkupDisablesPeriodValuesForClosedDays(): void
+    public function testScheduleMarkupKeepsSevenAccessibleStatefulGroups(): void
     {
         $config = $this->validConfig();
         $GLOBALS['wp_locale'] = new class() {
@@ -528,27 +563,82 @@ final class SettingsTest extends TestCase
         ob_start();
         $settings->renderScheduleField();
         $output = (string) ob_get_clean();
+        $xpath = $this->parseHtml($output);
 
-        $this->assertStringContainsString(
-            'id="opennow-schedule-monday-opens" name="opennow_config[schedule][monday][opens]" value="09:00"',
-            $output
-        );
-        $this->assertStringContainsString(
-            'id="opennow-schedule-tuesday-closed" name="opennow_config[schedule][tuesday][type]" value="closed"',
-            $output
-        );
+        $this->assertSame(7, $xpath->query('//fieldset[@data-opennow-schedule-day]')->length);
         $this->assertStringContainsString('<legend>Localized weekday 1</legend>', $output);
-        $this->assertLessThan(
-            strpos($output, 'id="opennow-schedule-tuesday-closed"'),
-            strpos($output, 'name="opennow_config[schedule][tuesday][type]" value="period"')
-        );
-        $this->assertMatchesRegularExpression(
-            '/id="opennow-schedule-tuesday-opens"[^>]*disabled="disabled"/',
-            $output
-        );
+        $this->assertStringContainsString('24-hour HH:MM local business time', $output);
+        $this->assertStringContainsString('means overnight', $output);
+        $this->assertSame(7, substr_count($output, 'value="period"'));
         $this->assertSame(7, substr_count($output, 'placeholder="Example: 09:00"'));
         $this->assertSame(7, substr_count($output, 'placeholder="Example: 17:00"'));
-        $this->assertStringContainsString('24-hour HH:MM local business time', $output);
+
+        foreach (Schema::days() as $day) {
+            $fieldset = $xpath->query(
+                '//fieldset[@data-opennow-schedule-day="' . $day . '"]'
+            )->item(0);
+            $this->assertInstanceOf(\DOMElement::class, $fieldset);
+            $is_open = 'monday' === $day;
+            $state = $is_open ? 'open' : 'closed';
+            $this->assertStringContainsString(
+                'opennow-schedule-day--' . $state,
+                $fieldset->getAttribute('class')
+            );
+            $this->assertSame($state, $fieldset->getAttribute('data-opennow-schedule-state'));
+            $this->assertSame(
+                $is_open ? 'Open' : 'Closed',
+                $xpath->query(
+                    '//fieldset[@data-opennow-schedule-day="' . $day
+                    . '"]//*[@data-opennow-schedule-state-text]'
+                )->item(0)->textContent
+            );
+            $this->assertSame('Open', $fieldset->getAttribute('data-opennow-open-label'));
+            $this->assertSame('Closed', $fieldset->getAttribute('data-opennow-closed-label'));
+
+            $opens_id = 'opennow-schedule-' . $day . '-opens';
+            $closes_id = 'opennow-schedule-' . $day . '-closes';
+            $closed_id = 'opennow-schedule-' . $day . '-closed';
+            $checkbox = $xpath->query('//input[@id="' . $closed_id . '"]')->item(0);
+            $opens = $xpath->query('//input[@id="' . $opens_id . '"]')->item(0);
+            $closes = $xpath->query('//input[@id="' . $closes_id . '"]')->item(0);
+
+            $this->assertInstanceOf(\DOMElement::class, $checkbox);
+            $this->assertInstanceOf(\DOMElement::class, $opens);
+            $this->assertInstanceOf(\DOMElement::class, $closes);
+            $this->assertSame($opens_id . ' ' . $closes_id, $checkbox->getAttribute('aria-controls'));
+            $this->assertSame(
+                'opennow-schedule-closed-description',
+                $checkbox->getAttribute('aria-describedby')
+            );
+            $this->assertSame(
+                $is_open ? '09:00' : '',
+                $opens->getAttribute('value')
+            );
+            $this->assertSame(
+                $is_open ? '17:00' : '',
+                $closes->getAttribute('value')
+            );
+            $this->assertSame($is_open, $opens->hasAttribute('required'));
+            $this->assertSame($is_open, $closes->hasAttribute('required'));
+            $this->assertSame(! $is_open, $opens->hasAttribute('disabled'));
+            $this->assertSame(! $is_open, $closes->hasAttribute('disabled'));
+            $this->assertStringContainsString(
+                'opennow-schedule-time-description',
+                $opens->getAttribute('aria-describedby')
+            );
+            $this->assertStringContainsString(
+                'opennow-schedule-time-description',
+                $closes->getAttribute('aria-describedby')
+            );
+            $this->assertSame(
+                1,
+                $xpath->query('//label[@for="' . $opens_id . '"]')->length
+            );
+            $this->assertSame(
+                1,
+                $xpath->query('//label[@for="' . $closes_id . '"]')->length
+            );
+        }
     }
 
     public function testValidSubmissionReturnsCanonicalValue(): void
@@ -562,6 +652,8 @@ final class SettingsTest extends TestCase
         $this->assertIsArray($result);
         $this->assertSame('UTC', $result['timezone']);
         $this->assertSame('Book online', $result['cta']['closed']['label']);
+        $this->assertSame('', $result['appearance']['background_color']);
+        $this->assertSame('', $result['appearance']['text_color']);
         $this->assertSame(array(), $GLOBALS['opennow_test_settings_errors']);
     }
 

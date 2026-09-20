@@ -24,7 +24,10 @@ account, SaaS service, booking system, tracking, or remote service is required.
 A fresh activation is intentionally unconfigured and renders nothing until a
 valid configuration is saved. Settings are one atomic WordPress option and are
 validated before they are persisted. An invalid submission keeps the last
-known-good option and displays field-specific errors.
+known-good option and displays field-specific errors. The weekly-hours editor
+uses one keyboard-operable fieldset per weekday with visible Open/Closed state
+text; Closed disables its time controls, and the time rows stack on narrow
+screens.
 
 ## Add a CTA
 
@@ -89,8 +92,10 @@ result. There is no DST override or ambiguity setting.
 
 Appearance controls are global only and are shared by the shortcode and all
 OpenNow blocks. The MVP exposes only CTA link background and text colors;
-content overrides do not change appearance. Leave either field blank to use
-the plugin defaults (`#166534` and `#FFFFFF`). Nonblank values must be
+content overrides do not change appearance. The native color pickers display
+`#166534` and `#FFFFFF` when their corresponding saved values are blank.
+Legacy blank values remain valid and use those defaults at runtime; saving the
+displayed picker value stores an explicit color. Nonblank values must be
 six-digit hexadecimal colors and the effective pair must meet WCAG 2.2 AA
 contrast for normal text. Invalid colors or an invalid pair use the complete
 default pair at runtime; there are no per-block or per-state style overrides.

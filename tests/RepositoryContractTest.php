@@ -54,7 +54,7 @@ final class RepositoryContractTest extends TestCase
                 }
             }
 
-            if (1 === preg_match_all(
+            if (preg_match_all(
                 "/wp_enqueue_(?:script|style)\\s*\\(\\s*['\"]([^'\"]+)['\"]/",
                 $contents,
                 $matches
@@ -68,7 +68,10 @@ final class RepositoryContractTest extends TestCase
         }
 
         $this->assertSame(array('opennow_cta'), $shortcode_tags);
-        $this->assertSame(array('opennow-admin-settings', 'opennow-cta'), $asset_handles);
+        $this->assertSame(
+            array('opennow-admin-settings', 'opennow-admin-settings-style', 'opennow-cta'),
+            $asset_handles
+        );
     }
 
     public function testRuntimeHasNoExternalRequestsTrackingOrRemoteAssets(): void
@@ -96,6 +99,8 @@ final class RepositoryContractTest extends TestCase
         foreach (array(
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets'
                 . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'settings.js',
+            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets'
+                . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'settings.css',
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets'
                 . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'cta.css',
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR

@@ -49,7 +49,10 @@ time earlier than its opening time is overnight; equal times are invalid.
 Actions are root-relative URLs, HTTPS URLs, or supported `tel:` values. Labels
 and status are plain text. Optional colors are six-digit hex values or blank;
 blank values use the accessible plugin defaults and a low-contrast pair falls
-back to the complete default pair.
+back to the complete default pair. The settings screen uses native color
+pickers: a picker displays its corresponding plugin default when a persisted
+value is blank, while the legacy blank remains valid and is preserved by the
+validator until the administrator saves a color.
 
 `OpenNow\Config\Repository` revalidates every stored section in memory and
 never repairs the option. Missing or invalid days become closed, invalid CTA
@@ -98,6 +101,12 @@ timezone, selects only the matching open or closed CTA, applies only valid
 selected-state block fields after validating the selected global CTA, escapes
 output, and conditionally enqueues the local shared stylesheet after valid
 markup is built.
+
+The weekly-hours settings UI renders one semantic fieldset per weekday with
+visible translated Open/Closed state text, explicit opening and closing labels,
+and keyboard-orderable controls. Closed days disable and remove the required
+state from their time inputs; each day has its own bordered group and the time
+rows stack at narrow admin widths.
 
 The plugin has no browser polling, AJAX, REST polling, cache variation, or
 scheduled purge. Cached HTML can therefore be stale until the site's normal
