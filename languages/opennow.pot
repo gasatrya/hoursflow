@@ -159,15 +159,15 @@ msgid "Select UTC or a named IANA region/city timezone. Manual UTC offsets are n
 msgstr ""
 
 #: src/Admin/Settings.php:512
-msgid "Choose optional global CTA colors shared by the shortcode and every OpenNow block. The native color picker displays the plugin default when a legacy stored value is blank. Legacy blank values remain valid and use the same default at runtime. The effective color pair must meet WCAG 2.2 AA contrast for normal text."
+msgid "Choose global CTA background and text colors for the shortcode and OpenNow blocks. Colors must meet WCAG 2.2 AA contrast for normal text."
 msgstr ""
 
 #: src/Admin/Settings.php:543
-msgid "Optional global CTA link background color. Choose a six-digit color with the native picker. When the stored value is blank, the picker displays the plugin default #166534; the legacy blank remains valid and uses that default at runtime."
+msgid "Global CTA background color. Plugin default: #166534."
 msgstr ""
 
 #: src/Admin/Settings.php:544
-msgid "Optional global CTA link text color. Choose a six-digit color with the native picker. When the stored value is blank, the picker displays the plugin default #FFFFFF; the legacy blank remains valid and uses that default at runtime."
+msgid "Global CTA text color. Plugin default: #FFFFFF."
 msgstr ""
 
 #: src/Admin/Settings.php:573

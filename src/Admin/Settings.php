@@ -510,7 +510,7 @@ final class Settings {
 	public function renderAppearanceSection() {
 		echo '<p class="description">'
 			. esc_html__(
-				'Choose optional global CTA colors shared by the shortcode and every OpenNow block. The native color picker displays the plugin default when a legacy stored value is blank. Legacy blank values remain valid and use the same default at runtime. The effective color pair must meet WCAG 2.2 AA contrast for normal text.',
+				'Choose global CTA background and text colors for the shortcode and OpenNow blocks. Colors must meet WCAG 2.2 AA contrast for normal text.',
 				'opennow'
 			)
 			. '</p>';
@@ -540,8 +540,8 @@ final class Settings {
 		$description_id = $id . '-description';
 		$error_code     = 'opennow_appearance_' . $color;
 		$description    = 'background_color' === $color
-			? __( 'Optional global CTA link background color. Choose a six-digit color with the native picker. When the stored value is blank, the picker displays the plugin default #166534; the legacy blank remains valid and uses that default at runtime.', 'opennow' )
-			: __( 'Optional global CTA link text color. Choose a six-digit color with the native picker. When the stored value is blank, the picker displays the plugin default #FFFFFF; the legacy blank remains valid and uses that default at runtime.', 'opennow' );
+			? __( 'Global CTA background color. Plugin default: #166534.', 'opennow' )
+			: __( 'Global CTA text color. Plugin default: #FFFFFF.', 'opennow' );
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Every dynamic attribute in this control is escaped.
 		echo '<p><input type="color" id="' . esc_attr( $id )

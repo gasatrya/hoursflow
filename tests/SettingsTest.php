@@ -528,9 +528,8 @@ final class SettingsTest extends TestCase
         ob_start();
         $settings->renderAppearanceSection();
         $section = (string) ob_get_clean();
-        $this->assertStringContainsString('global CTA colors shared by the shortcode and every OpenNow block', $section);
-        $this->assertStringContainsString('native color picker displays the plugin default', $section);
-        $this->assertStringContainsString('Legacy blank values remain valid', $section);
+        $this->assertStringContainsString('global CTA background and text colors', $section);
+        $this->assertStringContainsString('for the shortcode and OpenNow blocks', $section);
         $this->assertStringContainsString('must meet WCAG 2.2 AA contrast for normal text', $section);
 
         ob_start();
@@ -541,7 +540,8 @@ final class SettingsTest extends TestCase
         $this->assertSame(2, substr_count($output, 'type="color"'));
         $this->assertStringContainsString('name="opennow_config[appearance][background_color]" value="#166534"', $output);
         $this->assertStringContainsString('name="opennow_config[appearance][text_color]" value="#FFFFFF"', $output);
-        $this->assertStringContainsString('legacy blank remains valid and uses that default at runtime', $output);
+        $this->assertStringContainsString('Global CTA background color. Plugin default: #166534.', $output);
+        $this->assertStringContainsString('Global CTA text color. Plugin default: #FFFFFF.', $output);
         $this->assertStringNotContainsString('type="text"', $output);
         $this->assertStringNotContainsString('placeholder=', $output);
         $this->assertStringNotContainsString('maxlength=', $output);
