@@ -19,9 +19,11 @@ final class Settings {
 	const OPEN_CTA_SECTION   = 'opennow_open_cta_section';
 	const CLOSED_CTA_SECTION = 'opennow_closed_cta_section';
 
-	private const HIRE_URL     = 'https://gasatrya.com/?utm_source=plugin&utm_medium=opennow-sidebar';
-	private const DONATION_URL = 'https://gasatrya.com/donate/?utm_source=plugin&utm_medium=opennow-sidebar';
-	private const REVIEW_URL   = 'https://wordpress.org/support/plugin/opennow/reviews/#new-post';
+	private const HIRE_URL             = 'https://gasatrya.com/?utm_source=plugin&utm_medium=opennow-sidebar';
+	private const DONATION_URL         = 'https://gasatrya.com/donate/?utm_source=plugin&utm_medium=opennow-sidebar';
+	private const REVIEW_URL           = 'https://wordpress.org/support/plugin/opennow/reviews/#new-post';
+	private const DEFAULT_OPENING_TIME = '09:00';
+	private const DEFAULT_CLOSING_TIME = '17:00';
 
 	/**
 	 * @var string|false|null
@@ -670,8 +672,8 @@ final class Settings {
 			$is_closed   = 'closed' === $entry['type'];
 			$state       = $is_closed ? 'closed' : 'open';
 			$state_label = $is_closed ? $closed_label : $open_label;
-			$opens       = $is_closed ? '' : $entry['opens'];
-			$closes      = $is_closed ? '' : $entry['closes'];
+			$opens       = $is_closed ? self::DEFAULT_OPENING_TIME : $entry['opens'];
+			$closes      = $is_closed ? self::DEFAULT_CLOSING_TIME : $entry['closes'];
 			$opens_id    = 'opennow-schedule-' . $day . '-opens';
 			$closes_id   = 'opennow-schedule-' . $day . '-closes';
 			$closed_id   = 'opennow-schedule-' . $day . '-closed';

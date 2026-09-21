@@ -900,14 +900,8 @@ final class SettingsTest extends TestCase
                 'opennow-schedule-closed-description',
                 $checkbox->getAttribute('aria-describedby')
             );
-            $this->assertSame(
-                $is_open ? '09:00' : '',
-                $opens->getAttribute('value')
-            );
-            $this->assertSame(
-                $is_open ? '17:00' : '',
-                $closes->getAttribute('value')
-            );
+            $this->assertSame('09:00', $opens->getAttribute('value'));
+            $this->assertSame('17:00', $closes->getAttribute('value'));
             $this->assertSame($is_open, $opens->hasAttribute('required'));
             $this->assertSame($is_open, $closes->hasAttribute('required'));
             $this->assertSame(! $is_open, $opens->hasAttribute('disabled'));
