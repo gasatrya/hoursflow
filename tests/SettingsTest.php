@@ -200,12 +200,17 @@ final class SettingsTest extends TestCase
         $this->assertSame('region', $promotion->getAttribute('role'));
         $this->assertSame('opennow-developer-promotion-heading', $promotion->getAttribute('aria-labelledby'));
         $this->assertStringContainsString('Need a WordPress Developer?', $promotion->textContent);
-        $this->assertStringContainsString('custom plugins, themes, and WordPress development', $promotion->textContent);
+        $this->assertStringContainsString(
+            'I build custom plugins, themes, and high-performance WordPress sites for businesses that need more than off-the-shelf solutions.',
+            $promotion->textContent
+        );
 
         $hire = $xpath->query('.//a[contains(@class, "opennow-developer-promotion__hire")]', $promotion)->item(0);
         $donation = $xpath->query('.//a[contains(@class, "opennow-developer-promotion__support")]', $promotion)->item(0);
+        $review = $xpath->query('.//a[contains(@class, "opennow-developer-promotion__review")]', $promotion)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $hire);
         $this->assertInstanceOf(\DOMElement::class, $donation);
+        $this->assertInstanceOf(\DOMElement::class, $review);
         $this->assertSame(
             'https://gasatrya.com/?utm_source=plugin&utm_medium=opennow-sidebar',
             $hire->getAttribute('href')
@@ -214,59 +219,34 @@ final class SettingsTest extends TestCase
             'https://gasatrya.com/donate/?utm_source=plugin&utm_medium=opennow-sidebar',
             $donation->getAttribute('href')
         );
+        $this->assertSame(
+            'https://wordpress.org/support/plugin/opennow/reviews/#new-post',
+            $review->getAttribute('href')
+        );
         $this->assertSame('Hire Me', trim($hire->textContent));
         $this->assertSame('Buy me a coffee', trim($donation->textContent));
+        $this->assertSame('Rate this plugin', trim($review->textContent));
 
-        foreach (array($hire, $donation) as $link) {
+        foreach (array($hire, $donation, $review) as $link) {
             $this->assertSame('_blank', $link->getAttribute('target'));
             $this->assertSame('noopener noreferrer', $link->getAttribute('rel'));
             $this->assertStringContainsString('opens in a new tab', $link->getAttribute('aria-label'));
         }
 
+        $coffee = $xpath->query('.//span[contains(@class, "dashicons-coffee")]', $promotion)->item(0);
+        $star = $xpath->query('.//span[contains(@class, "dashicons-star-filled")]', $promotion)->item(0);
+        $separator = $xpath->query('.//span[contains(@class, "opennow-developer-promotion__separator")]', $promotion)->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $coffee);
+        $this->assertInstanceOf(\DOMElement::class, $star);
+        $this->assertInstanceOf(\DOMElement::class, $separator);
+        $this->assertSame('true', $coffee->getAttribute('aria-hidden'));
+        $this->assertSame('true', $star->getAttribute('aria-hidden'));
+        $this->assertSame('·', trim($separator->textContent));
+
         $this->assertStringContainsString('utm_source=plugin&amp;utm_medium=opennow-sidebar', $output);
-        $this->assertCount(0, $xpath->query('.//a[contains(@class, "opennow-developer-promotion__review")]', $promotion));
-        $this->assertStringNotContainsString('Rate this plugin', $promotion->textContent);
-        $this->assertStringNotContainsString('wordpress.org', $promotion->textContent);
         $this->assertStringNotContainsString('buttonflow', strtolower($output));
         $this->assertCount(0, $xpath->query('.//*[@style]', $promotion));
         $this->assertCount(0, $xpath->query('.//img | .//script | .//iframe | .//link | .//object | .//embed', $promotion));
-    }
-
-    public function testDeveloperPromotionRendersOnlyAConfirmedOpenNowReviewDestination(): void
-    {
-        $confirmed_settings = new Settings(
-            'https://wordpress.org/support/plugin/opennow/reviews/#new-post'
-        );
-
-        ob_start();
-        $confirmed_settings->renderPage();
-        $confirmed_output = (string) ob_get_clean();
-        $confirmed_xpath = $this->parseHtml($confirmed_output);
-        $review = $confirmed_xpath->query('//a[contains(@class, "opennow-developer-promotion__review")]')->item(0);
-
-        $this->assertInstanceOf(\DOMElement::class, $review);
-        $this->assertSame(
-            'https://wordpress.org/support/plugin/opennow/reviews/#new-post',
-            $review->getAttribute('href')
-        );
-        $this->assertSame('_blank', $review->getAttribute('target'));
-        $this->assertSame('noopener noreferrer', $review->getAttribute('rel'));
-        $this->assertStringContainsString('OpenNow', $review->getAttribute('aria-label'));
-        $this->assertSame('Rate this plugin', trim($review->textContent));
-
-        $unconfirmed_settings = new Settings(
-            'https://wordpress.org/support/plugin/buttonflow/reviews/#new-post'
-        );
-        ob_start();
-        $unconfirmed_settings->renderPage();
-        $unconfirmed_output = (string) ob_get_clean();
-        $unconfirmed_xpath = $this->parseHtml($unconfirmed_output);
-
-        $this->assertCount(
-            0,
-            $unconfirmed_xpath->query('//a[contains(@class, "opennow-developer-promotion__review")]')
-        );
-        $this->assertStringNotContainsString('buttonflow', strtolower($unconfirmed_output));
     }
 
     public function testAuthorizedSettingsPageLoadsExactlyFiveContextualHelpTabs(): void

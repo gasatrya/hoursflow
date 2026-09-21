@@ -21,6 +21,7 @@ final class Settings {
 
 	private const HIRE_URL     = 'https://gasatrya.com/?utm_source=plugin&utm_medium=opennow-sidebar';
 	private const DONATION_URL = 'https://gasatrya.com/donate/?utm_source=plugin&utm_medium=opennow-sidebar';
+	private const REVIEW_URL   = 'https://wordpress.org/support/plugin/opennow/reviews/#new-post';
 
 	/**
 	 * @var string|false|null
@@ -33,21 +34,11 @@ final class Settings {
 	private $editor_config;
 
 	/**
-	 * @var string
-	 */
-	private $review_url;
-
-	/**
 	 * Create the settings controller.
-	 *
-	 * The optional review URL is for a trusted, confirmed OpenNow listing only.
-	 *
-	 * @param string $review_url Confirmed OpenNow WordPress.org review URL, if available.
 	 */
-	public function __construct( $review_url = '' ) {
+	public function __construct() {
 		$this->page_hook     = null;
 		$this->editor_config = null;
-		$this->review_url    = $this->getConfirmedReviewUrl( $review_url );
 	}
 
 	/**
@@ -787,31 +778,32 @@ final class Settings {
 	/**
 	 * Render the settings-page developer promotion.
 	 *
-	 * A review URL must be configured only after the OpenNow listing is confirmed.
-	 *
 	 * @return void
 	 */
 	private function renderDeveloperPromotion() {
-		$review_url = $this->review_url;
-
 		echo '<div class="opennow-developer-promotion" role="region" aria-labelledby="opennow-developer-promotion-heading">';
 		echo '<h2 id="opennow-developer-promotion-heading">'
 			. esc_html__( 'Need a WordPress Developer?', 'opennow' )
 			. '</h2>';
 		echo '<p>'
 			. esc_html__(
-				'Get help with custom plugins, themes, and WordPress development tailored to your project.',
+				'I build custom plugins, themes, and high-performance WordPress sites for businesses that need more than off-the-shelf solutions.',
 				'opennow'
 			)
 			. '</p>';
-		echo '<div class="opennow-developer-promotion__links">';
-		echo '<a class="opennow-developer-promotion__hire" href="'
+		echo '<p class="opennow-developer-promotion__hire-row">';
+		echo '<a class="button button-primary opennow-developer-promotion__hire" href="'
 			. esc_url( self::HIRE_URL, array( 'https' ) )
 			. '" target="_blank" rel="noopener noreferrer" aria-label="'
 			. esc_attr__( 'Hire a WordPress developer (opens in a new tab)', 'opennow' )
 			. '">'
 			. esc_html__( 'Hire Me', 'opennow' )
 			. '</a>';
+		echo '</p>';
+		echo '<hr />';
+		echo '<p class="opennow-developer-promotion__links">';
+		echo '<span class="opennow-developer-promotion__link">';
+		echo '<span class="dashicons dashicons-coffee opennow-developer-promotion__coffee" aria-hidden="true"></span>';
 		echo '<a class="opennow-developer-promotion__support" href="'
 			. esc_url( self::DONATION_URL, array( 'https' ) )
 			. '" target="_blank" rel="noopener noreferrer" aria-label="'
@@ -819,49 +811,20 @@ final class Settings {
 			. '">'
 			. esc_html__( 'Buy me a coffee', 'opennow' )
 			. '</a>';
-
-		if ( '' !== $review_url ) {
-			echo '<a class="opennow-developer-promotion__review" href="'
-				. esc_url( $review_url, array( 'https' ) )
-				. '" target="_blank" rel="noopener noreferrer" aria-label="'
-				. esc_attr__( 'Rate OpenNow on WordPress.org (opens in a new tab)', 'opennow' )
-				. '">'
-				. esc_html__( 'Rate this plugin', 'opennow' )
-				. '</a>';
-		}
-
+		echo '</span>';
+		echo '<span class="opennow-developer-promotion__separator" aria-hidden="true">&middot;</span>';
+		echo '<span class="opennow-developer-promotion__link">';
+		echo '<span class="dashicons dashicons-star-filled opennow-developer-promotion__star" aria-hidden="true"></span>';
+		echo '<a class="opennow-developer-promotion__review" href="'
+			. esc_url( self::REVIEW_URL, array( 'https' ) )
+			. '" target="_blank" rel="noopener noreferrer" aria-label="'
+			. esc_attr__( 'Rate OpenNow on WordPress.org (opens in a new tab)', 'opennow' )
+			. '">'
+			. esc_html__( 'Rate this plugin', 'opennow' )
+			. '</a>';
+		echo '</span>';
+		echo '</p>';
 		echo '</div>';
-		echo '</div>';
-	}
-
-	/**
-	 * Accept only the canonical OpenNow WordPress.org review destination.
-	 *
-	 * @param mixed $review_url Candidate review URL.
-	 * @return string
-	 */
-	private function getConfirmedReviewUrl( $review_url ) {
-		if ( ! is_string( $review_url ) || '' === trim( $review_url ) ) {
-			return '';
-		}
-
-		$review_url = trim( $review_url );
-		$parts      = wp_parse_url( $review_url );
-		if ( ! is_array( $parts )
-			|| ! isset( $parts['scheme'], $parts['host'], $parts['path'] )
-			|| 'https' !== strtolower( $parts['scheme'] )
-			|| 'wordpress.org' !== strtolower( $parts['host'] )
-			|| '/support/plugin/opennow/reviews/' !== $parts['path']
-			|| isset( $parts['user'] )
-			|| isset( $parts['pass'] )
-			|| isset( $parts['port'] )
-			|| isset( $parts['query'] )
-			|| ( isset( $parts['fragment'] ) && 'new-post' !== $parts['fragment'] )
-		) {
-			return '';
-		}
-
-		return $review_url;
 	}
 
 	/**

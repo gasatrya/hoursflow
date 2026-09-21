@@ -146,7 +146,7 @@
 #opennow-settings-layout > #opennow-cta-preview,
 #opennow-settings-layout > .opennow-developer-promotion {
     background: #FFFFFF;
-    border: 1px solid #8C8F94;
+    border: 1px solid #CCD0D4;
     border-radius: 0.2rem;
     grid-column: 2;
     overflow-wrap: anywhere;
@@ -161,7 +161,12 @@
 }
 
 #opennow-settings-layout > .opennow-developer-promotion {
+    border-color: #CCD0D4;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
     grid-row: 2;
+    margin-bottom: 20px;
+    padding: 20px;
 }
 
 #opennow-cta-preview h2 {
@@ -248,48 +253,47 @@
 }
 
 #opennow-settings-layout .opennow-developer-promotion h2 {
+    border-bottom: 1px solid #EEEEEE;
+    font-size: 14px;
     margin-top: 0;
-}
-
-#opennow-settings-layout .opennow-developer-promotion__links {
-    align-items: flex-start;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    max-width: 100%;
-    min-width: 0;
-}
-
-#opennow-settings-layout .opennow-developer-promotion__links a {
-    align-items: center;
-    box-sizing: border-box;
-    display: inline-flex;
-    min-height: 44px;
-    max-width: 100%;
-    overflow-wrap: anywhere;
+    padding-bottom: 10px;
 }
 
 #opennow-settings-layout .opennow-developer-promotion__hire {
-    background: #2271B1;
-    border: 1px solid #2271B1;
-    border-radius: 0.2rem;
-    color: #FFFFFF;
-    font-weight: 600;
-    justify-content: center;
-    min-width: 44px;
-    padding: 0.5rem 1rem;
+    box-sizing: border-box;
+    text-align: center;
+    width: 100%;
+}
+
+#opennow-settings-layout .opennow-developer-promotion hr {
+    border: 0;
+    border-top: 1px solid #EEEEEE;
+    margin: 20px 0;
+}
+
+#opennow-settings-layout .opennow-developer-promotion__links {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 0;
+}
+
+#opennow-settings-layout .opennow-developer-promotion__links .dashicons,
+#opennow-settings-layout .opennow-developer-promotion__links a {
     text-decoration: none;
+    vertical-align: middle;
 }
 
-#opennow-settings-layout .opennow-developer-promotion__hire:hover {
-    background: #135E96;
-    border-color: #135E96;
-    color: #FFFFFF;
+#opennow-settings-layout .opennow-developer-promotion__coffee {
+    color: #C9A96E;
 }
 
-#opennow-settings-layout .opennow-developer-promotion__support,
-#opennow-settings-layout .opennow-developer-promotion__review {
-    padding: 0.5rem 0;
+#opennow-settings-layout .opennow-developer-promotion__star {
+    color: #FFB900;
+}
+
+#opennow-settings-layout .opennow-developer-promotion__separator {
+    color: #CCD0D4;
 }
 
 #opennow-settings-layout .opennow-developer-promotion__links a:focus {
