@@ -143,6 +143,8 @@ final class PluginIntegrationTest extends WP_UnitTestCase
     public function testRealShortcodeAndBlockStatusHidingPreservesLegacyOutput(): void
     {
         $config = $this->config();
+        // Keep the real callbacks on a deterministic closed state; production evaluates the current instant.
+        $config['schedule']['monday'] = array('type' => 'closed');
         $config['cta']['closed']['status'] = 'We are closed.';
         update_option(Schema::OPTION_NAME, $config, false);
 
@@ -150,6 +152,8 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $legacy_block = do_blocks('<!-- wp:opennow/cta /-->');
 
         $this->assertSame($legacy_shortcode, $legacy_block);
+        $this->assertStringContainsString('href="/booking/"', $legacy_shortcode);
+        $this->assertStringContainsString('Book online', $legacy_shortcode);
         $this->assertStringContainsString('opennow-cta__status', $legacy_shortcode);
         $this->assertSame(
             1,
