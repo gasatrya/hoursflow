@@ -13,17 +13,13 @@ The MVP targets:
 - WordPress 6.6 or newer.
 - PHP 7.4 or newer.
 
-These are target minimums, not release claims, until CI demonstrates them. The initial matrix, selected on 2026-09-13 from the official WordPress [requirements](https://wordpress.org/about/requirements/), [PHP compatibility table](https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/), and [release archive](https://wordpress.org/download/releases/), is:
+These remain broad target minimums rather than the tested release gate. The required integration gate is intentionally one lane, selected from the official WordPress [requirements](https://wordpress.org/about/requirements/), [PHP compatibility table](https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/), and [release archive](https://wordpress.org/download/releases/):
 
-| WordPress patch | PHP release line | Purpose |
+| WordPress release line | PHP release line | Purpose |
 | --- | --- | --- |
-| 6.6.7 | 7.4.x | Minimum supported combination |
-| 6.6.7 | 8.3.x | Minimum WordPress on a modern PHP version supported by that branch |
-| 7.0.4 | 7.4.x | Current WordPress release line with the PHP minimum |
-| 7.0.4 | 8.3.x | Current WordPress with the recommended PHP baseline |
-| 7.0.4 | 8.5.x | Current WordPress with the newest PHP release line it supports |
+| 7.1 (pinned to 7.1.1) | 8.5.x | Only required integration release gate |
 
-CI MUST record the exact patch versions used and use the newest available patch in each listed release line. Before release, metadata and documentation MUST claim only the minimums and combinations that pass required automated checks. An allowed-failure or experimental job proves no compatibility. Updating current-version lanes does not lower the minimums, but raising either minimum requires an explicit contract change.
+CI MUST record the exact WordPress patch and PHP versions used by this gate. This single lane is not exhaustive compatibility coverage and does not prove every combination within the WordPress 6.6+ and PHP 7.4+ target ranges. Before release, metadata and documentation MUST claim only the minimums and combinations that pass required automated checks. Raising either minimum requires an explicit contract change.
 
 ## 2. Weekly schedule
 

@@ -133,7 +133,7 @@ final class RepositoryContractTest extends TestCase
         $this->assertIsString($readme);
         $this->assertStringContainsString("Requires at least: 6.6\n", $readme);
         $this->assertStringContainsString("Requires PHP: 7.4\n", $readme);
-        $this->assertStringContainsString("Tested up to: 7.0\n", $readme);
+        $this->assertStringContainsString("Tested up to: 7.1\n", $readme);
         $this->assertStringContainsString("Stable tag: 0.1.0\n", $readme);
 
         $composer = json_decode(

@@ -27,7 +27,7 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         parent::tearDown();
     }
 
-    public function testRunningWordPressPatchMatchesTheExactCiMatrixVersion(): void
+    public function testRunningWordPressPatchMatchesTheConfiguredCiVersion(): void
     {
         $expected_version = getenv('WP_VERSION');
         $this->assertIsString($expected_version);

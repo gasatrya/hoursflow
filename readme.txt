@@ -3,7 +3,7 @@ Contributors: gasatrya
 Tags: call to action, business hours, dynamic content, gutenberg, shortcode
 Requires at least: 6.6
 Requires PHP: 7.4
-Tested up to: 7.0
+Tested up to: 7.1
 Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -145,10 +145,11 @@ created. Reinstalling after uninstall starts unconfigured.
 
 == Support ==
 
-The required release matrix verifies WordPress 6.6.7 with PHP 7.4 and 8.3,
-and WordPress 7.0.4 with PHP 7.4, 8.3, and 8.5. A package is release-ready
-only after every required CI lane passes. See the repository support contract
-for the complete behavior and compatibility details.
+The required release gate verifies WordPress 7.1 (pinned to 7.1.1) with PHP
+8.5. This is the only required integration lane; it does not replace the
+WordPress 6.6 and PHP 7.4 minimum targets. A package is release-ready only
+after the required CI gate passes. See the repository support contract for the
+complete behavior and compatibility details.
 
 == Changelog ==
 

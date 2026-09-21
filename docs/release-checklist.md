@@ -14,13 +14,10 @@ not authorize a WordPress.org submission, Git tag, or hosted release.
    npm run check
    ```
 
-2. Confirm CI passes without allowed failures on every declared lane:
+2. Confirm the single required integration gate passes without allowed
+   failures:
 
-   - WordPress 6.6.7 / PHP 7.4
-   - WordPress 6.6.7 / PHP 8.3
-   - WordPress 7.0.4 / PHP 7.4
-   - WordPress 7.0.4 / PHP 8.3
-   - WordPress 7.0.4 / PHP 8.5
+   - WordPress 7.1 (pinned to 7.1.1) / PHP 8.5
 
 3. Confirm CI tests the extracted production package, records the exact
    WordPress/PHP/PHPUnit versions, and publishes
@@ -125,7 +122,7 @@ a screen reader check is recommended for the release environment.
 ## Metadata and lifecycle
 
 1. Confirm version `0.1.0`, WordPress minimum `6.6`, PHP minimum `7.4`, tested-up-to
-   `7.0`, text domain `opennow`, and GPL-2.0-or-later metadata agree across the
+   `7.1`, text domain `opennow`, and GPL-2.0-or-later metadata agree across the
    plugin header, readmes, changelog, package metadata, and POT file.
 2. Deactivate and reactivate; configuration must remain. Uninstall; both
    `opennow_config` and `opennow_schema_version` must be deleted. Reinstalling

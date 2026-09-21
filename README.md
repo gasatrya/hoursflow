@@ -174,15 +174,16 @@ strings, and runs PHPUnit. `npm run check` audits production npm packages, runs
 JavaScript tests and linting, checks formatting and CSS, reproduces block/POT
 assets, and verifies deterministic packaging.
 
-A local real-WordPress run additionally needs MySQL and the exact test version:
+A local real-WordPress run additionally needs MySQL, PHP 8.5, and the exact
+WordPress patch used by the required integration gate:
 
 ```bash
-bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 6.6.7
-WP_VERSION=6.6.7 composer test:integration
+bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 7.1.1
+WP_VERSION=7.1.1 composer test:integration
 ```
 
 The production package is generated as `dist/opennow-0.1.0.zip` and is
 intentionally ignored by Git. It contains only runtime PHP, local assets,
 generated block files, the translation template, and release documentation.
-See [`docs/release-checklist.md`](docs/release-checklist.md) for matrix,
+See [`docs/release-checklist.md`](docs/release-checklist.md) for integration,
 accessibility, package, and release verification.
