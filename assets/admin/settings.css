@@ -143,6 +143,13 @@
     overflow-wrap: anywhere;
 }
 
+#opennow-settings-layout .opennow-settings-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 20px;
+}
+
 #opennow-settings-layout > #opennow-cta-preview,
 #opennow-settings-layout > .opennow-developer-promotion {
     background: #FFFFFF;

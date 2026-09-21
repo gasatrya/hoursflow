@@ -22,6 +22,8 @@ $GLOBALS['opennow_test_enqueued_styles'] = array();
 $GLOBALS['opennow_test_current_user_can'] = true;
 $GLOBALS['opennow_test_is_admin'] = false;
 $GLOBALS['opennow_test_current_screen'] = null;
+$GLOBALS['opennow_test_nonce_checks'] = array();
+$GLOBALS['opennow_test_redirects'] = array();
 
 if (!class_exists('OpenNow_Test_Screen')) {
     /**
@@ -55,6 +57,15 @@ if (!class_exists('OpenNow_Test_Screen')) {
         {
             $this->help_tabs[] = $help_tab;
         }
+    }
+}
+
+if (!class_exists('OpenNow_Test_Redirect_Exception')) {
+    /**
+     * Stops execution after a redirect during unit tests.
+     */
+    class OpenNow_Test_Redirect_Exception extends RuntimeException
+    {
     }
 }
 
@@ -199,6 +210,27 @@ if (!function_exists('esc_url')) {
         }
 
         return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('esc_js')) {
+    function esc_js($text)
+    {
+        return addslashes((string) $text);
+    }
+}
+
+if (!function_exists('wp_unslash')) {
+    function wp_unslash($value)
+    {
+        return is_array($value) ? array_map('wp_unslash', $value) : stripslashes((string) $value);
+    }
+}
+
+if (!function_exists('sanitize_key')) {
+    function sanitize_key($key)
+    {
+        return strtolower(preg_replace('/[^a-z0-9_\-]/', '', (string) $key));
     }
 }
 
@@ -501,9 +533,18 @@ if (!function_exists('settings_errors')) {
 }
 
 if (!function_exists('submit_button')) {
-    function submit_button($text = null)
+    function submit_button($text = null, $type = 'primary large', $name = 'submit', $wrap = true, $other_attributes = null)
     {
-        echo '<button type="submit">' . esc_html(null === $text ? 'Save Changes' : $text) . '</button>';
+        $attributes = '';
+        foreach ((array) $other_attributes as $attribute => $value) {
+            $attributes .= ' ' . esc_attr($attribute) . '="' . esc_attr($value) . '"';
+        }
+
+        $button = '<button type="submit" name="' . esc_attr($name) . '" class="button button-'
+            . esc_attr($type) . '"' . $attributes . '>'
+            . esc_html(null === $text ? 'Save Changes' : $text) . '</button>';
+
+        echo $wrap ? '<p class="submit">' . $button . '</p>' : $button;
     }
 }
 
@@ -525,6 +566,46 @@ if (!function_exists('wp_die')) {
     function wp_die($message = '')
     {
         throw new RuntimeException((string) $message);
+    }
+}
+
+if (!function_exists('check_admin_referer')) {
+    function check_admin_referer($action = -1, $query_arg = '_wpnonce')
+    {
+        $GLOBALS['opennow_test_nonce_checks'][] = array(
+            'action' => $action,
+            'query_arg' => $query_arg,
+        );
+
+        return isset($_POST[$query_arg]) && 'test-nonce' === $_POST[$query_arg];
+    }
+}
+
+if (!function_exists('admin_url')) {
+    function admin_url($path = '')
+    {
+        return 'https://example.test/wp-admin/' . ltrim($path, '/');
+    }
+}
+
+if (!function_exists('add_query_arg')) {
+    function add_query_arg($args, $url = '')
+    {
+        $separator = false === strpos($url, '?') ? '?' : '&';
+        return $url . $separator . http_build_query($args, '', '&', PHP_QUERY_RFC3986);
+    }
+}
+
+if (!function_exists('wp_safe_redirect')) {
+    function wp_safe_redirect($location, $status = 302, $x_redirect_by = 'WordPress')
+    {
+        $GLOBALS['opennow_test_redirects'][] = array(
+            'location' => $location,
+            'status' => $status,
+            'x_redirect_by' => $x_redirect_by,
+        );
+
+        throw new OpenNow_Test_Redirect_Exception($location);
     }
 }
 
@@ -621,5 +702,9 @@ function opennow_reset_wp_stubs()
     $GLOBALS['opennow_test_current_user_can'] = true;
     $GLOBALS['opennow_test_is_admin'] = false;
     $GLOBALS['opennow_test_current_screen'] = null;
+    $GLOBALS['opennow_test_nonce_checks'] = array();
+    $GLOBALS['opennow_test_redirects'] = array();
+    $_GET = array();
+    $_POST = array();
     $GLOBALS['wp_locale'] = new OpenNow_Test_Locale();
 }

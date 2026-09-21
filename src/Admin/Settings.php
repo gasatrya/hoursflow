@@ -48,6 +48,7 @@ final class Settings {
 	 */
 	public function register() {
 		add_action( 'admin_init', array( $this, 'registerSetting' ) );
+		add_action( 'admin_init', array( $this, 'handleReset' ) );
 		add_action( 'admin_menu', array( $this, 'registerPage' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueueAssets' ) );
 
@@ -356,17 +357,87 @@ final class Settings {
 
 		echo '<div class="wrap">';
 		echo '<h1>' . esc_html__( 'OpenNow Settings', 'opennow' ) . '</h1>';
+		$this->renderResetNotice();
 		$this->renderSettingsErrors();
 		echo '<div id="opennow-settings-layout">';
 		echo '<form action="options.php" method="post">';
 		settings_fields( 'opennow' );
 		do_settings_sections( self::PAGE_SLUG );
-		submit_button( __( 'Save Changes', 'opennow' ) );
+		echo '<div class="opennow-settings-actions">';
+		submit_button( __( 'Save Changes', 'opennow' ), 'primary', 'submit', false );
+		submit_button(
+			__( 'Reset to Defaults', 'opennow' ),
+			'secondary',
+			'opennow_reset',
+			false,
+			array(
+				'formnovalidate' => 'formnovalidate',
+				'onclick'        => 'return confirm("' . esc_js(
+					__( 'Are you sure you want to reset all settings to defaults?', 'opennow' )
+				) . '");',
+			)
+		);
+		echo '</div>';
 		echo '</form>';
 		$this->renderPreview();
 		$this->renderDeveloperPromotion();
 		echo '</div>';
 		echo '</div>';
+	}
+
+	/**
+	 * Delete the saved configuration when an authorized reset is requested.
+	 *
+	 * @return void
+	 */
+	public function handleReset() {
+		if ( ! isset( $_POST['opennow_reset'], $_POST['_wpnonce'] ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( self::PAGE_CAPABILITY ) ) {
+			return;
+		}
+
+		if ( ! check_admin_referer( 'opennow-options' ) ) {
+			return;
+		}
+
+		delete_option( Schema::OPTION_NAME );
+
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page'          => self::PAGE_SLUG,
+					'opennow-reset' => '1',
+				),
+				admin_url( 'options-general.php' )
+			)
+		);
+		exit;
+	}
+
+	/**
+	 * Display confirmation after settings have been reset.
+	 *
+	 * @return void
+	 */
+	public function renderResetNotice() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$reset = isset( $_GET['opennow-reset'] ) ? sanitize_key( wp_unslash( $_GET['opennow-reset'] ) ) : '';
+
+		if ( self::PAGE_SLUG !== $page
+			|| '1' !== $reset
+			|| ! current_user_can( self::PAGE_CAPABILITY )
+		) {
+			return;
+		}
+
+		echo '<div class="notice notice-success is-dismissible"><p>'
+			. esc_html__( 'Settings have been reset to defaults.', 'opennow' )
+			. '</p></div>';
 	}
 
 	/**

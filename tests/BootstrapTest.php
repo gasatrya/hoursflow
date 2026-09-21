@@ -45,7 +45,8 @@ final class BootstrapTest extends TestCase
         );
         $this->assertArrayHasKey('render_callback', $GLOBALS['opennow_test_registered_blocks'][0]['args']);
         $this->assertArrayHasKey('admin_init', $GLOBALS['opennow_test_hooks']);
-        $this->assertCount(1, $GLOBALS['opennow_test_hooks']['admin_init']);
+        $this->assertCount(2, $GLOBALS['opennow_test_hooks']['admin_init']);
+        $this->assertArrayNotHasKey('admin_notices', $GLOBALS['opennow_test_hooks']);
         $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
     }
 

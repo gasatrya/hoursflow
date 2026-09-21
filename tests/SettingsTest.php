@@ -18,7 +18,10 @@ final class SettingsTest extends TestCase
         $settings->register();
 
         $this->assertArrayHasKey('admin_init', $GLOBALS['opennow_test_hooks']);
-        $this->assertCount(1, $GLOBALS['opennow_test_hooks']['admin_init']);
+        $this->assertCount(2, $GLOBALS['opennow_test_hooks']['admin_init']);
+        $this->assertSame('registerSetting', $GLOBALS['opennow_test_hooks']['admin_init'][0]['callback'][1]);
+        $this->assertSame('handleReset', $GLOBALS['opennow_test_hooks']['admin_init'][1]['callback'][1]);
+        $this->assertArrayNotHasKey('admin_notices', $GLOBALS['opennow_test_hooks']);
         $this->assertSame(array(), $GLOBALS['opennow_test_registered_settings']);
 
         do_action('admin_init');
@@ -61,6 +64,10 @@ final class SettingsTest extends TestCase
             Settings::PAGE_CAPABILITY,
             apply_filters('option_page_capability_opennow', 'different_capability')
         );
+        $_GET = array(
+            'page' => Settings::PAGE_SLUG,
+            'opennow-reset' => '1',
+        );
 
         ob_start();
         call_user_func($page['callback']);
@@ -75,6 +82,11 @@ final class SettingsTest extends TestCase
         $this->assertStringContainsString('name="opennow_config[appearance][background_color]"', $output);
         $this->assertStringContainsString('name="opennow_config[appearance][text_color]"', $output);
         $this->assertStringNotContainsString('type="hidden" name="opennow_config[appearance]', $output);
+        $this->assertStringContainsString('name="opennow_reset"', $output);
+        $this->assertStringContainsString('formnovalidate="formnovalidate"', $output);
+        $this->assertStringContainsString('Reset to Defaults', $output);
+        $this->assertStringContainsString('Are you sure you want to reset all settings to defaults?', $output);
+        $this->assertSame(1, substr_count($output, 'Settings have been reset to defaults.'));
         $this->assertSame(7, substr_count($output, 'data-opennow-schedule-day='));
         $this->assertSame(7, substr_count($output, 'checked="checked"'));
         $this->assertSame(array(), $GLOBALS['opennow_test_option_calls']);
@@ -82,6 +94,106 @@ final class SettingsTest extends TestCase
         $this->assertStringContainsString('value="UTC"', $output);
         $this->assertStringNotContainsString('Manual Offsets', $output);
         $this->assertStringNotContainsString('value="UTC+1"', $output);
+    }
+
+    public function testResetDeletesOnlyConfigurationAndRedirectsToTheSettingsPage(): void
+    {
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->validConfig();
+        $GLOBALS['opennow_test_options'][Schema::SCHEMA_OPTION_NAME] = Schema::VERSION;
+        $_POST = array(
+            'opennow_reset' => 'Reset to Defaults',
+            '_wpnonce' => 'test-nonce',
+        );
+
+        try {
+            (new Settings())->handleReset();
+            $this->fail('Expected the redirect to stop request execution.');
+        } catch (\OpenNow_Test_Redirect_Exception $exception) {
+            $this->assertSame(
+                'https://example.test/wp-admin/options-general.php?page=opennow&opennow-reset=1',
+                $exception->getMessage()
+            );
+        }
+
+        $this->assertArrayNotHasKey(Schema::OPTION_NAME, $GLOBALS['opennow_test_options']);
+        $this->assertSame(
+            Schema::VERSION,
+            $GLOBALS['opennow_test_options'][Schema::SCHEMA_OPTION_NAME]
+        );
+        $this->assertSame(
+            array(array('function' => 'delete_option', 'option' => Schema::OPTION_NAME)),
+            $GLOBALS['opennow_test_option_calls']
+        );
+        $this->assertSame(
+            array(array('action' => 'opennow-options', 'query_arg' => '_wpnonce')),
+            $GLOBALS['opennow_test_nonce_checks']
+        );
+        $this->assertCount(1, $GLOBALS['opennow_test_redirects']);
+    }
+
+    public function testResetRejectsUnauthorizedAndInvalidNonceRequests(): void
+    {
+        $config = $this->validConfig();
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $_POST = array(
+            'opennow_reset' => 'Reset to Defaults',
+            '_wpnonce' => 'test-nonce',
+        );
+        $GLOBALS['opennow_test_current_user_can'] = false;
+
+        (new Settings())->handleReset();
+
+        $this->assertSame($config, $GLOBALS['opennow_test_options'][Schema::OPTION_NAME]);
+        $this->assertSame(array(), $GLOBALS['opennow_test_nonce_checks']);
+        $this->assertSame(array(), $GLOBALS['opennow_test_redirects']);
+
+        $GLOBALS['opennow_test_current_user_can'] = true;
+        $_POST['_wpnonce'] = 'invalid-nonce';
+
+        (new Settings())->handleReset();
+
+        $this->assertSame($config, $GLOBALS['opennow_test_options'][Schema::OPTION_NAME]);
+        $this->assertCount(1, $GLOBALS['opennow_test_nonce_checks']);
+        $this->assertSame(array(), $GLOBALS['opennow_test_option_calls']);
+        $this->assertSame(array(), $GLOBALS['opennow_test_redirects']);
+    }
+
+    public function testResetNoticeAppearsOnlyOnTheAuthorizedSettingsPage(): void
+    {
+        $settings = new Settings();
+        $_GET = array(
+            'page' => Settings::PAGE_SLUG,
+            'opennow-reset' => '1',
+        );
+
+        ob_start();
+        $settings->renderResetNotice();
+        $output = (string) ob_get_clean();
+
+        $this->assertStringContainsString('notice-success', $output);
+        $this->assertStringContainsString('Settings have been reset to defaults.', $output);
+
+        $_GET = array(
+            'page' => Settings::PAGE_SLUG,
+            'settings-updated' => 'reset',
+        );
+        ob_start();
+        $settings->renderResetNotice();
+        $this->assertSame('', (string) ob_get_clean());
+
+        $_GET = array(
+            'page' => 'other',
+            'opennow-reset' => '1',
+        );
+        ob_start();
+        $settings->renderResetNotice();
+        $this->assertSame('', (string) ob_get_clean());
+
+        $_GET['page'] = Settings::PAGE_SLUG;
+        $GLOBALS['opennow_test_current_user_can'] = false;
+        ob_start();
+        $settings->renderResetNotice();
+        $this->assertSame('', (string) ob_get_clean());
     }
 
     public function testSettingsPageRendersAnAccessibleNonNavigatingPreviewFromEditorValues(): void
