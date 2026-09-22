@@ -255,12 +255,23 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 
 function getServerAttributes( attributes ) {
 	const safeAttributes = getAttributes( attributes );
+	const serverAttributes = {};
 
-	if ( ! isObject( safeAttributes.overrides ) ) {
-		return {};
+	if ( isObject( safeAttributes.overrides ) ) {
+		serverAttributes.overrides = safeAttributes.overrides;
 	}
+	if ( isObject( safeAttributes.style ) ) {
+		serverAttributes.style = safeAttributes.style;
+	}
+	[ 'backgroundColor', 'fontFamily', 'fontSize', 'textColor' ].forEach(
+		( attribute ) => {
+			if ( 'string' === typeof safeAttributes[ attribute ] ) {
+				serverAttributes[ attribute ] = safeAttributes[ attribute ];
+			}
+		}
+	);
 
-	return { overrides: safeAttributes.overrides };
+	return serverAttributes;
 }
 
 export function Edit( props = {} ) {

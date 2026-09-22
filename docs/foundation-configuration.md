@@ -106,8 +106,12 @@ uses a server-side-rendered preview of the current output. The renderer first
 requires a valid selected global CTA, then applies only valid selected-state
 content and status-visibility overrides. `hideStatus: true` wins over a
 nonblank global or status override, while an explicitly blank status override
-retains its legacy suppression behavior. Schedules, appearance colors, and
-frontend styles remain global for both integrations.
+retains its legacy suppression behavior. Schedules and the shortcode's
+appearance colors remain global. Block instances may additionally use
+WordPress's built-in text/background color and typography supports. Per-block
+colors override the global defaults on that CTA link, while typography applies
+to the dynamic block wrapper; both appear in the editor preview without
+affecting shortcode output.
 
 The renderer evaluates the current absolute instant in the saved named IANA
 timezone, selects only the matching open or closed CTA, applies only valid

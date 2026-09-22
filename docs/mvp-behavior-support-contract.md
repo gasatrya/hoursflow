@@ -98,18 +98,27 @@ A fresh activation is unconfigured and renders nothing until valid settings are 
 
 ## 6. Styling boundary
 
-The MVP provides only two optional global appearance controls, shared by the shortcode and every block instance:
+The MVP provides two optional global appearance controls. They apply to the shortcode and provide the default for every block instance:
 
 - CTA link background color.
 - CTA link text color.
 
-Block content overrides MUST NOT change these global colors or any frontend
-style, class, or stylesheet behavior. The shortcode and every block instance
-share the same global appearance configuration.
+Block content and state overrides MUST NOT change these global defaults or any
+frontend style, class, or stylesheet behavior. Independently of content
+overrides, block instances MAY use WordPress's built-in color supports to
+override the CTA link text and background colors for that instance. The color
+support classes and custom styles MUST be applied to the CTA link rather than
+the surrounding status wrapper. A missing individual block color MUST retain
+its corresponding global color. Block instances MAY also use
+WordPress's built-in typography supports for font size, font family, font
+weight, font style, line height, letter spacing, and text transform. Typography
+attributes MUST apply to the rendered CTA wrapper. Color and typography
+attributes MUST appear in the server-rendered editor preview, MUST remain scoped
+to that block instance, and MUST NOT change shortcode output.
 
-A blank persisted value selects its plugin default; a nonblank value must match `#[0-9A-Fa-f]{6}` exactly after surrounding whitespace is trimmed. The native settings color picker MUST display the corresponding plugin default when a persisted value is blank. Legacy blank values MUST remain accepted by validation and use that default at runtime until an administrator saves an explicit picker value. The settings UI MUST reject an effective text/background pair that does not meet WCAG 2.2 AA contrast for normal text. The default pair MUST meet the same threshold. During runtime revalidation, if either stored value is malformed or the effective pair has insufficient contrast, the complete default pair is used.
+A blank globally persisted value selects its plugin default; a nonblank global value must match `#[0-9A-Fa-f]{6}` exactly after surrounding whitespace is trimmed. The native settings color picker MUST display the corresponding plugin default when a persisted value is blank. Legacy blank values MUST remain accepted by validation and use that default at runtime until an administrator saves an explicit picker value. The settings UI MUST reject an effective global text/background pair that does not meet WCAG 2.2 AA contrast for normal text. The default pair MUST meet the same threshold. During runtime revalidation, if either stored global value is malformed or the effective global pair has insufficient contrast, the complete default pair is used. Per-block colors use WordPress palette presets or custom-color serialization and its native contrast warning; editors remain responsible for ensuring the selected per-block pair has sufficient contrast.
 
-The plugin supplies a tightly bounded layout baseline, hover, and visible keyboard-focus styling. The link MUST use compact button-like internal spacing, a minimum 44x44 CSS-pixel target, modest corner rounding, centered text, and wrapping safeguards. Status text MUST remain block-level, have a modest separation gap, and wrap safely. The baseline inherits theme typography, does not set fixed width/height dimensions, and does not load fonts. No new appearance controls are exposed: the plugin MUST NOT expose controls for typography, font loading, fixed dimensions, spacing, borders, shadows, animation, responsive layout, per-state styles, or per-block style overrides.
+The plugin supplies a tightly bounded layout baseline, hover, and visible keyboard-focus styling. The link MUST use compact button-like internal spacing, a minimum 44x44 CSS-pixel target, modest corner rounding, centered text, and wrapping safeguards. Status text MUST remain block-level, have a modest separation gap, and wrap safely. The baseline inherits theme typography unless a block instance uses the supported WordPress typography controls. The plugin does not load fonts; font-family choices are limited to fonts supplied by WordPress, the active theme, or the site. The plugin MUST NOT expose controls for fixed dimensions, spacing, borders, shadows, animation, responsive layout, or per-state styles.
 
 The admin weekly-hours editor MUST keep each weekday in a bordered semantic fieldset with a localized weekday legend, explicit opening and closing labels, visible translated Open/Closed text, and aligned time rows. Its Closed control MUST accurately reference both time input IDs with `aria-controls`; closed inputs MUST be disabled and not required, while open inputs MUST be required and not disabled. The local admin stylesheet MUST keep these groups within the viewport and stack each time row at widths of 782 CSS pixels or less. The settings page MUST provide a labeled live CTA preview beside the form at wider widths and in a stacked position at narrow widths. Native Open and Closed controls MUST expose their selected state, select a variant independently of the schedule, and have at least 44x44 CSS-pixel targets with a visible focus indicator. The preview MUST reflect current unsaved labels, optional status, and global colors, use the documented defaults for blank colors, preserve safe wrapping, and remain visual-only non-link markup that cannot activate an action. A visually distinct developer promotion MUST follow the preview within the same sidebar in DOM and visual order, and the complete sidebar MUST stack below the form at widths of 782 CSS pixels or less without horizontal overflow. Promotion links MUST use translated, escaped text and URLs, protected new browsing contexts, understandable accessible names, and visible focus indicators. The card MUST load no remote assets or embedded content; its Gasatrya hire and donation destinations are contacted only after administrator activation. A review link MUST remain absent unless the canonical OpenNow WordPress.org review page is confirmed. Sidebar assets and markup MUST remain scoped to the authorized OpenNow settings page. Themes may customize stable public hooks without editing plugin files:
 

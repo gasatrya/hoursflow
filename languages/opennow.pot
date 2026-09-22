@@ -124,13 +124,13 @@ msgstr ""
 
 #: src/Admin/Settings.php:319
 #: src/Admin/Settings.php:1283
-#: src/blocks/cta/index.js:276
+#: src/blocks/cta/index.js:287
 msgid "Open CTA"
 msgstr ""
 
 #: src/Admin/Settings.php:338
 #: src/Admin/Settings.php:1284
-#: src/blocks/cta/index.js:283
+#: src/blocks/cta/index.js:294
 msgid "Closed CTA"
 msgstr ""
 

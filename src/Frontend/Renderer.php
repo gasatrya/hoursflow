@@ -35,9 +35,11 @@ final class Renderer {
 	 * Render the CTA for the current runtime state.
 	 *
 	 * @param mixed $overrides Raw per-state override candidate.
+	 * @param bool  $is_block_render Whether to apply WordPress block wrapper supports.
+	 * @param mixed $block_colors Canonical per-block color attributes.
 	 * @return string
 	 */
-	public function render( $overrides = array() ): string {
+	public function render( $overrides = array(), bool $is_block_render = false, $block_colors = array() ): string {
 		try {
 			$config = $this->repository->getRuntimeConfig();
 			if ( ! is_array( $config ) ) {
@@ -99,13 +101,23 @@ final class Renderer {
 				return '';
 			}
 
-			$wrapper_class = 'opennow-cta opennow-cta--' . $state;
-			$style         = '--opennow-cta-background-color: ' . $appearance['background_color']
+			$wrapper_class      = 'opennow-cta opennow-cta--' . $state;
+			$style              = '--opennow-cta-background-color: ' . $appearance['background_color']
 				. '; --opennow-cta-text-color: ' . $appearance['text_color'] . ';';
-			$markup        = '<div class="' . esc_attr( $wrapper_class ) . '" style="'
-				. esc_attr( $style ) . '">'
-				. '<a class="' . esc_attr( 'opennow-cta__link' ) . '" href="'
-				. $action . '">' . esc_html( $cta['label'] ) . '</a>';
+			$wrapper_attributes = 'class="' . esc_attr( $wrapper_class ) . '" style="'
+				. esc_attr( $style ) . '"';
+			if ( $is_block_render && function_exists( 'get_block_wrapper_attributes' ) ) {
+				$wrapper_attributes = get_block_wrapper_attributes(
+					array(
+						'class' => $wrapper_class,
+						'style' => $style,
+					)
+				);
+			}
+			$link_attributes = $this->linkAttributes( $block_colors );
+			$markup          = '<div ' . $wrapper_attributes . '>'
+				. '<a ' . $link_attributes . ' href="' . $action . '">'
+				. esc_html( $cta['label'] ) . '</a>';
 
 			if ( ! $hide_status && '' !== $cta['status'] ) {
 				$markup .= '<span class="' . esc_attr( 'opennow-cta__status' ) . '">'
@@ -120,6 +132,74 @@ final class Renderer {
 		} catch ( \Throwable $exception ) {
 			return '';
 		}
+	}
+
+	/**
+	 * Build link attributes with optional WordPress color support output.
+	 *
+	 * @param mixed $block_colors Canonical per-block color attributes.
+	 * @return string
+	 */
+	private function linkAttributes( $block_colors ): string {
+		$classes = array( 'opennow-cta__link' );
+		$styles  = array();
+		if ( is_array( $block_colors ) && function_exists( 'wp_style_engine_get_styles' ) ) {
+			$custom_colors = isset( $block_colors['style'] ) && is_array( $block_colors['style'] )
+				&& isset( $block_colors['style']['color'] ) && is_array( $block_colors['style']['color'] )
+				? $block_colors['style']['color']
+				: array();
+			foreach (
+				array(
+					'text'       => 'textColor',
+					'background' => 'backgroundColor',
+				) as $color => $preset_attribute
+			) {
+				$is_preset = isset( $block_colors[ $preset_attribute ] )
+					&& is_string( $block_colors[ $preset_attribute ] )
+					&& '' !== $block_colors[ $preset_attribute ];
+				$value     = $is_preset
+					? 'var:preset|color|' . $block_colors[ $preset_attribute ]
+					: ( isset( $custom_colors[ $color ] ) && is_string( $custom_colors[ $color ] )
+						? $custom_colors[ $color ]
+						: '' );
+				if ( '' === $value ) {
+					continue;
+				}
+
+				$generated = wp_style_engine_get_styles(
+					array( 'color' => array( $color => $value ) ),
+					array( 'convert_vars_to_classnames' => true )
+				);
+				if ( ! is_array( $generated ) ) {
+					continue;
+				}
+
+				$generated_style = '';
+				if ( isset( $generated['css'] ) && is_string( $generated['css'] )
+					&& '' !== $generated['css'] && function_exists( 'safecss_filter_attr' )
+				) {
+					$generated_style = rtrim( trim( safecss_filter_attr( $generated['css'] ) ), ';' );
+				}
+				if ( ! $is_preset && '' === $generated_style ) {
+					continue;
+				}
+				if ( isset( $generated['classnames'] ) && is_string( $generated['classnames'] )
+					&& '' !== $generated['classnames']
+				) {
+					$classes[] = $generated['classnames'];
+				}
+				if ( '' !== $generated_style ) {
+					$styles[] = $generated_style;
+				}
+			}
+		}
+
+		$attributes = 'class="' . esc_attr( implode( ' ', $classes ) ) . '"';
+		if ( ! empty( $styles ) ) {
+			$attributes .= ' style="' . esc_attr( implode( ';', $styles ) ) . '"';
+		}
+
+		return $attributes;
 	}
 
 	/**

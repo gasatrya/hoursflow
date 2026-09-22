@@ -170,6 +170,33 @@ final class BlockTest extends TestCase
         $this->assertStringNotContainsString('opennow-cta__status', $output);
     }
 
+    public function testBlockColorsOverrideGlobalLinkColorsWithoutAffectingDirectRendering(): void
+    {
+        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
+        $block = new Block($this->rendererAt('2024-01-08 10:00:00'));
+        $attributes = array(
+            'textColor' => 'vivid-red',
+            'style' => array(
+                'color' => array(
+                    'background' => '#123456',
+                ),
+            ),
+        );
+
+        $block_output = $block->render($attributes, '', (object) array());
+        $direct_output = $block->render($attributes, '', null);
+
+        $this->assertStringContainsString(
+            'class="opennow-cta__link has-text-color has-vivid-red-color has-background"',
+            $block_output
+        );
+        $this->assertStringContainsString('style="background-color:#123456"', $block_output);
+        $this->assertStringNotContainsString('has-vivid-red-color', $direct_output);
+        $this->assertStringNotContainsString('style="background-color:#123456"', $direct_output);
+        $this->assertStringContainsString('--opennow-cta-background-color:', $direct_output);
+        $this->assertStringContainsString('--opennow-cta-text-color:', $direct_output);
+    }
+
     public function testBlockHandlesMalformedAttributesWithoutWarningsOrOverrideRescue(): void
     {
         $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->config();
@@ -181,9 +208,11 @@ final class BlockTest extends TestCase
                     'open' => 'malformed',
                     'closed' => array('action' => 'javascript:bad'),
                 ),
+                'textColor' => array('malformed'),
+                'style' => 'malformed',
             ),
             '<strong>ignored</strong>',
-            null
+            (object) array()
         );
 
         $this->assertStringContainsString('Call Now', $output);

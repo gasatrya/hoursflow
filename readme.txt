@@ -64,8 +64,12 @@ back to the matching field in the selected global open or closed CTA; values
 from the other state have no effect. `hideStatus: true` takes priority over a
 nonblank global or status override. An enabled blank status still explicitly
 suppresses the global status for backward compatibility. Removing every
-override restores the legacy empty block delimiter. Schedules, colors, and
-styles remain global and shared by every integration.
+override restores the legacy empty block delimiter. Schedules remain global
+and shared by every integration. Blocks additionally expose WordPress's
+built-in text/background color and typography controls. A block's colors
+override the global CTA link colors for that instance, while its typography can
+set font size, family, weight, style, line height, letter spacing, and text
+transform. These choices do not change shortcode output.
 
 Actions may be root-relative URLs such as `/booking/`, complete `https://`
 URLs, or supported `tel:` actions. Labels and status text are plain text. HTML,
@@ -91,17 +95,23 @@ or date ranges.
 
 == Appearance and accessibility ==
 
-Only two global appearance controls exist: CTA link background and text color.
-Content overrides do not affect appearance. The native color pickers display
+The OpenNow settings provide global CTA link background and text colors for the
+shortcode and as the default for every block. Individual blocks can override
+both through WordPress's built-in color panel; content and state overrides do
+not affect appearance. The global color pickers display
 `#166534` and `#FFFFFF` when their corresponding saved values are blank.
 Legacy blank values remain valid and use those defaults at runtime; saving the
 displayed picker value stores an explicit color. Nonblank values must be
 six-digit hexadecimal colors and the effective pair must meet WCAG 2.2 AA
-contrast for normal text. Invalid colors or low contrast use the complete
-plugin default pair. There are no per-block or per-state style controls.
+contrast for normal text. Invalid global colors or low global contrast use the
+complete plugin default pair. WordPress's editor contrast checker warns about
+potentially inaccessible per-block choices, but editors remain responsible for
+the contrast of those overrides. There are no per-state color controls.
 
-Plugin styling uses the theme's inherited typography and a compact, button-like
-baseline: the link has a minimum 44x44 CSS-pixel target, modest rounding, and
+Plugin styling uses the theme's inherited typography by default. Each block
+can override that inheritance through WordPress's built-in typography panel;
+the shortcode continues to inherit theme typography. The compact, button-like
+baseline gives the link a minimum 44x44 CSS-pixel target, modest rounding, and
 responsive wrapping; status text has a small separation gap and also wraps
 safely. It does not set fixed dimensions or load fonts.
 

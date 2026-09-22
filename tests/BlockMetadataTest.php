@@ -44,6 +44,27 @@ final class BlockMetadataTest extends TestCase
             array(
                 'html' => false,
                 'customClassName' => false,
+                'color' => array(
+                    'text' => true,
+                    'background' => true,
+                    '__experimentalSkipSerialization' => true,
+                    '__experimentalDefaultControls' => array(
+                        'text' => true,
+                        'background' => true,
+                    ),
+                ),
+                'typography' => array(
+                    'fontSize' => true,
+                    'lineHeight' => true,
+                    '__experimentalFontFamily' => true,
+                    '__experimentalFontWeight' => true,
+                    '__experimentalFontStyle' => true,
+                    '__experimentalTextTransform' => true,
+                    '__experimentalLetterSpacing' => true,
+                    '__experimentalDefaultControls' => array(
+                        'fontSize' => true,
+                    ),
+                ),
             ),
             $metadata['supports']
         );
@@ -61,6 +82,14 @@ final class BlockMetadataTest extends TestCase
         $this->assertIsString($editor_css);
         $this->assertStringContainsString('.opennow-cta__link', $editor_css);
         $this->assertStringContainsString('min-height:44px', $editor_css);
+        $this->assertStringContainsString(
+            '.opennow-cta__link:not(.has-background)',
+            $editor_css
+        );
+        $this->assertStringContainsString(
+            '.opennow-cta__link:not(.has-text-color)',
+            $editor_css
+        );
         $this->assertStringContainsString(
             '.wp-block-opennow-cta .opennow-cta__link{pointer-events:none}',
             $editor_css

@@ -4,8 +4,6 @@
 }
 
 .opennow-cta__link {
-    background-color: var(--opennow-cta-background-color);
-    color: var(--opennow-cta-text-color);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -18,6 +16,14 @@
     text-align: center;
     text-decoration: none;
     overflow-wrap: anywhere;
+}
+
+.opennow-cta__link:not(.has-background) {
+    background-color: var(--opennow-cta-background-color);
+}
+
+.opennow-cta__link:not(.has-text-color) {
+    color: var(--opennow-cta-text-color);
 }
 
 .opennow-cta__link:hover {

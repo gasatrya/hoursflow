@@ -258,6 +258,82 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $this->assertSame('', do_blocks($this->serializedCta($valid_overrides)));
     }
 
+    public function testTypographyBlockSupportsReachTheRenderedCtaWrapper(): void
+    {
+        update_option(Schema::OPTION_NAME, $this->config(), false);
+        $attributes = array(
+            'fontFamily' => 'heading',
+            'fontSize' => 'large',
+            'style' => array(
+                'typography' => array(
+                    'fontStyle' => 'italic',
+                    'fontWeight' => '700',
+                    'letterSpacing' => '0.05em',
+                    'lineHeight' => '1.4',
+                    'textTransform' => 'uppercase',
+                ),
+            ),
+        );
+        $serialized = serialize_blocks(
+            array(
+                array(
+                    'blockName' => 'opennow/cta',
+                    'attrs' => $attributes,
+                    'innerBlocks' => array(),
+                    'innerHTML' => '',
+                    'innerContent' => array(),
+                ),
+            )
+        );
+
+        $output = do_blocks($serialized);
+
+        $this->assertStringContainsString('has-heading-font-family', $output);
+        $this->assertStringContainsString('has-large-font-size', $output);
+        $this->assertStringContainsString('font-style:italic', $output);
+        $this->assertStringContainsString('font-weight:700', $output);
+        $this->assertStringContainsString('letter-spacing:0.05em', $output);
+        $this->assertStringContainsString('line-height:1.4', $output);
+        $this->assertStringContainsString('text-transform:uppercase', $output);
+        $this->assertStringContainsString('--opennow-cta-background-color:', $output);
+        $this->assertStringContainsString('--opennow-cta-text-color:', $output);
+    }
+
+    public function testColorBlockSupportsOverrideOnlyTheRenderedCtaLink(): void
+    {
+        update_option(Schema::OPTION_NAME, $this->config(), false);
+        $attributes = array(
+            'textColor' => 'vivid-red',
+            'style' => array(
+                'color' => array(
+                    'background' => '#123456',
+                ),
+            ),
+        );
+        $serialized = serialize_blocks(
+            array(
+                array(
+                    'blockName' => 'opennow/cta',
+                    'attrs' => $attributes,
+                    'innerBlocks' => array(),
+                    'innerHTML' => '',
+                    'innerContent' => array(),
+                ),
+            )
+        );
+
+        $output = do_blocks($serialized);
+        $shortcode_output = do_shortcode('[opennow_cta]');
+
+        $this->assertStringContainsString('has-text-color', $output);
+        $this->assertStringContainsString('has-vivid-red-color', $output);
+        $this->assertStringContainsString('has-background', $output);
+        $this->assertStringContainsString('background-color:', $output);
+        $this->assertStringContainsString('#123456', $output);
+        $this->assertStringNotContainsString('has-vivid-red-color', $shortcode_output);
+        $this->assertStringNotContainsString('#123456', $shortcode_output);
+    }
+
     public function testRestBlockRendererReturnsAuthenticatedNestedOverrideOutput(): void
     {
         $config = $this->config();
@@ -286,7 +362,21 @@ final class PluginIntegrationTest extends WP_UnitTestCase
             wp_json_encode(
                 array(
                     'context' => 'edit',
-                    'attributes' => array('overrides' => $overrides),
+                    'attributes' => array(
+                        'overrides' => $overrides,
+                        'fontFamily' => 'heading',
+                        'fontSize' => 'large',
+                        'textColor' => 'vivid-red',
+                        'style' => array(
+                            'color' => array(
+                                'background' => '#123456',
+                            ),
+                            'typography' => array(
+                                'fontWeight' => '700',
+                                'lineHeight' => '1.4',
+                            ),
+                        ),
+                    ),
                 )
             )
         );
@@ -300,6 +390,12 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $this->assertArrayHasKey('rendered', $data);
         $this->assertStringContainsString('REST CTA', $data['rendered']);
         $this->assertStringContainsString('href="/rest-cta/"', $data['rendered']);
+        $this->assertStringContainsString('has-heading-font-family', $data['rendered']);
+        $this->assertStringContainsString('has-large-font-size', $data['rendered']);
+        $this->assertStringContainsString('has-vivid-red-color', $data['rendered']);
+        $this->assertStringContainsString('#123456', $data['rendered']);
+        $this->assertStringContainsString('font-weight:700', $data['rendered']);
+        $this->assertStringContainsString('line-height:1.4', $data['rendered']);
         $this->assertStringNotContainsString('opennow-cta__status', $data['rendered']);
     }
 

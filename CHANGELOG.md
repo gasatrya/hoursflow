@@ -15,7 +15,11 @@ All notable OpenNow CTA changes are documented here.
   semantics and legacy blank-status compatibility.
 - Fixed the editor preview transport so nested boolean status-hiding flags
   remain booleans during server-side rendering.
-- Added a real server-rendered block-editor preview while keeping schedules,
-  global colors, styles, and shortcode behavior unchanged.
+- Added a real server-rendered block-editor preview while keeping schedules and
+  shortcode behavior unchanged.
+- Added WordPress's built-in per-block typography controls and applied their
+  generated classes and styles to the dynamic CTA wrapper and editor preview.
+- Added built-in per-block text and background color controls that override the
+  global defaults on that CTA link without changing shortcode output.
 - Added reproducible quality checks, WordPress integration coverage, and a
   deterministic production package.

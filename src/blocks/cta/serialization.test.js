@@ -12,6 +12,14 @@ import metadata from './block.json';
 describe( 'OpenNow CTA serialization', () => {
 	beforeAll( () => {
 		registerBlockType( metadata, {
+			attributes: {
+				...metadata.attributes,
+				backgroundColor: { type: 'string' },
+				fontFamily: { type: 'string' },
+				fontSize: { type: 'string' },
+				style: { type: 'object' },
+				textColor: { type: 'string' },
+			},
 			edit: () => null,
 			save: () => null,
 		} );
@@ -46,6 +54,41 @@ describe( 'OpenNow CTA serialization', () => {
 		expect( serialized ).toBe(
 			'<!-- wp:opennow/cta {"overrides":{"open":{"label":"Call this block","status":""}}} /-->'
 		);
+		expect( parse( serialized )[ 0 ].attributes ).toEqual( attributes );
+	} );
+
+	test( 'serializes color support attributes and round-trips them', () => {
+		const attributes = {
+			textColor: 'contrast',
+			style: {
+				color: {
+					background: '#123456',
+				},
+			},
+		};
+		const block = createBlock( metadata.name, attributes );
+		const serialized = serialize( block );
+
+		expect( block.attributes ).toEqual( attributes );
+		expect( parse( serialized )[ 0 ].attributes ).toEqual( attributes );
+	} );
+
+	test( 'serializes typography support attributes and round-trips them', () => {
+		const attributes = {
+			fontFamily: 'heading',
+			fontSize: 'large',
+			style: {
+				typography: {
+					fontWeight: '700',
+					letterSpacing: '0.05em',
+					lineHeight: '1.4',
+				},
+			},
+		};
+		const block = createBlock( metadata.name, attributes );
+		const serialized = serialize( block );
+
+		expect( block.attributes ).toEqual( attributes );
 		expect( parse( serialized )[ 0 ].attributes ).toEqual( attributes );
 	} );
 

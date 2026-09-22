@@ -624,6 +624,49 @@ if (!function_exists('wp_timezone_choice')) {
     }
 }
 
+if (!function_exists('wp_style_engine_get_styles')) {
+    function wp_style_engine_get_styles($block_styles, $options = array())
+    {
+        $colors = isset($block_styles['color']) && is_array($block_styles['color'])
+            ? $block_styles['color']
+            : array();
+        $classes = array();
+        $styles = array();
+        foreach (array('text' => 'color', 'background' => 'background-color') as $type => $property) {
+            if (!isset($colors[$type]) || !is_string($colors[$type]) || '' === $colors[$type]) {
+                continue;
+            }
+
+            $generic_class = 'text' === $type ? 'has-text-color' : 'has-background';
+            $classes[] = $generic_class;
+            if (0 === strpos($colors[$type], 'var:preset|color|')) {
+                $slug = substr($colors[$type], strlen('var:preset|color|'));
+                $classes[] = 'text' === $type
+                    ? 'has-' . $slug . '-color'
+                    : 'has-' . $slug . '-background-color';
+            } else {
+                $styles[] = $property . ':' . $colors[$type];
+            }
+        }
+
+        return array(
+            'classnames' => implode(' ', $classes),
+            'css' => implode(';', $styles),
+        );
+    }
+}
+
+if (!function_exists('safecss_filter_attr')) {
+    function safecss_filter_attr($css)
+    {
+        if (!is_string($css) || false !== stripos($css, 'expression') || false !== stripos($css, 'url(')) {
+            return '';
+        }
+
+        return $css;
+    }
+}
+
 if (!function_exists('plugins_url')) {
     function plugins_url($path = '', $plugin = '')
     {

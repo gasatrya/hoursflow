@@ -106,6 +106,29 @@ describe( 'OpenNow CTA block', () => {
 		expect( useBlockProps ).toHaveBeenCalledWith();
 	} );
 
+	test( 'passes color and typography support attributes to the server preview', () => {
+		const attributes = {
+			fontFamily: 'heading',
+			fontSize: 'large',
+			textColor: 'contrast',
+			style: {
+				color: {
+					background: '#123456',
+				},
+				typography: {
+					fontWeight: '700',
+					letterSpacing: '0.05em',
+					lineHeight: '1.4',
+				},
+			},
+		};
+		const element = Edit( { attributes, setAttributes: jest.fn() } );
+		const preview =
+			childrenOf( element )[ 1 ].props.children.props.children;
+
+		expect( preview.props.attributes ).toEqual( attributes );
+	} );
+
 	test( 'groups translated open and closed field controls in inspector panels', () => {
 		const element = Edit( { attributes: {}, setAttributes: jest.fn() } );
 		const panels = panelsFrom( element );
@@ -449,6 +472,27 @@ describe( 'OpenNow CTA block', () => {
 			overrides: { type: 'object' },
 		} );
 		expect( metadata.editorStyle ).toBe( 'file:./index.css' );
+		expect( metadata.supports.color ).toEqual( {
+			text: true,
+			background: true,
+			__experimentalSkipSerialization: true,
+			__experimentalDefaultControls: {
+				text: true,
+				background: true,
+			},
+		} );
+		expect( metadata.supports.typography ).toEqual( {
+			fontSize: true,
+			lineHeight: true,
+			__experimentalFontFamily: true,
+			__experimentalFontWeight: true,
+			__experimentalFontStyle: true,
+			__experimentalTextTransform: true,
+			__experimentalLetterSpacing: true,
+			__experimentalDefaultControls: {
+				fontSize: true,
+			},
+		} );
 		expect( Save() ).toBeNull();
 	} );
 } );
