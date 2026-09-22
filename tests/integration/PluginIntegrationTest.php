@@ -151,7 +151,8 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $legacy_shortcode = do_shortcode('[opennow_cta]');
         $legacy_block = do_blocks('<!-- wp:opennow/cta /-->');
 
-        $this->assertSame($legacy_shortcode, $legacy_block);
+        // WordPress block supports decorate the outer wrapper, but the CTA contents must stay in parity.
+        $this->assertSame(strstr($legacy_shortcode, '>'), strstr($legacy_block, '>'));
         $this->assertStringContainsString('href="/booking/"', $legacy_shortcode);
         $this->assertStringContainsString('Book online', $legacy_shortcode);
         $this->assertStringContainsString('opennow-cta__status', $legacy_shortcode);
@@ -175,7 +176,8 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         );
         $hidden_block = do_blocks($this->serializedCta($hidden_overrides));
 
-        $this->assertSame($hidden_shortcode, $hidden_block);
+        $this->assertSame(strstr($hidden_shortcode, '>'), strstr($hidden_block, '>'));
+        $this->assertStringContainsString('href="/booking/"', $hidden_shortcode);
         $this->assertStringNotContainsString('opennow-cta__status', $hidden_shortcode);
         $this->assertStringNotContainsString('Ignored', $hidden_shortcode);
 
@@ -325,6 +327,9 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $output = do_blocks($serialized);
         $shortcode_output = do_shortcode('[opennow_cta]');
 
+        // A real block object must receive WordPress's standard wrapper even without typography attributes.
+        $this->assertStringContainsString('wp-block-opennow-cta', $output);
+        $this->assertStringNotContainsString('wp-block-opennow-cta', $shortcode_output);
         $this->assertStringContainsString('has-text-color', $output);
         $this->assertStringContainsString('has-vivid-red-color', $output);
         $this->assertStringContainsString('has-background', $output);

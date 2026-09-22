@@ -19,6 +19,11 @@ function compareStrings( first, second ) {
 }
 
 const FIXED_DATE = new Date( '2000-01-01T00:00:00.000Z' );
+const ALLOWED_NON_PHP_SOURCE_ENTRIES = [
+	'src/blocks/cta/block.json',
+	'src/blocks/cta/editor.scss',
+	'src/blocks/cta/index.js',
+];
 const REQUIRED_ENTRIES = [
 	'CHANGELOG.md',
 	'LICENSE',
@@ -32,6 +37,9 @@ const REQUIRED_ENTRIES = [
 	'build/blocks/cta/index-rtl.css',
 	'build/blocks/cta/index.js',
 	'languages/opennow.pot',
+	'src/blocks/cta/block.json',
+	'src/blocks/cta/editor.scss',
+	'src/blocks/cta/index.js',
 	'opennow.php',
 	'readme.txt',
 	'uninstall.php',
@@ -50,7 +58,9 @@ const FORBIDDEN_PARTS = [
 	'phpunit.integration.xml.dist',
 	'phpunit.xml.dist',
 	'plugin-concept.md',
-	'src/blocks/',
+	'src/blocks/cta/index.js.map',
+	'src/blocks/cta/index.test.js',
+	'src/blocks/cta/serialization.test.js',
 	'tests/',
 	'tools/',
 	'vendor/',
@@ -126,12 +136,18 @@ function validateManifest( entries ) {
 		);
 	}
 
-	if (
-		names.some(
-			( name ) => name.startsWith( 'src/' ) && ! name.endsWith( '.php' )
-		)
-	) {
-		throw new Error( 'Production package contains non-PHP source files.' );
+	const unapprovedSourceFiles = names.filter(
+		( name ) =>
+			name.startsWith( 'src/' ) &&
+			! name.endsWith( '.php' ) &&
+			! ALLOWED_NON_PHP_SOURCE_ENTRIES.includes( name )
+	);
+	if ( unapprovedSourceFiles.length ) {
+		throw new Error(
+			`Production package contains an unapproved non-PHP source file: ${ unapprovedSourceFiles.join(
+				', '
+			) }`
+		);
 	}
 }
 
@@ -229,12 +245,15 @@ async function main() {
 	}
 }
 
-main().catch( ( error ) => {
-	console.error( error.message );
-	process.exitCode = 1;
-} );
+if ( require.main === module ) {
+	main().catch( ( error ) => {
+		console.error( error.message );
+		process.exitCode = 1;
+	} );
+}
 
 module.exports = {
+	ALLOWED_NON_PHP_SOURCE_ENTRIES,
 	FORBIDDEN_PARTS,
 	REQUIRED_ENTRIES,
 	productionManifest,

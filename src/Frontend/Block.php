@@ -65,38 +65,11 @@ final class Block {
 		if ( is_array( $attributes ) && array_key_exists( 'overrides', $attributes ) ) {
 			$overrides = $attributes['overrides'];
 		}
-		$is_block_render      = is_object( $block );
-		$has_block_typography = $is_block_render && $this->hasTypography( $attributes );
-		$block_colors         = $is_block_render ? $this->getColors( $attributes ) : array();
+		$is_block_render = is_object( $block );
+		$block_colors    = $is_block_render ? $this->getColors( $attributes ) : array();
 		unset( $content );
 
-		return $this->renderer->render( $overrides, $has_block_typography, $block_colors );
-	}
-
-	/**
-	 * Determine whether the block has typography attributes for the supports API.
-	 *
-	 * @param mixed $attributes Block attributes.
-	 * @return bool
-	 */
-	private function hasTypography( $attributes ): bool {
-		if ( ! is_array( $attributes ) ) {
-			return false;
-		}
-		foreach ( array( 'fontFamily', 'fontSize' ) as $attribute ) {
-			if ( isset( $attributes[ $attribute ] ) && is_string( $attributes[ $attribute ] )
-				&& '' !== $attributes[ $attribute ]
-			) {
-				return true;
-			}
-		}
-		if ( ! isset( $attributes['style'] ) || ! is_array( $attributes['style'] ) ) {
-			return false;
-		}
-
-		return isset( $attributes['style']['typography'] )
-			&& is_array( $attributes['style']['typography'] )
-			&& ! empty( $attributes['style']['typography'] );
+		return $this->renderer->render( $overrides, $is_block_render, $block_colors );
 	}
 
 	/**

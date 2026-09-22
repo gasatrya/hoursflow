@@ -84,6 +84,11 @@ final class SettingsTest extends TestCase
         $this->assertStringNotContainsString('type="hidden" name="opennow_config[appearance]', $output);
         $this->assertStringContainsString('name="opennow_reset"', $output);
         $this->assertStringContainsString('formnovalidate="formnovalidate"', $output);
+        $this->assertStringContainsString(
+            'data-opennow-reset-confirm="Are you sure you want to reset all settings to defaults?"',
+            $output
+        );
+        $this->assertStringNotContainsString('onclick=', $output);
         $this->assertStringContainsString('Reset to Defaults', $output);
         $this->assertStringContainsString('Are you sure you want to reset all settings to defaults?', $output);
         $this->assertSame(1, substr_count($output, 'Settings have been reset to defaults.'));
@@ -322,40 +327,31 @@ final class SettingsTest extends TestCase
         $review = $xpath->query('.//a[contains(@class, "opennow-developer-promotion__review")]', $promotion)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $hire);
         $this->assertInstanceOf(\DOMElement::class, $donation);
-        $this->assertInstanceOf(\DOMElement::class, $review);
+        $this->assertNull($review);
         $this->assertSame(
-            'https://gasatrya.com/?utm_source=plugin&utm_medium=opennow-sidebar',
+            'https://gasatrya.com/',
             $hire->getAttribute('href')
         );
         $this->assertSame(
-            'https://gasatrya.com/donate/?utm_source=plugin&utm_medium=opennow-sidebar',
+            'https://gasatrya.com/donate/',
             $donation->getAttribute('href')
-        );
-        $this->assertSame(
-            'https://wordpress.org/support/plugin/opennow/reviews/#new-post',
-            $review->getAttribute('href')
         );
         $this->assertSame('Hire Me', trim($hire->textContent));
         $this->assertSame('Buy me a coffee', trim($donation->textContent));
-        $this->assertSame('Rate this plugin', trim($review->textContent));
 
-        foreach (array($hire, $donation, $review) as $link) {
+        foreach (array($hire, $donation) as $link) {
             $this->assertSame('_blank', $link->getAttribute('target'));
             $this->assertSame('noopener noreferrer', $link->getAttribute('rel'));
             $this->assertStringContainsString('opens in a new tab', $link->getAttribute('aria-label'));
         }
 
         $coffee = $xpath->query('.//span[contains(@class, "dashicons-coffee")]', $promotion)->item(0);
-        $star = $xpath->query('.//span[contains(@class, "dashicons-star-filled")]', $promotion)->item(0);
-        $separator = $xpath->query('.//span[contains(@class, "opennow-developer-promotion__separator")]', $promotion)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $coffee);
-        $this->assertInstanceOf(\DOMElement::class, $star);
-        $this->assertInstanceOf(\DOMElement::class, $separator);
         $this->assertSame('true', $coffee->getAttribute('aria-hidden'));
-        $this->assertSame('true', $star->getAttribute('aria-hidden'));
-        $this->assertSame('·', trim($separator->textContent));
 
-        $this->assertStringContainsString('utm_source=plugin&amp;utm_medium=opennow-sidebar', $output);
+        $this->assertStringNotContainsString('utm_', $output);
+        $this->assertStringNotContainsString('Rate this plugin', $output);
+        $this->assertStringNotContainsString('wordpress.org/support/plugin/opennow/reviews', $output);
         $this->assertStringNotContainsString('buttonflow', strtolower($output));
         $this->assertCount(0, $xpath->query('.//*[@style]', $promotion));
         $this->assertCount(0, $xpath->query('.//img | .//script | .//iframe | .//link | .//object | .//embed', $promotion));

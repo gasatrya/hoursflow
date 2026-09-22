@@ -1,8 +1,25 @@
 # OpenNow CTA
 
-OpenNow CTA automatically shows the appropriate call to action for a business's
-current weekly schedule. It is a small, server-rendered WordPress plugin: no
-account, SaaS service, booking system, tracking, or remote service is required.
+OpenNow CTA helps visitors find the right next action for a business's current
+weekly schedule. Configure one open CTA and one closed CTA, then present them
+through a shortcode or dynamic block. It is a focused, server-rendered plugin:
+there is no account or remote service to configure.
+
+## Who is this for?
+
+OpenNow CTA is for small businesses, studios, practices, shops, and service
+teams that want a clear schedule-aware action while keeping their labels,
+destinations, and status copy in WordPress.
+
+## Core features
+
+- One shared open/closed schedule for the shortcode and dynamic block.
+- Named IANA timezone support, including overnight periods.
+- Per-state block overrides for label, action, status, and status visibility.
+- Global colors plus WordPress's built-in block color and typography controls.
+- A keyboard-operable, responsive CTA with visible focus styling.
+- Server-side rendering without browser timers, polling, remote assets, or
+  background requests.
 
 ## Requirements
 
@@ -142,15 +159,14 @@ or arrange boundary purges in its own caching system; OpenNow performs neither.
 
 The administrator is responsible for keeping status copy such as “reopen at
 9 AM” accurate. OpenNow does not calculate or translate that copy, provide
-holiday hours, or integrate with booking, CRM, analytics, CDNs, or page-cache
-systems.
+holiday hours, or integrate with booking, CRM, CDNs, or page-cache systems.
 
 ## Privacy and external services
 
 OpenNow makes no external requests and loads no remote scripts, fonts, images,
 stylesheets, or other assets. It collects no visitor data, sets no cookies, and
-performs no analytics, tracking, telemetry, scheduled network activity, or
-remote license checks. Ordinary user-initiated navigation is the only outbound
+performs no tracking, telemetry, scheduled network activity, or remote license
+checks. Ordinary user-initiated navigation is the only outbound
 behavior: a visitor may follow an administrator-configured HTTPS or telephone
 CTA, and an administrator may follow the clearly labeled Gasatrya hire or
 donation links on **Settings → OpenNow**. The settings card loads no remote
@@ -183,16 +199,25 @@ strings, and runs PHPUnit. `npm run check` audits production npm packages, runs
 JavaScript tests and linting, checks formatting and CSS, reproduces block/POT
 assets, and verifies deterministic packaging.
 
-A local real-WordPress run additionally needs MySQL, PHP 8.5, and the exact
-WordPress patch used by the required integration gate:
+A local real-WordPress run additionally needs MySQL and the exact boundary
+lane you want to exercise. The required integration matrix uses WordPress
+6.6.7 with PHP 7.4 and WordPress 7.1.1 with PHP 8.5:
 
 ```bash
+bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 6.6.7
+WP_VERSION=6.6.7 composer test:integration
+
 bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 7.1.1
 WP_VERSION=7.1.1 composer test:integration
 ```
 
 The production package is generated as `dist/opennow-0.1.0.zip` and is
-intentionally ignored by Git. It contains only runtime PHP, local assets,
-generated block files, the translation template, and release documentation.
-See [`docs/release-checklist.md`](docs/release-checklist.md) for integration,
-accessibility, package, and release verification.
+intentionally ignored by Git. It contains runtime PHP, local assets, generated
+block files, the translation template, and the three readable block source
+files `src/blocks/cta/index.js`, `src/blocks/cta/editor.scss`, and
+`src/blocks/cta/block.json`; other development files are excluded. The source
+file `src/blocks/cta/index.js` is the human-readable source for the compiled
+`build/blocks/cta/index.js`.
+
+See the [release checklist on GitHub](https://github.com/gasatrya/opennow/blob/main/docs/release-checklist.md)
+for integration, accessibility, package, and release verification.

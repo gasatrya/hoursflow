@@ -55,14 +55,24 @@ jobs:
         run: npm run check
 
   wordpress:
-    name: WordPress 7.1 / PHP 8.5
+    name: WordPress ${{ matrix.wordpress }} / PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wordpress: '6.6.7'
+            php: '7.4'
+            lane: '6.6.7-7.4'
+          - wordpress: '7.1.1'
+            php: '8.5'
+            lane: '7.1.1-8.5'
     env:
-      WP_VERSION: '7.1.1'
-      WP_TESTS_DIR: ${{ github.workspace }}/.wordpress-tests-7.1.1-8.5
-      WP_CORE_DIR: ${{ github.workspace }}/.wordpress-7.1.1-8.5
+      WP_VERSION: ${{ matrix.wordpress }}
+      WP_TESTS_DIR: ${{ github.workspace }}/.wordpress-tests-${{ matrix.lane }}
+      WP_CORE_DIR: ${{ github.workspace }}/.wordpress-${{ matrix.lane }}
       WP_TESTS_PHPUNIT_POLYFILLS_PATH: ${{ github.workspace }}/vendor/yoast/phpunit-polyfills
-      OPENNOW_TEST_PLUGIN_FILE: ${{ github.workspace }}/.wordpress-7.1.1-8.5/wp-content/plugins/opennow/opennow.php
+      OPENNOW_TEST_PLUGIN_FILE: ${{ github.workspace }}/.wordpress-${{ matrix.lane }}/wp-content/plugins/opennow/opennow.php
     services:
       mysql:
         image: mysql:8.0
@@ -80,10 +90,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Set up PHP 8.5
+      - name: Set up PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
         with:
-          php-version: '8.5'
+          php-version: ${{ matrix.php }}
           extensions: curl, mbstring, mysqli, xml, xmlreader, xmlwriter, zip
           coverage: none
           tools: composer:v2
@@ -165,7 +175,15 @@ jobs:
           grep -Fx 'opennow/opennow.php' package-files.txt
           grep -Fx 'opennow/uninstall.php' package-files.txt
           grep -Fx 'opennow/languages/opennow.pot' package-files.txt
-          ! grep -E '^opennow/(tests|docs|vendor|node_modules|tools|src/blocks)/' package-files.txt
+          grep -Fx 'opennow/src/blocks/cta/index.js' package-files.txt
+          grep -Fx 'opennow/src/blocks/cta/editor.scss' package-files.txt
+          grep -Fx 'opennow/src/blocks/cta/block.json' package-files.txt
+          test "$(awk '
+            /^opennow\/src\// && $0 !~ /\.php$/ && $0 !~ /^opennow\/src\/blocks\/cta\/(block\.json|editor\.scss|index\.js)$/ { count++ }
+            END { print count + 0 }
+          ' package-files.txt)" -eq 0
+          ! grep -E '\.map$' package-files.txt
+          ! grep -E '^opennow/(tests|docs|vendor|node_modules|tools)/' package-files.txt
           ! grep -E '^opennow/(composer|package|phpunit|phpcs)' package-files.txt
           unzip -p dist/opennow-0.1.0.zip opennow/opennow.php | grep -F 'Plugin Name: OpenNow CTA'
           sha256sum dist/opennow-0.1.0.zip

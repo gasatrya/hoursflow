@@ -14,22 +14,27 @@ not authorize a WordPress.org submission, Git tag, or hosted release.
    npm run check
    ```
 
-2. Confirm the single required integration gate passes without allowed
-   failures:
+2. Confirm both required integration lanes pass without allowed failures:
 
-   - WordPress 7.1 (pinned to 7.1.1) / PHP 8.5
+   - WordPress 6.6.7 / PHP 7.4
+   - WordPress 7.1.1 / PHP 8.5
+
+   Each matrix lane uses its own WordPress core and test-suite paths, installs
+   the dependency-free production ZIP, and runs the existing integration suite.
 
 3. Confirm CI tests the extracted production package, records the exact
    WordPress/PHP/PHPUnit versions, and publishes
-   `opennow-0.1.0.zip` only after every required job passes.
+   `opennow-0.1.0.zip` only after every required job passes. The package job
+   must wait for the complete integration matrix.
 
 4. Confirm `npm run build:check`, `npm run i18n:pot:check`, and
    `npm run package:check` report reproducible output. Inspect the ZIP manifest:
    it must have one `opennow/` root, contain runtime PHP, local assets, generated
-   block files (including editor CSS and its RTL companion), `languages/opennow.pot`,
-   and release documents, and omit tests,
-   development source, dependency directories, repository tooling, and lock
-   files.
+   block files (including editor CSS and its RTL companion),
+   `src/blocks/cta/index.js`, `src/blocks/cta/editor.scss`,
+   `src/blocks/cta/block.json`, and `languages/opennow.pot`. It must omit every
+   other source file, source map, test, dependency directory,
+   repository tool, and lock file.
 
 ## Manual installation and runtime checks
 
@@ -69,9 +74,9 @@ Use a clean single-site WordPress installation with `WP_DEBUG` enabled.
    editor stylesheet disables CTA navigation without changing public CSS.
    Confirm the settings script and page-scoped settings stylesheet appear only
    on **Settings → OpenNow** for a user with `manage_options`. Confirm the
-   developer card follows the preview, links only to the documented Gasatrya
-   destinations, and shows no review link unless the OpenNow WordPress.org
-   review page has been confirmed.
+   developer card follows the preview and contains only the documented
+   Gasatrya hire and donation destinations. No review or rating link is present
+   until the WordPress.org slug is approved and live.
 7. Inspect browser network/storage panels and confirm no plugin-originated
    background remote requests, remote assets, cookies, local storage, tracking,
    polling, or telemetry. Confirm the developer card makes a request only after
@@ -122,7 +127,7 @@ a screen reader check is recommended for the release environment.
 ## Metadata and lifecycle
 
 1. Confirm version `0.1.0`, WordPress minimum `6.6`, PHP minimum `7.4`, tested-up-to
-   `7.1`, text domain `opennow`, and GPL-2.0-or-later metadata agree across the
+   `7.1`, requested author/URI metadata, text domain `opennow`, and GPL-2.0-or-later metadata agree across the
    plugin header, readmes, changelog, package metadata, and POT file.
 2. Deactivate and reactivate; configuration must remain. Uninstall; both
    `opennow_config` and `opennow_schema_version` must be deleted. Reinstalling

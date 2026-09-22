@@ -66,6 +66,37 @@
 		}
 	}
 
+	function initializeResetConfirmation() {
+		const form = document.querySelector( '#opennow-settings-layout form' );
+		if ( ! form || 'function' !== typeof form.addEventListener ) {
+			return;
+		}
+
+		const resetButton = form.querySelector(
+			'[data-opennow-reset-confirm]'
+		);
+		if ( ! resetButton ) {
+			return;
+		}
+
+		const message =
+			resetButton.getAttribute( 'data-opennow-reset-confirm' ) || '';
+		if ( '' === message.trim() || 'function' !== typeof window.confirm ) {
+			return;
+		}
+
+		form.addEventListener( 'submit', function ( event ) {
+			if ( event.submitter !== resetButton ) {
+				return;
+			}
+
+			// eslint-disable-next-line no-alert
+			if ( ! window.confirm( message ) ) {
+				event.preventDefault();
+			}
+		} );
+	}
+
 	function normalizeState( state ) {
 		return 'closed' === state ? 'closed' : 'open';
 	}
@@ -272,6 +303,7 @@
 	function initialize() {
 		initializeSchedule();
 		initializePreview();
+		initializeResetConfirmation();
 	}
 
 	if ( 'loading' === document.readyState ) {

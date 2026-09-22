@@ -62,6 +62,24 @@ function previewMarkup() {
 	`;
 }
 
+function resetMarkup(
+	message = 'Are you sure you want to reset all settings to defaults?',
+	includeReset = true
+) {
+	return `
+		<div id="opennow-settings-layout">
+			<form>
+				<button type="submit" data-opennow-save="1">Save</button>
+				${
+					includeReset
+						? `<button type="submit" data-opennow-reset-confirm="${ message }">Reset</button>`
+						: ''
+				}
+			</form>
+		</div>
+	`;
+}
+
 function loadSettings( markup = scheduleMarkup() ) {
 	jest.resetModules();
 	document.body.innerHTML = markup;
@@ -71,6 +89,16 @@ function loadSettings( markup = scheduleMarkup() ) {
 
 function dispatchInput( element, eventName = 'input' ) {
 	element.dispatchEvent( new Event( eventName, { bubbles: true } ) );
+}
+
+function dispatchSubmit( form, submitter ) {
+	const event = new window.Event( 'submit', {
+		bubbles: true,
+		cancelable: true,
+	} );
+	Object.defineProperty( event, 'submitter', { value: submitter } );
+	const dispatched = form.dispatchEvent( event );
+	return { event, dispatched };
 }
 
 describe( 'OpenNow settings schedule behavior', () => {
@@ -192,6 +220,127 @@ describe( 'OpenNow settings schedule behavior', () => {
 			true
 		);
 		expect( monday.dataset.opennowScheduleState ).toBe( 'closed' );
+	} );
+} );
+
+describe( 'OpenNow reset confirmation', () => {
+	test( 'prevents reset submission when confirmation is declined', () => {
+		const originalConfirm = window.confirm;
+		window.confirm = jest.fn( () => false );
+		try {
+			loadSettings( resetMarkup() );
+			const form = document.querySelector(
+				'#opennow-settings-layout form'
+			);
+			const button = form.querySelector( '[data-opennow-reset-confirm]' );
+			const result = dispatchSubmit( form, button );
+
+			expect( button.type ).toBe( 'submit' );
+			expect( button.hasAttribute( 'onclick' ) ).toBe( false );
+			expect( window.confirm ).toHaveBeenCalledWith(
+				'Are you sure you want to reset all settings to defaults?'
+			);
+			expect( result.event.defaultPrevented ).toBe( true );
+			expect( result.dispatched ).toBe( false );
+		} finally {
+			window.confirm = originalConfirm;
+		}
+	} );
+
+	test( 'allows reset submission when confirmation is accepted', () => {
+		const originalConfirm = window.confirm;
+		window.confirm = jest.fn( () => true );
+		try {
+			loadSettings( resetMarkup() );
+			const form = document.querySelector(
+				'#opennow-settings-layout form'
+			);
+			const button = form.querySelector( '[data-opennow-reset-confirm]' );
+			const result = dispatchSubmit( form, button );
+
+			expect( window.confirm ).toHaveBeenCalledWith(
+				'Are you sure you want to reset all settings to defaults?'
+			);
+			expect( result.event.defaultPrevented ).toBe( false );
+			expect( result.dispatched ).toBe( true );
+		} finally {
+			window.confirm = originalConfirm;
+		}
+	} );
+
+	test( 'does not prompt when another submitter saves the form', () => {
+		const originalConfirm = window.confirm;
+		window.confirm = jest.fn( () => false );
+		try {
+			loadSettings( resetMarkup() );
+			const form = document.querySelector(
+				'#opennow-settings-layout form'
+			);
+			const saveButton = form.querySelector( '[data-opennow-save]' );
+			const result = dispatchSubmit( form, saveButton );
+
+			expect( window.confirm ).not.toHaveBeenCalled();
+			expect( result.event.defaultPrevented ).toBe( false );
+			expect( result.dispatched ).toBe( true );
+		} finally {
+			window.confirm = originalConfirm;
+		}
+	} );
+
+	test( 'does not prompt when the reset button is absent', () => {
+		const originalConfirm = window.confirm;
+		window.confirm = jest.fn();
+		try {
+			loadSettings( resetMarkup( undefined, false ) );
+			const form = document.querySelector(
+				'#opennow-settings-layout form'
+			);
+			const saveButton = form.querySelector( '[data-opennow-save]' );
+			const result = dispatchSubmit( form, saveButton );
+
+			expect( window.confirm ).not.toHaveBeenCalled();
+			expect( result.event.defaultPrevented ).toBe( false );
+			expect( result.dispatched ).toBe( true );
+		} finally {
+			window.confirm = originalConfirm;
+		}
+	} );
+
+	test( 'does not prompt when the reset message is blank', () => {
+		const originalConfirm = window.confirm;
+		window.confirm = jest.fn();
+		try {
+			loadSettings( resetMarkup( '   ' ) );
+			const form = document.querySelector(
+				'#opennow-settings-layout form'
+			);
+			const button = form.querySelector( '[data-opennow-reset-confirm]' );
+			const result = dispatchSubmit( form, button );
+
+			expect( window.confirm ).not.toHaveBeenCalled();
+			expect( result.event.defaultPrevented ).toBe( false );
+			expect( result.dispatched ).toBe( true );
+		} finally {
+			window.confirm = originalConfirm;
+		}
+	} );
+
+	test( 'does not prompt when window.confirm is unavailable', () => {
+		const originalConfirm = window.confirm;
+		window.confirm = undefined;
+		try {
+			loadSettings( resetMarkup() );
+			const form = document.querySelector(
+				'#opennow-settings-layout form'
+			);
+			const button = form.querySelector( '[data-opennow-reset-confirm]' );
+			const result = dispatchSubmit( form, button );
+
+			expect( result.event.defaultPrevented ).toBe( false );
+			expect( result.dispatched ).toBe( true );
+		} finally {
+			window.confirm = originalConfirm;
+		}
 	} );
 } );
 

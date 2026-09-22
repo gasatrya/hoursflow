@@ -295,14 +295,6 @@
     color: #C9A96E;
 }
 
-#opennow-settings-layout .opennow-developer-promotion__star {
-    color: #FFB900;
-}
-
-#opennow-settings-layout .opennow-developer-promotion__separator {
-    color: #CCD0D4;
-}
-
 #opennow-settings-layout .opennow-developer-promotion__links a:focus {
     box-shadow: 0 0 0 4px #FFFFFF;
     outline: 2px solid #000000;

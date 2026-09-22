@@ -92,7 +92,7 @@ final class RepositoryContractTest extends TestCase
             $contents
         );
         $this->assertDoesNotMatchRegularExpression(
-            '/\\b(?:fetch|XMLHttpRequest|sendBeacon|gtag|ga|analytics|telemetry)\\b/i',
+            '/\\b(?:fetch|XMLHttpRequest|sendBeacon|gtag|analytics|telemetry)\\b/i',
             $contents
         );
         $styles_and_scripts = '';
@@ -120,8 +120,12 @@ final class RepositoryContractTest extends TestCase
         $plugin_file = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'opennow.php';
         $plugin = file_get_contents($plugin_file);
         $this->assertIsString($plugin);
+        $this->assertStringContainsString('* Description: Show an open or closed call to action based on your weekly business hours.', $plugin);
         $this->assertStringContainsString('* Requires at least: 6.6', $plugin);
         $this->assertStringContainsString('* Requires PHP: 7.4', $plugin);
+        $this->assertStringContainsString('* Author: Ga Satrya', $plugin);
+        $this->assertStringContainsString('* Author URI: https://gasatrya.com/', $plugin);
+        $this->assertStringContainsString('* Plugin URI: https://gasatrya.com/wp-plugins/opennow/', $plugin);
         $this->assertStringContainsString('* License: GPL-2.0-or-later', $plugin);
         $this->assertStringContainsString('* Text Domain: opennow', $plugin);
         $this->assertMatchesRegularExpression(
@@ -135,6 +139,42 @@ final class RepositoryContractTest extends TestCase
         $this->assertStringContainsString("Requires PHP: 7.4\n", $readme);
         $this->assertStringContainsString("Tested up to: 7.1\n", $readme);
         $this->assertStringContainsString("Stable tag: 0.1.0\n", $readme);
+        $this->assertStringContainsString("Donate link: https://gasatrya.com/donate/\n", $readme);
+        $this->assertStringNotContainsString('https://wordpress.org/support/plugin/opennow/', $readme);
+        $this->assertStringContainsString("plugin page's Support tab once the plugin is published", $readme);
+        $this->assertStringContainsString('https://github.com/gasatrya/opennow/issues', $readme);
+        $this->assertStringContainsString('https://github.com/gasatrya/opennow', $readme);
+        $this->assertStringContainsString('src/blocks/cta/index.js', $readme);
+        $this->assertStringContainsString('build/blocks/cta/index.js', $readme);
+        $this->assertStringContainsString('npm ci --ignore-scripts', $readme);
+        $this->assertStringContainsString('npm run build:check', $readme);
+        $this->assertStringContainsString('npm run package:check', $readme);
+        $this->assertDoesNotMatchRegularExpression('/\\]\\((?!https?:|#)/', $readme);
+        $this->assertSame(1, preg_match('/Donate link:[^\\n]+\\n\\n([^\\n]+)/', $readme, $short_description));
+        $this->assertLessThanOrEqual(150, strlen(trim($short_description[1])));
+
+        $package_tool = file_get_contents(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'tools' . DIRECTORY_SEPARATOR . 'package.js');
+        $this->assertIsString($package_tool);
+        foreach (array(
+            'src/blocks/cta/index.js',
+            'src/blocks/cta/editor.scss',
+            'src/blocks/cta/block.json',
+        ) as $source_entry) {
+            $this->assertStringContainsString("'" . $source_entry . "'", $package_tool);
+        }
+        $this->assertStringContainsString('ALLOWED_NON_PHP_SOURCE_ENTRIES', $package_tool);
+        $this->assertStringContainsString('Production package contains an unapproved non-PHP source file:', $package_tool);
+        $this->assertStringNotContainsString("'src/blocks/',", $package_tool);
+
+        $ci = file_get_contents(dirname(__DIR__) . DIRECTORY_SEPARATOR . '.github' . DIRECTORY_SEPARATOR . 'workflows' . DIRECTORY_SEPARATOR . 'ci.yml');
+        $this->assertIsString($ci);
+        $this->assertStringContainsString("wordpress: '6.6.7'", $ci);
+        $this->assertStringContainsString("php: '7.4'", $ci);
+        $this->assertStringContainsString("wordpress: '7.1.1'", $ci);
+        $this->assertStringContainsString("php: '8.5'", $ci);
+        $this->assertStringContainsString('WP_TESTS_DIR: ${{ github.workspace }}/.wordpress-tests-${{ matrix.lane }}', $ci);
+        $this->assertStringContainsString('WP_CORE_DIR: ${{ github.workspace }}/.wordpress-${{ matrix.lane }}', $ci);
+        $this->assertStringContainsString('needs: [quality, wordpress]', $ci);
 
         $composer = json_decode(
             (string) file_get_contents(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'composer.json'),

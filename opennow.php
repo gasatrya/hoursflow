@@ -1,8 +1,11 @@
 <?php
 /**
  * Plugin Name: OpenNow CTA
- * Description: Automatically show the right call to action based on business hours.
+ * Description: Show an open or closed call to action based on your weekly business hours.
  * Version: 0.1.0
+ * Author: Ga Satrya
+ * Author URI: https://gasatrya.com/
+ * Plugin URI: https://gasatrya.com/wp-plugins/opennow/
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * License: GPL-2.0-or-later

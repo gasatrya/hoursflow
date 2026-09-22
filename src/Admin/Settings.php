@@ -19,9 +19,8 @@ final class Settings {
 	const OPEN_CTA_SECTION   = 'opennow_open_cta_section';
 	const CLOSED_CTA_SECTION = 'opennow_closed_cta_section';
 
-	private const HIRE_URL             = 'https://gasatrya.com/?utm_source=plugin&utm_medium=opennow-sidebar';
-	private const DONATION_URL         = 'https://gasatrya.com/donate/?utm_source=plugin&utm_medium=opennow-sidebar';
-	private const REVIEW_URL           = 'https://wordpress.org/support/plugin/opennow/reviews/#new-post';
+	private const HIRE_URL             = 'https://gasatrya.com/';
+	private const DONATION_URL         = 'https://gasatrya.com/donate/';
 	private const DEFAULT_OPENING_TIME = '09:00';
 	private const DEFAULT_CLOSING_TIME = '17:00';
 
@@ -373,10 +372,11 @@ final class Settings {
 			'opennow_reset',
 			false,
 			array(
-				'formnovalidate' => 'formnovalidate',
-				'onclick'        => 'return confirm("' . esc_js(
-					__( 'Are you sure you want to reset all settings to defaults?', 'opennow' )
-				) . '");',
+				'formnovalidate'             => 'formnovalidate',
+				'data-opennow-reset-confirm' => __(
+					'Are you sure you want to reset all settings to defaults?',
+					'opennow'
+				),
 			)
 		);
 		echo '</div>';
@@ -883,17 +883,6 @@ final class Settings {
 			. esc_attr__( 'Buy me a coffee to support OpenNow (opens in a new tab)', 'opennow' )
 			. '">'
 			. esc_html__( 'Buy me a coffee', 'opennow' )
-			. '</a>';
-		echo '</span>';
-		echo '<span class="opennow-developer-promotion__separator" aria-hidden="true">&middot;</span>';
-		echo '<span class="opennow-developer-promotion__link">';
-		echo '<span class="dashicons dashicons-star-filled opennow-developer-promotion__star" aria-hidden="true"></span>';
-		echo '<a class="opennow-developer-promotion__review" href="'
-			. esc_url( self::REVIEW_URL, array( 'https' ) )
-			. '" target="_blank" rel="noopener noreferrer" aria-label="'
-			. esc_attr__( 'Rate OpenNow on WordPress.org (opens in a new tab)', 'opennow' )
-			. '">'
-			. esc_html__( 'Rate this plugin', 'opennow' )
 			. '</a>';
 		echo '</span>';
 		echo '</p>';

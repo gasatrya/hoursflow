@@ -13,13 +13,23 @@ The MVP targets:
 - WordPress 6.6 or newer.
 - PHP 7.4 or newer.
 
-These remain broad target minimums rather than the tested release gate. The required integration gate is intentionally one lane, selected from the official WordPress [requirements](https://wordpress.org/about/requirements/), [PHP compatibility table](https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/), and [release archive](https://wordpress.org/download/releases/):
+These remain broad target minimums rather than a claim that every version
+combination is tested. The required integration matrix is selected from the
+official WordPress [requirements](https://wordpress.org/about/requirements/),
+[PHP compatibility table](https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/),
+and [release archive](https://wordpress.org/download/releases/):
 
-| WordPress release line | PHP release line | Purpose |
+| WordPress patch | PHP release line | Purpose |
 | --- | --- | --- |
-| 7.1 (pinned to 7.1.1) | 8.5.x | Only required integration release gate |
+| 6.6.7 | 7.4.x | Minimum compatibility boundary |
+| 7.1.1 | 8.5.x | Current compatibility boundary |
 
-CI MUST record the exact WordPress patch and PHP versions used by this gate. This single lane is not exhaustive compatibility coverage and does not prove every combination within the WordPress 6.6+ and PHP 7.4+ target ranges. Before release, metadata and documentation MUST claim only the minimums and combinations that pass required automated checks. Raising either minimum requires an explicit contract change.
+CI MUST record the exact WordPress patch and PHP versions used by both lanes.
+The matrix is not exhaustive compatibility coverage and does not prove every
+combination within the WordPress 6.6+ and PHP 7.4+ target ranges. Before
+release, metadata and documentation MUST claim only the minimums and
+combinations that pass required automated checks. Raising either minimum
+requires an explicit contract change.
 
 ## 2. Weekly schedule
 
@@ -70,7 +80,7 @@ Labels and status text MUST be stored and rendered without HTML. A submitted lab
 Only these action forms are valid:
 
 - A root-relative same-site URL beginning with exactly one slash, such as `/booking/` or `/contact/?from=cta#form`.
-- An absolute `https://` URL with a non-empty host, such as `https://example.com/book` or an HTTPS WhatsApp link.
+- An absolute `https://` URL with a non-empty host, such as `https://example.com/book`.
 - A `tel:` URI whose value starts with an optional `+` followed by a digit and then contains only digits, spaces, `.`, `-`, `(`, or `)`, such as `tel:+123456789` or `tel:+1 (234) 567-8900`.
 
 Actions MUST be trimmed, validated as a complete value, and escaped as a URL when rendered. Validation occurs before output escaping; sanitization MUST NOT transform a disallowed action into an allowed one. Control characters, backslashes, protocol-relative URLs (`//example.com`), credentials in absolute URLs, and empty values are invalid. Whitespace is invalid in root-relative and HTTPS actions; ASCII spaces are allowed only inside a valid `tel:` value. An HTTPS action requires a standards-based parser to identify the `https` scheme, a non-empty ASCII or punycode hostname, no username or password, and a valid optional port. Unicode hostnames must be supplied in punycode form.
@@ -120,7 +130,7 @@ A blank globally persisted value selects its plugin default; a nonblank global v
 
 The plugin supplies a tightly bounded layout baseline, hover, and visible keyboard-focus styling. The link MUST use compact button-like internal spacing, a minimum 44x44 CSS-pixel target, modest corner rounding, centered text, and wrapping safeguards. Status text MUST remain block-level, have a modest separation gap, and wrap safely. The baseline inherits theme typography unless a block instance uses the supported WordPress typography controls. The plugin does not load fonts; font-family choices are limited to fonts supplied by WordPress, the active theme, or the site. The plugin MUST NOT expose controls for fixed dimensions, spacing, borders, shadows, animation, responsive layout, or per-state styles.
 
-The admin weekly-hours editor MUST keep each weekday in a bordered semantic fieldset with a localized weekday legend, explicit opening and closing labels, visible translated Open/Closed text, and aligned time rows. Its Closed control MUST accurately reference both time input IDs with `aria-controls`; closed inputs MUST be disabled and not required, while open inputs MUST be required and not disabled. The local admin stylesheet MUST keep these groups within the viewport and stack each time row at widths of 782 CSS pixels or less. The settings page MUST provide a labeled live CTA preview beside the form at wider widths and in a stacked position at narrow widths. Native Open and Closed controls MUST expose their selected state, select a variant independently of the schedule, and have at least 44x44 CSS-pixel targets with a visible focus indicator. The preview MUST reflect current unsaved labels, optional status, and global colors, use the documented defaults for blank colors, preserve safe wrapping, and remain visual-only non-link markup that cannot activate an action. A visually distinct developer promotion MUST follow the preview within the same sidebar in DOM and visual order, and the complete sidebar MUST stack below the form at widths of 782 CSS pixels or less without horizontal overflow. Promotion links MUST use translated, escaped text and URLs, protected new browsing contexts, understandable accessible names, and visible focus indicators. The card MUST load no remote assets or embedded content; its Gasatrya hire and donation destinations are contacted only after administrator activation. A review link MUST remain absent unless the canonical OpenNow WordPress.org review page is confirmed. Sidebar assets and markup MUST remain scoped to the authorized OpenNow settings page. Themes may customize stable public hooks without editing plugin files:
+The admin weekly-hours editor MUST keep each weekday in a bordered semantic fieldset with a localized weekday legend, explicit opening and closing labels, visible translated Open/Closed text, and aligned time rows. Its Closed control MUST accurately reference both time input IDs with `aria-controls`; closed inputs MUST be disabled and not required, while open inputs MUST be required and not disabled. The local admin stylesheet MUST keep these groups within the viewport and stack each time row at widths of 782 CSS pixels or less. The settings page MUST provide a labeled live CTA preview beside the form at wider widths and in a stacked position at narrow widths. Native Open and Closed controls MUST expose their selected state, select a variant independently of the schedule, and have at least 44x44 CSS-pixel targets with a visible focus indicator. The preview MUST reflect current unsaved labels, optional status, and global colors, use the documented defaults for blank colors, preserve safe wrapping, and remain visual-only non-link markup that cannot activate an action. A visually distinct developer promotion MUST follow the preview within the same sidebar in DOM and visual order, and the complete sidebar MUST stack below the form at widths of 782 CSS pixels or less without horizontal overflow. Promotion links MUST use translated, escaped text and URLs, protected new browsing contexts, understandable accessible names, and visible focus indicators. The card MUST load no remote assets or embedded content; its Gasatrya hire and donation destinations are contacted only after administrator activation. A WordPress.org review or rating link MUST remain absent until the OpenNow slug is approved and live. Sidebar assets and markup MUST remain scoped to the authorized OpenNow settings page. Themes may customize stable public hooks without editing plugin files:
 
 - `.opennow-cta`
 - `.opennow-cta--open`
@@ -154,6 +164,6 @@ The MVP support contract is single-site WordPress only; multisite and network ac
 - Status text, when present, is visibly grouped with the CTA and rendered as text. The plugin does not add a hidden open/closed announcement; administrators are responsible for labels and status copy that communicate the intended action. Plugin styling MUST NOT use color as the only distinction between otherwise identical state content.
 - Every plugin-authored user-facing PHP or JavaScript string MUST be translatable with the `opennow` text domain, including block-editor and validation messages. Weekday labels in administration MUST use WordPress locale data; stored weekday keys and `HH:MM` values remain locale-independent. Administrator-authored CTA copy is displayed as entered and is not automatically translated.
 - All output MUST be escaped for its context. Administrative writes require capability checks, nonce verification, sanitization, and validation.
-- No lifecycle hook, administration screen, scheduled task, or frontend execution makes a background external request or loads a remote asset. The plugin collects no visitor data, sets no cookies, and performs no tracking, analytics, or telemetry. Ordinary user-initiated navigation is the only exception: a visitor may follow an administrator-configured HTTPS CTA, and an administrator may follow the clearly labeled Gasatrya hire or donation links on the OpenNow settings page.
+- No lifecycle hook, administration screen, scheduled task, or frontend execution makes a background external request or loads a remote asset. The plugin collects no visitor data, sets no cookies, and performs no tracking or telemetry. Ordinary user-initiated navigation is the only exception: a visitor may follow an administrator-configured HTTPS CTA, and an administrator may follow the clearly labeled Gasatrya hire or donation links on the OpenNow settings page.
 
 Anything not defined here remains outside the MVP unless this contract and the product concept are deliberately revised.

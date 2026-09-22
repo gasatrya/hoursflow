@@ -68,9 +68,8 @@ final class AdminAssetsTest extends TestCase
         $this->assertStringContainsString('width: 100%;', $css);
         $this->assertStringContainsString('.opennow-developer-promotion__coffee', $css);
         $this->assertStringContainsString('color: #C9A96E;', $css);
-        $this->assertStringContainsString('.opennow-developer-promotion__star', $css);
-        $this->assertStringContainsString('color: #FFB900;', $css);
-        $this->assertStringContainsString('.opennow-developer-promotion__separator', $css);
+        $this->assertStringNotContainsString('.opennow-developer-promotion__star', $css);
+        $this->assertStringNotContainsString('.opennow-developer-promotion__separator', $css);
         $this->assertStringContainsString('.opennow-developer-promotion__links a:focus', $css);
         $this->assertStringContainsString('outline-offset: 2px;', $css);
         $this->assertMatchesRegularExpression(
