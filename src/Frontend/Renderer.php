@@ -1,9 +1,9 @@
 <?php
-namespace OpenNow\Frontend;
+namespace HoursFlow\Frontend;
 
-use OpenNow\Config\Repository;
-use OpenNow\Config\Validator;
-use OpenNow\Schedule\Evaluator;
+use HoursFlow\Config\Repository;
+use HoursFlow\Config\Validator;
+use HoursFlow\Schedule\Evaluator;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -101,9 +101,9 @@ final class Renderer {
 				return '';
 			}
 
-			$wrapper_class      = 'opennow-cta opennow-cta--' . $state;
-			$style              = '--opennow-cta-background-color: ' . $appearance['background_color']
-				. '; --opennow-cta-text-color: ' . $appearance['text_color'] . ';';
+			$wrapper_class      = 'hoursflow-cta hoursflow-cta--' . $state;
+			$style              = '--hoursflow-cta-background-color: ' . $appearance['background_color']
+				. '; --hoursflow-cta-text-color: ' . $appearance['text_color'] . ';';
 			$wrapper_attributes = 'class="' . esc_attr( $wrapper_class ) . '" style="'
 				. esc_attr( $style ) . '"';
 			if ( $is_block_render && function_exists( 'get_block_wrapper_attributes' ) ) {
@@ -120,7 +120,7 @@ final class Renderer {
 				. esc_html( $cta['label'] ) . '</a>';
 
 			if ( ! $hide_status && '' !== $cta['status'] ) {
-				$markup .= '<span class="' . esc_attr( 'opennow-cta__status' ) . '">'
+				$markup .= '<span class="' . esc_attr( 'hoursflow-cta__status' ) . '">'
 					. esc_html( $cta['status'] ) . '</span>';
 			}
 
@@ -141,7 +141,7 @@ final class Renderer {
 	 * @return string
 	 */
 	private function linkAttributes( $block_colors ): string {
-		$classes = array( 'opennow-cta__link' );
+		$classes = array( 'hoursflow-cta__link' );
 		$styles  = array();
 		if ( is_array( $block_colors ) && function_exists( 'wp_style_engine_get_styles' ) ) {
 			$custom_colors = isset( $block_colors['style'] ) && is_array( $block_colors['style'] )
@@ -212,13 +212,13 @@ final class Renderer {
 			return;
 		}
 
-		$plugin_file = defined( 'OPENNOW_PLUGIN_FILE' )
-			? OPENNOW_PLUGIN_FILE
-			: dirname( __DIR__, 2 ) . DIRECTORY_SEPARATOR . 'opennow.php';
-		$version     = defined( 'OPENNOW_VERSION' ) ? OPENNOW_VERSION : null;
+		$plugin_file = defined( 'HOURSFLOW_PLUGIN_FILE' )
+			? HOURSFLOW_PLUGIN_FILE
+			: dirname( __DIR__, 2 ) . DIRECTORY_SEPARATOR . 'hoursflow.php';
+		$version     = defined( 'HOURSFLOW_VERSION' ) ? HOURSFLOW_VERSION : null;
 
 		wp_enqueue_style(
-			'opennow-cta',
+			'hoursflow-cta',
 			plugins_url( 'assets/public/cta.css', $plugin_file ),
 			array(),
 			$version

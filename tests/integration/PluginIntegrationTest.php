@@ -1,15 +1,15 @@
 <?php
-namespace OpenNow\Tests\Integration;
+namespace HoursFlow\Tests\Integration;
 
-use OpenNow\Admin\Settings;
-use OpenNow\Config\Repository;
-use OpenNow\Config\Schema;
-use OpenNow\Frontend\Block;
-use OpenNow\Frontend\Renderer;
-use OpenNow\Frontend\Shortcode;
-use OpenNow\Lifecycle;
-use OpenNow\Schedule\Evaluator;
-use OpenNow\Uninstaller;
+use HoursFlow\Admin\Settings;
+use HoursFlow\Config\Repository;
+use HoursFlow\Config\Schema;
+use HoursFlow\Frontend\Block;
+use HoursFlow\Frontend\Renderer;
+use HoursFlow\Frontend\Shortcode;
+use HoursFlow\Lifecycle;
+use HoursFlow\Schedule\Evaluator;
+use HoursFlow\Uninstaller;
 use WP_UnitTestCase;
 
 final class PluginIntegrationTest extends WP_UnitTestCase
@@ -17,7 +17,7 @@ final class PluginIntegrationTest extends WP_UnitTestCase
     protected function tearDown(): void
     {
         if (function_exists('deactivate_plugins')) {
-            deactivate_plugins('opennow/opennow.php', true);
+            deactivate_plugins('hoursflow/hoursflow.php', true);
         }
         if (function_exists('wp_set_current_user')) {
             wp_set_current_user(0);
@@ -38,19 +38,19 @@ final class PluginIntegrationTest extends WP_UnitTestCase
     public function testRealWordPressRegistersTheDynamicBlockAndShortcode(): void
     {
         $registry = \WP_Block_Type_Registry::get_instance();
-        $this->assertTrue($registry->is_registered('opennow/cta'));
-        $block_type = $registry->get_registered('opennow/cta');
+        $this->assertTrue($registry->is_registered('hoursflow/cta'));
+        $block_type = $registry->get_registered('hoursflow/cta');
         $this->assertIsObject($block_type);
         $this->assertIsArray($block_type->render_callback);
         $this->assertSame('render', $block_type->render_callback[1]);
-        $this->assertTrue(shortcode_exists('opennow_cta'));
+        $this->assertTrue(shortcode_exists('hoursflow_cta'));
     }
 
     public function testProductionPackageActivatesWithoutOutputOrDevelopmentDependencies(): void
     {
-        $plugin_file = getenv('OPENNOW_TEST_PLUGIN_FILE');
+        $plugin_file = getenv('HOURSFLOW_TEST_PLUGIN_FILE');
         if (!is_string($plugin_file) || '' === $plugin_file) {
-            $this->markTestSkipped('Set OPENNOW_TEST_PLUGIN_FILE to test a production package.');
+            $this->markTestSkipped('Set HOURSFLOW_TEST_PLUGIN_FILE to test a production package.');
         }
 
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -90,12 +90,12 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $shortcode->register();
         $block = new Block($renderer);
 
-        $shortcode_output = do_shortcode('[opennow_cta]');
+        $shortcode_output = do_shortcode('[hoursflow_cta]');
         $block_output = $block->render(array(), '', null);
 
         $this->assertSame($saved, get_option(Schema::OPTION_NAME));
         $this->assertSame($shortcode_output, $block_output);
-        $this->assertStringContainsString('opennow-cta--' . $expected_state, $block_output);
+        $this->assertStringContainsString('hoursflow-cta--' . $expected_state, $block_output);
     }
 
     public function testSerializedDynamicBlockUsesNestedOverridesAndKeepsLegacyBlocksWorking(): void
@@ -125,17 +125,17 @@ final class PluginIntegrationTest extends WP_UnitTestCase
 
         $output = do_blocks($serialized);
 
-        $this->assertSame(1, preg_match('/opennow-cta--(open|closed)/', $output));
+        $this->assertSame(1, preg_match('/hoursflow-cta--(open|closed)/', $output));
         $this->assertStringContainsString('Serialized CTA', $output);
         $this->assertStringContainsString('href="/serialized/"', $output);
         $this->assertStringNotContainsString('Call Now', $output);
         $this->assertStringNotContainsString('Book online', $output);
         $this->assertStringNotContainsString('We are open.', $output);
         $this->assertStringNotContainsString('We are closed.', $output);
-        $this->assertStringNotContainsString('opennow-cta__status', $output);
+        $this->assertStringNotContainsString('hoursflow-cta__status', $output);
 
-        $legacy_output = do_blocks('<!-- wp:opennow/cta /-->');
-        $this->assertSame(1, preg_match('/opennow-cta--(open|closed)/', $legacy_output));
+        $legacy_output = do_blocks('<!-- wp:hoursflow/cta /-->');
+        $this->assertSame(1, preg_match('/hoursflow-cta--(open|closed)/', $legacy_output));
         $this->assertSame(1, preg_match('/Call Now|Book online/', $legacy_output));
         $this->assertStringNotContainsString('Serialized CTA', $legacy_output);
     }
@@ -148,17 +148,17 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $config['cta']['closed']['status'] = 'We are closed.';
         update_option(Schema::OPTION_NAME, $config, false);
 
-        $legacy_shortcode = do_shortcode('[opennow_cta]');
-        $legacy_block = do_blocks('<!-- wp:opennow/cta /-->');
+        $legacy_shortcode = do_shortcode('[hoursflow_cta]');
+        $legacy_block = do_blocks('<!-- wp:hoursflow/cta /-->');
 
         // WordPress block supports decorate the outer wrapper, but the CTA contents must stay in parity.
         $this->assertSame(strstr($legacy_shortcode, '>'), strstr($legacy_block, '>'));
         $this->assertStringContainsString('href="/booking/"', $legacy_shortcode);
         $this->assertStringContainsString('Book online', $legacy_shortcode);
-        $this->assertStringContainsString('opennow-cta__status', $legacy_shortcode);
+        $this->assertStringContainsString('hoursflow-cta__status', $legacy_shortcode);
         $this->assertSame(
             1,
-            preg_match('/opennow-cta--(open|closed)/', $legacy_shortcode, $matches)
+            preg_match('/hoursflow-cta--(open|closed)/', $legacy_shortcode, $matches)
         );
         $selected_state = $matches[1];
         $other_state = 'open' === $selected_state ? 'closed' : 'open';
@@ -172,13 +172,13 @@ final class PluginIntegrationTest extends WP_UnitTestCase
             ),
         );
         $hidden_shortcode = do_shortcode(
-            '[opennow_cta hide_status="1" label="Ignored"]Ignored content[/opennow_cta]'
+            '[hoursflow_cta hide_status="1" label="Ignored"]Ignored content[/hoursflow_cta]'
         );
         $hidden_block = do_blocks($this->serializedCta($hidden_overrides));
 
         $this->assertSame(strstr($hidden_shortcode, '>'), strstr($hidden_block, '>'));
         $this->assertStringContainsString('href="/booking/"', $hidden_shortcode);
-        $this->assertStringNotContainsString('opennow-cta__status', $hidden_shortcode);
+        $this->assertStringNotContainsString('hoursflow-cta__status', $hidden_shortcode);
         $this->assertStringNotContainsString('Ignored', $hidden_shortcode);
 
         $this->assertSame(
@@ -202,8 +202,8 @@ final class PluginIntegrationTest extends WP_UnitTestCase
             )
         );
         $this->assertStringContainsString(
-            'opennow-cta__status',
-            do_shortcode('[opennow_cta hide_status="true"]')
+            'hoursflow-cta__status',
+            do_shortcode('[hoursflow_cta hide_status="true"]')
         );
     }
 
@@ -227,7 +227,7 @@ final class PluginIntegrationTest extends WP_UnitTestCase
 
         $this->assertSame(
             1,
-            preg_match('/opennow-cta opennow-cta--(open|closed)/', $output, $matches)
+            preg_match('/hoursflow-cta hoursflow-cta--(open|closed)/', $output, $matches)
         );
         $state = $matches[1];
         $selected_action = 'open' === $state ? 'tel:+123456789' : '/booking/';
@@ -279,7 +279,7 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $serialized = serialize_blocks(
             array(
                 array(
-                    'blockName' => 'opennow/cta',
+                    'blockName' => 'hoursflow/cta',
                     'attrs' => $attributes,
                     'innerBlocks' => array(),
                     'innerHTML' => '',
@@ -297,8 +297,8 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $this->assertStringContainsString('letter-spacing:0.05em', $output);
         $this->assertStringContainsString('line-height:1.4', $output);
         $this->assertStringContainsString('text-transform:uppercase', $output);
-        $this->assertStringContainsString('--opennow-cta-background-color:', $output);
-        $this->assertStringContainsString('--opennow-cta-text-color:', $output);
+        $this->assertStringContainsString('--hoursflow-cta-background-color:', $output);
+        $this->assertStringContainsString('--hoursflow-cta-text-color:', $output);
     }
 
     public function testColorBlockSupportsOverrideOnlyTheRenderedCtaLink(): void
@@ -315,7 +315,7 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $serialized = serialize_blocks(
             array(
                 array(
-                    'blockName' => 'opennow/cta',
+                    'blockName' => 'hoursflow/cta',
                     'attrs' => $attributes,
                     'innerBlocks' => array(),
                     'innerHTML' => '',
@@ -325,11 +325,11 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         );
 
         $output = do_blocks($serialized);
-        $shortcode_output = do_shortcode('[opennow_cta]');
+        $shortcode_output = do_shortcode('[hoursflow_cta]');
 
         // A real block object must receive WordPress's standard wrapper even without typography attributes.
-        $this->assertStringContainsString('wp-block-opennow-cta', $output);
-        $this->assertStringNotContainsString('wp-block-opennow-cta', $shortcode_output);
+        $this->assertStringContainsString('wp-block-hoursflow-cta', $output);
+        $this->assertStringNotContainsString('wp-block-hoursflow-cta', $shortcode_output);
         $this->assertStringContainsString('has-text-color', $output);
         $this->assertStringContainsString('has-vivid-red-color', $output);
         $this->assertStringContainsString('has-background', $output);
@@ -361,7 +361,7 @@ final class PluginIntegrationTest extends WP_UnitTestCase
                 'hideStatus' => true,
             ),
         );
-        $request = new \WP_REST_Request('POST', '/wp/v2/block-renderer/opennow/cta');
+        $request = new \WP_REST_Request('POST', '/wp/v2/block-renderer/hoursflow/cta');
         $request->set_header('content-type', 'application/json');
         $request->set_body(
             wp_json_encode(
@@ -401,7 +401,7 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         $this->assertStringContainsString('#123456', $data['rendered']);
         $this->assertStringContainsString('font-weight:700', $data['rendered']);
         $this->assertStringContainsString('line-height:1.4', $data['rendered']);
-        $this->assertStringNotContainsString('opennow-cta__status', $data['rendered']);
+        $this->assertStringNotContainsString('hoursflow-cta__status', $data['rendered']);
     }
 
     public function testRealWordPressLifecycleRetainsOnDeactivateAndDeletesOnUninstall(): void
@@ -438,7 +438,7 @@ final class PluginIntegrationTest extends WP_UnitTestCase
         return serialize_blocks(
             array(
                 array(
-                    'blockName' => 'opennow/cta',
+                    'blockName' => 'hoursflow/cta',
                     'attrs' => array('overrides' => $overrides),
                     'innerBlocks' => array(),
                     'innerHTML' => '',

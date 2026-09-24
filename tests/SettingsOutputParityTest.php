@@ -1,20 +1,20 @@
 <?php
-namespace OpenNow\Tests;
+namespace HoursFlow\Tests;
 
-use OpenNow\Admin\Settings;
-use OpenNow\Config\Repository;
-use OpenNow\Config\Schema;
-use OpenNow\Frontend\Block;
-use OpenNow\Frontend\Renderer;
-use OpenNow\Frontend\Shortcode;
-use OpenNow\Schedule\Evaluator;
+use HoursFlow\Admin\Settings;
+use HoursFlow\Config\Repository;
+use HoursFlow\Config\Schema;
+use HoursFlow\Frontend\Block;
+use HoursFlow\Frontend\Renderer;
+use HoursFlow\Frontend\Shortcode;
+use HoursFlow\Schedule\Evaluator;
 use PHPUnit\Framework\TestCase;
 
 final class SettingsOutputParityTest extends TestCase
 {
     protected function setUp(): void
     {
-        opennow_reset_wp_stubs();
+        hoursflow_reset_wp_stubs();
     }
 
     /**
@@ -28,7 +28,7 @@ final class SettingsOutputParityTest extends TestCase
         $saved = $settings->sanitize($this->config());
 
         $this->assertIsArray($saved);
-        $this->assertSame(array(), $GLOBALS['opennow_test_settings_errors']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_settings_errors']);
         update_option(Schema::OPTION_NAME, $saved);
 
         $renderer = new Renderer(
@@ -44,21 +44,21 @@ final class SettingsOutputParityTest extends TestCase
         do_action('init');
 
         $block_output = call_user_func(
-            $GLOBALS['opennow_test_registered_blocks'][0]['args']['render_callback'],
+            $GLOBALS['hoursflow_test_registered_blocks'][0]['args']['render_callback'],
             array(),
             '',
             null
         );
         $shortcode_output = call_user_func(
-            $GLOBALS['opennow_test_shortcodes']['opennow_cta'],
+            $GLOBALS['hoursflow_test_shortcodes']['hoursflow_cta'],
             array(),
             null,
-            'opennow_cta'
+            'hoursflow_cta'
         );
 
-        $this->assertSame($saved, $GLOBALS['opennow_test_options'][Schema::OPTION_NAME]);
+        $this->assertSame($saved, $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME]);
         $this->assertSame($shortcode_output, $block_output);
-        $this->assertStringContainsString('opennow-cta--' . $expected_state, $block_output);
+        $this->assertStringContainsString('hoursflow-cta--' . $expected_state, $block_output);
         $this->assertStringContainsString(
             'open' === $expected_state ? 'Call Now' : 'Book online',
             $block_output

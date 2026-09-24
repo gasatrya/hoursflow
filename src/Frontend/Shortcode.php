@@ -1,10 +1,10 @@
 <?php
-namespace OpenNow\Frontend;
+namespace HoursFlow\Frontend;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Register the OpenNow CTA shortcode.
+ * Register the HoursFlow CTA shortcode.
  */
 final class Shortcode {
 
@@ -26,7 +26,7 @@ final class Shortcode {
 	 * @return void
 	 */
 	public function register() {
-		add_shortcode( 'opennow_cta', array( $this, 'render' ) );
+		add_shortcode( 'hoursflow_cta', array( $this, 'render' ) );
 	}
 
 	/**

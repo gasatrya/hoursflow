@@ -1,7 +1,7 @@
-# OpenNow configuration and runtime foundation
+# HoursFlow configuration and runtime foundation
 
-OpenNow is an installable WordPress plugin. Its entry point is `opennow.php`.
-The entry point defines the `OPENNOW_*` constants, loads the namespaced
+HoursFlow is an installable WordPress plugin. Its entry point is `hoursflow.php`.
+The entry point defines the `HOURSFLOW_*` constants, loads the namespaced
 autoloading layer, registers activation/deactivation callbacks, and boots the
 plugin after `plugins_loaded`. Frontend services are always available; the
 Settings API screen is registered only during an admin request.
@@ -12,8 +12,8 @@ and [`readme.txt`](../readme.txt). The normative behavior contract is in
 
 ## Configuration
 
-The Settings API registers one atomic, non-REST option: `opennow_config` in
-the `opennow` group. A successful submission is validated completely before
+The Settings API registers one atomic, non-REST option: `hoursflow_config` in
+the `hoursflow` group. A successful submission is validated completely before
 WordPress persists it. Invalid submissions return the exact existing option
 (or `false` when it does not exist), add field-specific settings errors, and
 never partially update the option.
@@ -65,9 +65,9 @@ a distinct developer promotion after the preview in DOM and visual order. Its
 translated, escaped Hire Me and donation links open only after administrator
 activation, use protected new browsing contexts, and load no remote assets or
 embedded content. No WordPress.org review or rating link is included until the
-OpenNow slug is approved and live.
+HoursFlow slug is approved and live.
 
-`OpenNow\Config\Repository` revalidates every stored section in memory and
+`HoursFlow\Config\Repository` revalidates every stored section in memory and
 never repairs the option. Missing or invalid days become closed, invalid CTA
 states become unavailable, invalid timezones make evaluation closed, and
 invalid appearance data uses the default color pair.
@@ -90,8 +90,8 @@ apply.
 The shortcode is:
 
 ```text
-[opennow_cta]
-[opennow_cta hide_status="1"]
+[hoursflow_cta]
+[hoursflow_cta hide_status="1"]
 ```
 
 Only the exact string `hide_status="1"` is recognized. It forwards a
@@ -99,8 +99,8 @@ Only the exact string `hide_status="1"` is recognized. It forwards a
 the state selected at runtime. Other values or malformed attribute containers
 are a no-op, and all other attributes and content remain ignored.
 
-The dynamic block is `opennow/cta`. It uses the same
-`OpenNow\Frontend\Renderer` as the shortcode, so saved global settings produce
+The dynamic block is `hoursflow/cta`. It uses the same
+`HoursFlow\Frontend\Renderer` as the shortcode, so saved global settings produce
 the same server-rendered output when no block overrides are present. Its editor
 uses a server-side-rendered preview of the current output. The renderer first
 requires a valid selected global CTA, then applies only valid selected-state
@@ -130,7 +130,7 @@ markup is absent, and preview state changes never mutate schedule controls.
 The plugin has no browser polling, AJAX, REST polling, cache variation, or
 scheduled purge. Cached HTML can therefore be stale until the site's normal
 page-cache TTL; configure that TTL to the maximum staleness the site requires
-or arrange a boundary purge outside OpenNow.
+or arrange a boundary purge outside HoursFlow.
 
 ## Lifecycle
 

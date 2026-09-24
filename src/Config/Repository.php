@@ -1,5 +1,5 @@
 <?php
-namespace OpenNow\Config;
+namespace HoursFlow\Config;
 
 defined( 'ABSPATH' ) || exit;
 

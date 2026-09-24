@@ -1,10 +1,10 @@
 <?php
-namespace OpenNow\Frontend;
+namespace HoursFlow\Frontend;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Register and render the dynamic OpenNow CTA block.
+ * Register and render the dynamic HoursFlow CTA block.
  */
 final class Block {
 
@@ -42,8 +42,8 @@ final class Block {
 		}
 
 		$block_directory = str_replace( '/', DIRECTORY_SEPARATOR, self::BLOCK_DIRECTORY );
-		$directory       = defined( 'OPENNOW_PLUGIN_DIR' )
-			? rtrim( OPENNOW_PLUGIN_DIR, '/\\' ) . DIRECTORY_SEPARATOR . $block_directory
+		$directory       = defined( 'HOURSFLOW_PLUGIN_DIR' )
+			? rtrim( HOURSFLOW_PLUGIN_DIR, '/\\' ) . DIRECTORY_SEPARATOR . $block_directory
 			: dirname( __DIR__, 2 ) . DIRECTORY_SEPARATOR . $block_directory;
 
 		register_block_type(

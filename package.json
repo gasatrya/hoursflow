@@ -1,8 +1,8 @@
 {
-  "name": "opennow-cta",
+  "name": "hoursflow-business-hours-cta",
   "version": "0.1.0",
   "private": true,
-  "description": "Build and test tooling for the OpenNow CTA WordPress block.",
+  "description": "Build and test tooling for HoursFlow — Business Hours CTA for WordPress.",
   "scripts": {
     "audit:production": "npm audit --omit=dev --audit-level=high",
     "build": "wp-scripts build",

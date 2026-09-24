@@ -8,7 +8,7 @@ const path = require( 'path' );
 const { makePot } = require( './make-pot' );
 
 const ROOT = path.resolve( __dirname, '..' );
-const EXPECTED = path.join( ROOT, 'languages', 'opennow.pot' );
+const EXPECTED = path.join( ROOT, 'languages', 'hoursflow.pot' );
 
 function digest( filePath ) {
 	return crypto
@@ -19,7 +19,7 @@ function digest( filePath ) {
 
 function main() {
 	const temporaryDirectory = fs.mkdtempSync(
-		path.join( os.tmpdir(), 'opennow-pot-' )
+		path.join( os.tmpdir(), 'hoursflow-pot-' )
 	);
 	const first = path.join( temporaryDirectory, 'first.pot' );
 	const second = path.join( temporaryDirectory, 'second.pot' );
@@ -35,7 +35,7 @@ function main() {
 			digest( first ) !== digest( EXPECTED )
 		) {
 			throw new Error(
-				'languages/opennow.pot is out of date. Run npm run i18n:pot.'
+				'languages/hoursflow.pot is out of date. Run npm run i18n:pot.'
 			);
 		}
 		console.log(

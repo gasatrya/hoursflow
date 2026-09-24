@@ -1,5 +1,5 @@
 <?php
-namespace OpenNow\Tests;
+namespace HoursFlow\Tests;
 
 use PHPUnit\Framework\TestCase;
 
@@ -12,18 +12,18 @@ final class AdminAssetsTest extends TestCase
         $css = file_get_contents($path);
 
         $this->assertIsString($css);
-        $this->assertStringContainsString('#opennow-schedule', $css);
+        $this->assertStringContainsString('#hoursflow-schedule', $css);
         $this->assertStringContainsString('border: 1px solid #8C8F94;', $css);
-        $this->assertStringContainsString('.opennow-schedule-day--open', $css);
-        $this->assertStringContainsString('.opennow-schedule-day--closed', $css);
+        $this->assertStringContainsString('.hoursflow-schedule-day--open', $css);
+        $this->assertStringContainsString('.hoursflow-schedule-day--closed', $css);
         $this->assertStringContainsString('font-weight: 700;', $css);
-        $this->assertStringContainsString('.opennow-schedule-summary', $css);
+        $this->assertStringContainsString('.hoursflow-schedule-summary', $css);
         $this->assertStringContainsString('display: flex;', $css);
         $this->assertStringContainsString('gap: 0.5rem 1rem;', $css);
-        $this->assertStringContainsString('.opennow-schedule-closed-toggle', $css);
+        $this->assertStringContainsString('.hoursflow-schedule-closed-toggle', $css);
         $this->assertStringContainsString('input[type="checkbox"]', $css);
         $this->assertStringContainsString('flex: 0 0 auto;', $css);
-        $this->assertStringContainsString('.opennow-schedule-row', $css);
+        $this->assertStringContainsString('.hoursflow-schedule-row', $css);
         $this->assertStringContainsString('align-items: center;', $css);
         $this->assertStringContainsString('display: grid;', $css);
         $this->assertStringContainsString('grid-template-columns: minmax(9rem, 12rem) minmax(10rem, 20rem);', $css);
@@ -34,46 +34,46 @@ final class AdminAssetsTest extends TestCase
         $this->assertStringContainsString('max-width: 100%;', $css);
         $this->assertStringContainsString('overflow-wrap: anywhere;', $css);
 
-        $this->assertStringContainsString('#opennow-settings-layout', $css);
+        $this->assertStringContainsString('#hoursflow-settings-layout', $css);
         $this->assertStringContainsString('grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);', $css);
         $this->assertStringContainsString('grid-template-rows: auto minmax(0, 1fr);', $css);
-        $this->assertStringContainsString('#opennow-cta-preview', $css);
-        $this->assertStringContainsString('.opennow-developer-promotion', $css);
-        $this->assertStringNotContainsString('.opennow-settings-sidebar', $css);
+        $this->assertStringContainsString('#hoursflow-cta-preview', $css);
+        $this->assertStringContainsString('.hoursflow-developer-promotion', $css);
+        $this->assertStringNotContainsString('.hoursflow-settings-sidebar', $css);
         $this->assertMatchesRegularExpression(
-            '/#opennow-settings-layout > #opennow-cta-preview\s*\{[^}]*position: sticky;[^}]*top: 2rem;[^}]*z-index: 1;[^}]*\}/s',
+            '/#hoursflow-settings-layout > #hoursflow-cta-preview\s*\{[^}]*position: sticky;[^}]*top: 2rem;[^}]*z-index: 1;[^}]*\}/s',
             $css
         );
         $this->assertDoesNotMatchRegularExpression(
-            '/#opennow-settings-layout > \.opennow-developer-promotion\s*\{[^}]*position: sticky;/s',
+            '/#hoursflow-settings-layout > \.hoursflow-developer-promotion\s*\{[^}]*position: sticky;/s',
             $css
         );
-        $this->assertStringContainsString('.opennow-cta-preview__state-button[aria-pressed="true"]', $css);
+        $this->assertStringContainsString('.hoursflow-cta-preview__state-button[aria-pressed="true"]', $css);
         $this->assertStringContainsString('background: transparent;', $css);
         $this->assertStringContainsString('border-bottom: 3px solid transparent;', $css);
         $this->assertStringContainsString('border-bottom-color: #2271B1;', $css);
-        $this->assertStringContainsString('.opennow-cta-preview__state-button:focus', $css);
+        $this->assertStringContainsString('.hoursflow-cta-preview__state-button:focus', $css);
         $this->assertStringContainsString('outline: 2px solid #000000;', $css);
-        $this->assertStringContainsString('.opennow-cta__link', $css);
+        $this->assertStringContainsString('.hoursflow-cta__link', $css);
         $this->assertStringContainsString('min-height: 44px;', $css);
         $this->assertStringContainsString('min-width: 44px;', $css);
         $this->assertStringContainsString('padding: 0.5em 1em;', $css);
         $this->assertStringContainsString('border-radius: 0.25em;', $css);
-        $this->assertStringContainsString('.opennow-cta__status', $css);
+        $this->assertStringContainsString('.hoursflow-cta__status', $css);
         $this->assertStringContainsString('margin-top: 0.5em;', $css);
 
-        $this->assertStringContainsString('.opennow-developer-promotion__links', $css);
+        $this->assertStringContainsString('.hoursflow-developer-promotion__links', $css);
         $this->assertStringContainsString('gap: 12px;', $css);
-        $this->assertStringContainsString('.opennow-developer-promotion__hire', $css);
+        $this->assertStringContainsString('.hoursflow-developer-promotion__hire', $css);
         $this->assertStringContainsString('width: 100%;', $css);
-        $this->assertStringContainsString('.opennow-developer-promotion__coffee', $css);
+        $this->assertStringContainsString('.hoursflow-developer-promotion__coffee', $css);
         $this->assertStringContainsString('color: #C9A96E;', $css);
-        $this->assertStringNotContainsString('.opennow-developer-promotion__star', $css);
-        $this->assertStringNotContainsString('.opennow-developer-promotion__separator', $css);
-        $this->assertStringContainsString('.opennow-developer-promotion__links a:focus', $css);
+        $this->assertStringNotContainsString('.hoursflow-developer-promotion__star', $css);
+        $this->assertStringNotContainsString('.hoursflow-developer-promotion__separator', $css);
+        $this->assertStringContainsString('.hoursflow-developer-promotion__links a:focus', $css);
         $this->assertStringContainsString('outline-offset: 2px;', $css);
         $this->assertMatchesRegularExpression(
-            '/#opennow-settings-layout \.opennow-developer-promotion__links a:focus\s*\{[^}]*outline: 2px solid #000000;[^}]*\}/s',
+            '/#hoursflow-settings-layout \.hoursflow-developer-promotion__links a:focus\s*\{[^}]*outline: 2px solid #000000;[^}]*\}/s',
             $css
         );
 
@@ -81,17 +81,17 @@ final class AdminAssetsTest extends TestCase
         $this->assertStringContainsString('grid-template-columns: minmax(0, 1fr);', $css);
         $this->assertStringContainsString('position: static;', $css);
         $this->assertMatchesRegularExpression(
-            '/@media \(max-width: 782px\)\s*\{.*?#opennow-settings-layout > #opennow-cta-preview\s*\{\s*position: static;\s*\}/s',
+            '/@media \(max-width: 782px\)\s*\{.*?#hoursflow-settings-layout > #hoursflow-cta-preview\s*\{\s*position: static;\s*\}/s',
             $css
         );
-        $this->assertStringNotContainsString('#opennow-schedule *', $css);
+        $this->assertStringNotContainsString('#hoursflow-schedule *', $css);
         $this->assertStringNotContainsString('@import', $css);
         $this->assertStringNotContainsString('url(', $css);
 
         $this->assertSame(
             0,
             preg_match(
-                '/(?m)^(?!\s*(?:#opennow-schedule|#opennow-settings-layout|#opennow-cta-preview|@media|\}))[^\s].*\{/',
+                '/(?m)^(?!\s*(?:#hoursflow-schedule|#hoursflow-settings-layout|#hoursflow-cta-preview|@media|\}))[^\s].*\{/',
                 $css
             )
         );

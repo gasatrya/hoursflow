@@ -1,13 +1,13 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "opennow/cta",
-	"title": "OpenNow CTA",
+	"name": "hoursflow/cta",
+	"title": "HoursFlow CTA",
 	"category": "widgets",
 	"icon": "megaphone",
 	"description": "Show the right call to action based on the current business state, with optional per-state content and status visibility.",
 	"keywords": [ "call to action", "business hours", "open now" ],
-	"textdomain": "opennow",
+	"textdomain": "hoursflow",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"attributes": {

@@ -1,8 +1,8 @@
-# OpenNow CTA: Product and Market Assessment
+# HoursFlow — Business Hours CTA: Product and Market Assessment
 
 ## Bottom line
 
-**OpenNow has real utility, but it is a niche conversion tool—not yet a strong standalone commercial product.**
+**HoursFlow has real utility, but it is a niche conversion tool—not yet a strong standalone commercial product.**
 
 Its valuable idea is not “display business hours.” It is:
 
@@ -59,13 +59,13 @@ Consequently, this is unlikely to be a plugin that businesses actively seek by p
 The differentiation is legitimate:
 
 - A normal button has one label and destination.
-- OpenNow changes the label, destination, and supporting message according to availability.
+- HoursFlow changes the label, destination, and supporting message according to availability.
 - The same centrally managed schedule can drive multiple placements.
 - Block-level overrides allow contextual CTAs without duplicating the scheduling logic.
 
 That is meaningful. A business should not have to choose permanently between “Call us” and “Book online.”
 
-However, the feature can be reproduced with page-builder visibility rules, two buttons, and a scheduling add-on. OpenNow wins only if it is substantially easier and more reliable.
+However, the feature can be reproduced with page-builder visibility rules, two buttons, and a scheduling add-on. HoursFlow wins only if it is substantially easier and more reliable.
 
 ### Versus business-hours plugins
 
@@ -83,11 +83,11 @@ Established products already offer combinations of:
 
 For example, **We’re Open!** reports 5,000+ installations and includes conditional content, up to three periods per day, special hours, temporary closures, structured data, and cache refresh behavior. Business Hours Indicator also markets conditional content, dynamic messaging, multiple locations, special dates, and cache compatibility.
 
-OpenNow is simpler and more CTA-focused, but simplicity alone is not a durable moat. An established hours plugin’s conditional-content feature can already approximate the core result.
+HoursFlow is simpler and more CTA-focused, but simplicity alone is not a durable moat. An established hours plugin’s conditional-content feature can already approximate the core result.
 
 The defensible distinction should be:
 
-> **OpenNow is a conversion router driven by business availability, not another hours table.**
+> **HoursFlow is a conversion router driven by business availability, not another hours table.**
 
 ### Versus CTA and page-builder plugins
 
@@ -100,7 +100,7 @@ Generic CTA plugins offer much richer:
 - Analytics.
 - Templates and previews.
 
-Some newer contact-button plugins also include business-hours rules. OpenNow currently has better conceptual focus, but less presentation and distribution power.
+Some newer contact-button plugins also include business-hours rules. HoursFlow currently has better conceptual focus, but less presentation and distribution power.
 
 Its technical quality—validation, output parity, escaping, accessibility, and backward compatibility—is excellent engineering, but users generally regard these as expected reliability rather than purchase-driving features.
 
@@ -220,7 +220,7 @@ Prioritize:
    “Dynamic CTA based on opening hours” sounds like a small convenience unless demonstrated as after-hours lead recovery.
 
 10. **The competitive moat is thin.**  
-    A business-hours plugin can add CTA presets; a CTA plugin can add schedule conditions. OpenNow needs superior simplicity and outcome-focused UX.
+    A business-hours plugin can add CTA presets; a CTA plugin can add schedule conditions. HoursFlow needs superior simplicity and outcome-focused UX.
 
 ## Highest-value next steps
 
@@ -287,7 +287,7 @@ Do not build a complex proprietary analytics dashboard until users prove they wa
 
 ### 7. Reposition the product
 
-Avoid leading with “business hours.” That puts OpenNow against more complete schedule plugins.
+Avoid leading with “business hours.” That puts HoursFlow against more complete schedule plugins.
 
 Better positioning:
 
@@ -313,7 +313,7 @@ Release it as a free beta or WordPress.org plugin, install it on a small set of 
 - Whether closed-state CTAs generate meaningful leads.
 - Whether agencies reuse it on multiple client sites.
 
-If users consistently adopt “call while open, book while closed,” there is a viable niche. If they mostly ask for hours tables, holiday support, and schema, OpenNow is drifting into a mature category where stronger free competitors already exist.
+If users consistently adopt “call while open, book while closed,” there is a viable niche. If they mostly ask for hours tables, holiday support, and schema, HoursFlow is drifting into a mature category where stronger free competitors already exist.
 
 The concept has value. The current implementation proves the mechanics. What is not yet proven is that the conversion benefit is large enough for users to install—and especially pay for—a separate plugin.
 

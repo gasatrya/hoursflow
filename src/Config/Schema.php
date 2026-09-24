@@ -1,16 +1,16 @@
 <?php
-namespace OpenNow\Config;
+namespace HoursFlow\Config;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * The single persisted configuration schema used by OpenNow.
+ * The single persisted configuration schema used by HoursFlow.
  */
 final class Schema {
 
 	const VERSION                  = 1;
-	const OPTION_NAME              = 'opennow_config';
-	const SCHEMA_OPTION_NAME       = 'opennow_schema_version';
+	const OPTION_NAME              = 'hoursflow_config';
+	const SCHEMA_OPTION_NAME       = 'hoursflow_schema_version';
 	const DEFAULT_BACKGROUND_COLOR = '#166534';
 	const DEFAULT_TEXT_COLOR       = '#FFFFFF';
 	const MIN_CONTRAST_RATIO       = 4.5;

@@ -1,5 +1,5 @@
 <?php
-namespace OpenNow\Tests;
+namespace HoursFlow\Tests;
 
 use PHPUnit\Framework\TestCase;
 
@@ -11,9 +11,9 @@ final class BlockMetadataTest extends TestCase
             . 'blocks' . DIRECTORY_SEPARATOR . 'cta' . DIRECTORY_SEPARATOR . 'block.json';
         $metadata = $this->readMetadata($source);
 
-        $this->assertSame('opennow/cta', $metadata['name']);
+        $this->assertSame('hoursflow/cta', $metadata['name']);
         $this->assertSame(3, $metadata['apiVersion']);
-        $this->assertSame('opennow', $metadata['textdomain']);
+        $this->assertSame('hoursflow', $metadata['textdomain']);
         $this->assertNotSame('', $metadata['title']);
         $this->assertSame(
             'Show the right call to action based on the current business state, with optional per-state content and status visibility.',
@@ -80,18 +80,18 @@ final class BlockMetadataTest extends TestCase
 
         $editor_css = file_get_contents($built_directory . DIRECTORY_SEPARATOR . 'index.css');
         $this->assertIsString($editor_css);
-        $this->assertStringContainsString('.opennow-cta__link', $editor_css);
+        $this->assertStringContainsString('.hoursflow-cta__link', $editor_css);
         $this->assertStringContainsString('min-height:44px', $editor_css);
         $this->assertStringContainsString(
-            '.opennow-cta__link:not(.has-background)',
+            '.hoursflow-cta__link:not(.has-background)',
             $editor_css
         );
         $this->assertStringContainsString(
-            '.opennow-cta__link:not(.has-text-color)',
+            '.hoursflow-cta__link:not(.has-text-color)',
             $editor_css
         );
         $this->assertStringContainsString(
-            '.wp-block-opennow-cta .opennow-cta__link{pointer-events:none}',
+            '.wp-block-hoursflow-cta .hoursflow-cta__link{pointer-events:none}',
             $editor_css
         );
 

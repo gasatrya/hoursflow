@@ -1,5 +1,5 @@
 <?php
-namespace OpenNow;
+namespace HoursFlow;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 final class Autoloader {
 
 	/**
-	 * Register the OpenNow namespace loader.
+	 * Register the HoursFlow namespace loader.
 	 *
 	 * @param string $directory Directory containing the namespace classes.
 	 * @return void

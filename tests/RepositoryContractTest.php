@@ -1,5 +1,5 @@
 <?php
-namespace OpenNow\Tests;
+namespace HoursFlow\Tests;
 
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
@@ -29,8 +29,8 @@ final class RepositoryContractTest extends TestCase
         foreach ($this->runtimePhpFiles() as $path) {
             $contents = file_get_contents($path);
             $this->assertIsString($contents);
-            if (!in_array(basename($path), array('opennow.php', 'uninstall.php'), true)) {
-                $this->assertStringContainsString('namespace OpenNow', $contents, $path);
+            if (!in_array(basename($path), array('hoursflow.php', 'uninstall.php'), true)) {
+                $this->assertStringContainsString('namespace HoursFlow', $contents, $path);
             }
 
             foreach ($this->classNames($contents) as $class_name) {
@@ -48,7 +48,7 @@ final class RepositoryContractTest extends TestCase
                 $matches
             )) {
                 foreach ($matches[1] as $tag) {
-                    $this->assertStringStartsWith('opennow_', $tag);
+                    $this->assertStringStartsWith('hoursflow_', $tag);
                     $this->assertNotContains($tag, $shortcode_tags);
                     $shortcode_tags[] = $tag;
                 }
@@ -60,16 +60,16 @@ final class RepositoryContractTest extends TestCase
                 $matches
             )) {
                 foreach ($matches[1] as $handle) {
-                    $this->assertStringStartsWith('opennow-', $handle);
+                    $this->assertStringStartsWith('hoursflow-', $handle);
                     $this->assertNotContains($handle, $asset_handles);
                     $asset_handles[] = $handle;
                 }
             }
         }
 
-        $this->assertSame(array('opennow_cta'), $shortcode_tags);
+        $this->assertSame(array('hoursflow_cta'), $shortcode_tags);
         $this->assertSame(
-            array('opennow-admin-settings', 'opennow-admin-settings-style', 'opennow-cta'),
+            array('hoursflow-admin-settings', 'hoursflow-admin-settings-style', 'hoursflow-cta'),
             $asset_handles
         );
     }
@@ -117,19 +117,20 @@ final class RepositoryContractTest extends TestCase
 
     public function testPluginAndBlockMetadataStayConsistent(): void
     {
-        $plugin_file = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'opennow.php';
+        $plugin_file = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'hoursflow.php';
         $plugin = file_get_contents($plugin_file);
         $this->assertIsString($plugin);
+        $this->assertStringContainsString('* Plugin Name: HoursFlow — Business Hours CTA', $plugin);
         $this->assertStringContainsString('* Description: Show an open or closed call to action based on your weekly business hours.', $plugin);
         $this->assertStringContainsString('* Requires at least: 6.6', $plugin);
         $this->assertStringContainsString('* Requires PHP: 7.4', $plugin);
         $this->assertStringContainsString('* Author: Ga Satrya', $plugin);
         $this->assertStringContainsString('* Author URI: https://gasatrya.com/', $plugin);
-        $this->assertStringContainsString('* Plugin URI: https://gasatrya.com/wp-plugins/opennow/', $plugin);
+        $this->assertStringContainsString('* Plugin URI: https://gasatrya.com/wp-plugins/hoursflow/', $plugin);
         $this->assertStringContainsString('* License: GPL-2.0-or-later', $plugin);
-        $this->assertStringContainsString('* Text Domain: opennow', $plugin);
+        $this->assertStringContainsString('* Text Domain: hoursflow', $plugin);
         $this->assertMatchesRegularExpression(
-            "/define\\s*\\(\\s*['\"]OPENNOW_VERSION['\"]\\s*,\\s*['\"]0\\.1\\.0['\"]\\s*\\)/",
+            "/define\\s*\\(\\s*['\"]HOURSFLOW_VERSION['\"]\\s*,\\s*['\"]0\\.1\\.0['\"]\\s*\\)/",
             $plugin
         );
 
@@ -140,10 +141,10 @@ final class RepositoryContractTest extends TestCase
         $this->assertStringContainsString("Tested up to: 7.1\n", $readme);
         $this->assertStringContainsString("Stable tag: 0.1.0\n", $readme);
         $this->assertStringContainsString("Donate link: https://gasatrya.com/donate/\n", $readme);
-        $this->assertStringNotContainsString('https://wordpress.org/support/plugin/opennow/', $readme);
+        $this->assertStringNotContainsString('https://wordpress.org/support/plugin/hoursflow/', $readme);
         $this->assertStringContainsString("plugin page's Support tab once the plugin is published", $readme);
-        $this->assertStringContainsString('https://github.com/gasatrya/opennow/issues', $readme);
-        $this->assertStringContainsString('https://github.com/gasatrya/opennow', $readme);
+        $this->assertStringContainsString('https://github.com/gasatrya/hoursflow/issues', $readme);
+        $this->assertStringContainsString('https://github.com/gasatrya/hoursflow', $readme);
         $this->assertStringContainsString('src/blocks/cta/index.js', $readme);
         $this->assertStringContainsString('build/blocks/cta/index.js', $readme);
         $this->assertStringContainsString('npm ci --ignore-scripts', $readme);
@@ -181,6 +182,7 @@ final class RepositoryContractTest extends TestCase
             true
         );
         $this->assertIsArray($composer);
+        $this->assertSame('hoursflow/hoursflow-business-hours-cta', $composer['name']);
         $this->assertSame('>=7.4', $composer['require']['php']);
         $this->assertSame('GPL-2.0-or-later', $composer['license']);
 
@@ -189,14 +191,15 @@ final class RepositoryContractTest extends TestCase
             true
         );
         $this->assertIsArray($package);
+        $this->assertSame('hoursflow-business-hours-cta', $package['name']);
         $this->assertSame('0.1.0', $package['version']);
 
         $metadata_path = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR
             . 'blocks' . DIRECTORY_SEPARATOR . 'cta' . DIRECTORY_SEPARATOR . 'block.json';
         $metadata = json_decode((string) file_get_contents($metadata_path), true);
         $this->assertIsArray($metadata);
-        $this->assertSame('opennow/cta', $metadata['name']);
-        $this->assertSame('opennow', $metadata['textdomain']);
+        $this->assertSame('hoursflow/cta', $metadata['name']);
+        $this->assertSame('hoursflow', $metadata['textdomain']);
     }
 
     /**
@@ -205,7 +208,7 @@ final class RepositoryContractTest extends TestCase
     private function runtimePhpFiles(): array
     {
         $files = array(
-            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'opennow.php',
+            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'hoursflow.php',
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'uninstall.php',
         );
         $source_directory = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src';

@@ -1,4 +1,4 @@
-=== OpenNow CTA ===
+=== HoursFlow — Business Hours CTA ===
 Contributors: gasatrya
 Tags: call to action, business hours, dynamic content, gutenberg, shortcode
 Requires at least: 6.6
@@ -14,16 +14,16 @@ Show an open or closed call to action based on your weekly business hours.
 == Description ==
 
 Visitors should not have to guess what to do when your business is open or
-closed. OpenNow CTA lets you present one clear action for each state, such as
+closed. HoursFlow CTA lets you present one clear action for each state, such as
 calling while you are open and booking or sending a message after hours.
 
-Configure it once in **Settings > OpenNow**, then use the same schedule-aware
-CTA through a shortcode or a dynamic block. OpenNow renders the selected state
+Configure it once in **Settings > HoursFlow**, then use the same schedule-aware
+CTA through a shortcode or a dynamic block. HoursFlow renders the selected state
 on the server, without an account or a remote service.
 
 = Who is this for? =
 
-OpenNow CTA is for small businesses, studios, practices, shops, and service
+HoursFlow CTA is for small businesses, studios, practices, shops, and service
 teams that want a simple open-hours action on their WordPress site. It works
 well when the action changes with the weekly schedule and the site owner wants
 to keep the copy and destination under their control.
@@ -31,7 +31,7 @@ to keep the copy and destination under their control.
 = Core Features =
 
 * One global open CTA and one global closed CTA shared by the shortcode and
-  the OpenNow CTA block.
+  the HoursFlow CTA block.
 * A Monday-to-Sunday schedule using a named IANA business timezone, including
   overnight periods such as 22:00 to 02:00.
 * Sparse per-state block overrides for label, action, status, and hiding the
@@ -47,24 +47,24 @@ to keep the copy and destination under their control.
 
 = Focused by design =
 
-OpenNow CTA is a focused weekly-hours switch, not a booking system or a full
+HoursFlow CTA is a focused weekly-hours switch, not a booking system or a full
 business-hours manager. Each weekday has one period or is closed. Holiday
 exceptions, multiple daily periods, split shifts, date ranges, and automatic
 schedule-generated status copy are outside this release. The status message is
 written by the administrator and stays exactly as configured.
 
-OpenNow is intended for a single-site installation. Multisite and network
+HoursFlow is intended for a single-site installation. Multisite and network
 activation are not claimed by this release.
 
 == Installation ==
 
-1. Upload the `opennow` folder to `/wp-content/plugins/`, or upload the
+1. Upload the `hoursflow` folder to `/wp-content/plugins/`, or upload the
    production ZIP in **Plugins > Add New > Upload Plugin**.
-2. Activate **OpenNow CTA**.
-3. Go to **Settings > OpenNow** and choose a named IANA timezone.
+2. Activate **HoursFlow CTA**.
+3. Go to **Settings > HoursFlow** and choose a named IANA timezone.
 4. Set each weekday to closed or enter one opening and closing time. Add the
    open and closed labels and actions, then save.
-5. Add `[opennow_cta]` or the **OpenNow CTA** block to a page.
+5. Add `[hoursflow_cta]` or the **HoursFlow CTA** block to a page.
 
 A fresh activation is unconfigured and renders no CTA until a complete valid
 configuration is saved. Invalid settings keep the last valid configuration and
@@ -74,14 +74,14 @@ show field-specific errors.
 
 Use the shortcode anywhere WordPress processes shortcodes:
 
-`[opennow_cta]`
+`[hoursflow_cta]`
 
-`[opennow_cta hide_status="1"]`
+`[hoursflow_cta hide_status="1"]`
 
 Only the exact `hide_status="1"` value hides the selected state's status. Other
 attributes and enclosed content are ignored.
 
-The dynamic `opennow/cta` block uses the same server renderer. It can override
+The dynamic `hoursflow/cta` block uses the same server renderer. It can override
 the label, action, or status independently for its open and closed states. A
 block can also hide a state's status; invalid or missing values fall back to
 the corresponding global value. Removing all overrides restores the standard
@@ -114,30 +114,30 @@ action.
 
 == Caching ==
 
-OpenNow checks the schedule when the shortcode or dynamic block renders.
+HoursFlow checks the schedule when the shortcode or dynamic block renders.
 Cached page HTML can therefore remain stale until the site's page-cache TTL.
 If a site needs a maximum staleness of **N** minutes, set its cache TTL to no
 more than **N** minutes or arrange boundary purges in the site's own caching
-system. OpenNow does not manage cache variation or purges.
+system. HoursFlow does not manage cache variation or purges.
 
 == Privacy ==
 
-OpenNow makes no external requests and loads no remote scripts, fonts, images,
+HoursFlow makes no external requests and loads no remote scripts, fonts, images,
 or stylesheets. It collects no visitor data, sets no cookies, and performs no
 tracking or telemetry. A visitor can follow the configured CTA, and an
 administrator can follow the clearly labeled Gasatrya hire or donation link on
-**Settings > OpenNow**; those are ordinary user-initiated navigations.
+**Settings > HoursFlow**; those are ordinary user-initiated navigations.
 
 == Deactivation and uninstall ==
 
-Deactivation stops OpenNow behavior but keeps the saved settings for
-reactivation. Uninstall deletes the OpenNow configuration and schema marker.
+Deactivation stops HoursFlow behavior but keeps the saved settings for
+reactivation. Uninstall deletes the HoursFlow configuration and schema marker.
 The plugin creates no custom tables, posts, pages, user metadata, or transient
 business data. Reinstalling after uninstall starts unconfigured.
 
 == Frequently Asked Questions ==
 
-= Is OpenNow CTA a booking system? =
+= Is HoursFlow CTA a booking system? =
 
 No. It displays a link that you configure. Point the open or closed action at
 your existing booking, contact, phone, or other destination.
@@ -151,14 +151,14 @@ Yes. Configure a separate label, action, and optional status for each state.
 Yes. Enter a closing time earlier than the opening time, such as 22:00 to
 02:00. The period carries into the following day.
 
-= Can OpenNow write the next opening time for me? =
+= Can HoursFlow write the next opening time for me? =
 
 No. Status text is administrator-authored. Enter wording that is accurate for
 your schedule and update it when your message changes.
 
 = Can I configure holidays or multiple shifts? =
 
-Not in this release. OpenNow has one weekly period per day and no holiday or
+Not in this release. HoursFlow has one weekly period per day and no holiday or
 exception calendar.
 
 = Why does a cached page show the previous state? =
@@ -167,7 +167,7 @@ The state is calculated when the page is rendered. A page cache can keep that
 HTML until its TTL expires, so set an appropriate TTL or configure boundary
 purges in the site's caching system.
 
-= Does OpenNow support multisite? =
+= Does HoursFlow support multisite? =
 
 This release is designed for a single site. Multisite and network activation
 are not claimed.
@@ -176,11 +176,11 @@ are not claimed.
 
 For questions, use the plugin page's Support tab once the plugin is published on WordPress.org.
 
-For reproducible bugs and feature discussion, use [GitHub issues](https://github.com/gasatrya/opennow/issues).
+For reproducible bugs and feature discussion, use [GitHub issues](https://github.com/gasatrya/hoursflow/issues).
 
 == Source and build ==
 
-The public source repository is [github.com/gasatrya/opennow](https://github.com/gasatrya/opennow).
+The public source repository is [github.com/gasatrya/hoursflow](https://github.com/gasatrya/hoursflow).
 The human-readable block source in `src/blocks/cta/index.js` corresponds to the
 compiled `build/blocks/cta/index.js`; `src/blocks/cta/editor.scss` and
 `src/blocks/cta/block.json` are included alongside it for reference.
@@ -195,11 +195,11 @@ npm run package:check
 npm run package
 ```
 
-The production package is `dist/opennow-0.1.0.zip`. Development dependencies,
+The production package is `dist/hoursflow-0.1.0.zip`. Development dependencies,
 tests, and build tooling remain in the public repository rather than the
 production ZIP.
 
 == Changelog ==
 
 = 0.1.0 =
-* Initial OpenNow CTA release.
+* Initial HoursFlow — Business Hours CTA release.

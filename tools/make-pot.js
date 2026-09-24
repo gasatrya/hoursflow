@@ -6,7 +6,7 @@ const path = require( 'path' );
 const { spawnSync } = require( 'child_process' );
 
 const ROOT = path.resolve( __dirname, '..' );
-const FIXED_COPYRIGHT = '# Copyright (C) 2026 OpenNow contributors';
+const FIXED_COPYRIGHT = '# Copyright (C) 2026 HoursFlow contributors';
 const FIXED_GENERATOR = 'X-Generator: WP-CLI i18n-command 3.0.1';
 
 function parseOutput( argumentsList ) {
@@ -22,7 +22,7 @@ function parseOutput( argumentsList ) {
 		return path.resolve( ROOT, outputOption.slice( '--output='.length ) );
 	}
 
-	return path.join( ROOT, 'languages', 'opennow.pot' );
+	return path.join( ROOT, 'languages', 'hoursflow.pot' );
 }
 
 function normalizePot( contents ) {
@@ -45,7 +45,7 @@ function normalizePot( contents ) {
 
 function makePot( outputPath ) {
 	const destination =
-		outputPath || path.join( ROOT, 'languages', 'opennow.pot' );
+		outputPath || path.join( ROOT, 'languages', 'hoursflow.pot' );
 	fs.mkdirSync( path.dirname( destination ), { recursive: true } );
 
 	const wpExecutable = path.join( ROOT, 'vendor', 'bin', 'wp' );
@@ -55,12 +55,12 @@ function makePot( outputPath ) {
 		'make-pot',
 		ROOT,
 		destination,
-		'--slug=opennow',
-		'--domain=opennow',
-		'--include=opennow.php,uninstall.php,src,assets',
+		'--slug=hoursflow',
+		'--domain=hoursflow',
+		'--include=hoursflow.php,uninstall.php,src,assets',
 		'--exclude=src/blocks/cta/*.test.js',
 		'--skip-audit',
-		'--headers={"Report-Msgid-Bugs-To":"https://github.com/gasatrya/opennow/issues"}',
+		'--headers={"Report-Msgid-Bugs-To":"https://github.com/gasatrya/hoursflow/issues"}',
 		'--no-color',
 	];
 	if ( process.platform === 'win32' ) {

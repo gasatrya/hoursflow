@@ -36,11 +36,11 @@ const REQUIRED_ENTRIES = [
 	'build/blocks/cta/index.css',
 	'build/blocks/cta/index-rtl.css',
 	'build/blocks/cta/index.js',
-	'languages/opennow.pot',
+	'languages/hoursflow.pot',
 	'src/blocks/cta/block.json',
 	'src/blocks/cta/editor.scss',
 	'src/blocks/cta/index.js',
-	'opennow.php',
+	'hoursflow.php',
 	'readme.txt',
 	'uninstall.php',
 ];
@@ -177,7 +177,7 @@ function writeZip( outputPath, entries ) {
 			entries.forEach( ( entry ) => {
 				zipfile.addFile(
 					entry.absolutePath,
-					`opennow/${ entry.relativePath }`,
+					`hoursflow/${ entry.relativePath }`,
 					{
 						compress: true,
 						mtime: FIXED_DATE,
@@ -213,7 +213,7 @@ async function main() {
 	const outputPath =
 		outputIndex !== -1 && process.argv[ outputIndex + 1 ]
 			? path.resolve( ROOT, process.argv[ outputIndex + 1 ] )
-			: path.join( ROOT, 'dist', `opennow-${ PACKAGE_VERSION }.zip` );
+			: path.join( ROOT, 'dist', `hoursflow-${ PACKAGE_VERSION }.zip` );
 
 	if ( ! check ) {
 		await createPackage( outputPath );
@@ -227,7 +227,7 @@ async function main() {
 	}
 
 	const temporaryDirectory = fs.mkdtempSync(
-		path.join( os.tmpdir(), 'opennow-package-' )
+		path.join( os.tmpdir(), 'hoursflow-package-' )
 	);
 	const first = path.join( temporaryDirectory, 'first.zip' );
 	const second = path.join( temporaryDirectory, 'second.zip' );

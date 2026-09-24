@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="OpenNow">
-    <description>WordPress coding standards for the OpenNow runtime.</description>
+<ruleset name="HoursFlow">
+    <description>WordPress coding standards for the HoursFlow runtime.</description>
 
     <arg name="basepath" value="." />
     <arg name="colors" />
@@ -27,9 +27,9 @@
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
         <properties>
             <property name="prefixes" type="array">
-                <element value="opennow" />
-                <element value="OpenNow" />
-                <element value="OPENNOW" />
+                <element value="hoursflow" />
+                <element value="HoursFlow" />
+                <element value="HOURSFLOW" />
             </property>
         </properties>
     </rule>
@@ -37,12 +37,12 @@
     <rule ref="WordPress.WP.I18n">
         <properties>
             <property name="text_domain" type="array">
-                <element value="opennow" />
+                <element value="hoursflow" />
             </property>
         </properties>
     </rule>
 
-    <file>opennow.php</file>
+    <file>hoursflow.php</file>
     <file>uninstall.php</file>
     <file>src</file>
 

@@ -1,18 +1,18 @@
 <?php
-namespace OpenNow\Tests;
+namespace HoursFlow\Tests;
 
-use OpenNow\Config\Schema;
-use OpenNow\Frontend\Renderer;
-use OpenNow\Frontend\Shortcode;
-use OpenNow\Config\Repository;
-use OpenNow\Schedule\Evaluator;
+use HoursFlow\Config\Schema;
+use HoursFlow\Frontend\Renderer;
+use HoursFlow\Frontend\Shortcode;
+use HoursFlow\Config\Repository;
+use HoursFlow\Schedule\Evaluator;
 use PHPUnit\Framework\TestCase;
 
 final class ShortcodeTest extends TestCase
 {
     protected function setUp(): void
     {
-        opennow_reset_wp_stubs();
+        hoursflow_reset_wp_stubs();
     }
 
     public function testShortcodeRegistersAPluginNamespacedObjectCallback(): void
@@ -20,12 +20,12 @@ final class ShortcodeTest extends TestCase
         $shortcode = new Shortcode($this->renderer());
         $shortcode->register();
 
-        $this->assertArrayHasKey('opennow_cta', $GLOBALS['opennow_test_shortcodes']);
-        $callback = $GLOBALS['opennow_test_shortcodes']['opennow_cta'];
+        $this->assertArrayHasKey('hoursflow_cta', $GLOBALS['hoursflow_test_shortcodes']);
+        $callback = $GLOBALS['hoursflow_test_shortcodes']['hoursflow_cta'];
         $this->assertIsArray($callback);
         $this->assertSame($shortcode, $callback[0]);
         $this->assertSame('render', $callback[1]);
-        $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_enqueued_styles']);
     }
 
     public function testShortcodeIgnoresAttributesAndContentAndDelegatesToRenderer(): void
@@ -34,7 +34,7 @@ final class ShortcodeTest extends TestCase
         $shortcode->register();
 
         $output = call_user_func(
-            $GLOBALS['opennow_test_shortcodes']['opennow_cta'],
+            $GLOBALS['hoursflow_test_shortcodes']['hoursflow_cta'],
             array(
                 'label' => 'Override',
                 'action' => 'javascript:bad',
@@ -46,15 +46,15 @@ final class ShortcodeTest extends TestCase
                 ),
             ),
             '<script>override</script>',
-            'opennow_cta'
+            'hoursflow_cta'
         );
 
         $this->assertStringContainsString('Call Now', $output);
-        $this->assertStringContainsString('opennow-cta--open', $output);
+        $this->assertStringContainsString('hoursflow-cta--open', $output);
         $this->assertStringNotContainsString('Override', $output);
         $this->assertStringNotContainsString('shortcode-override', $output);
         $this->assertStringNotContainsString('<script>', $output);
-        $this->assertArrayHasKey('opennow-cta', $GLOBALS['opennow_test_enqueued_styles']);
+        $this->assertArrayHasKey('hoursflow-cta', $GLOBALS['hoursflow_test_enqueued_styles']);
     }
 
     public function testExactHideStatusAttributeHidesTheSelectedStateStatus(): void
@@ -66,9 +66,9 @@ final class ShortcodeTest extends TestCase
         $closed_output = $closed_shortcode->render(array('hide_status' => '1'));
 
         $this->assertStringContainsString('Call Now', $open_output);
-        $this->assertStringNotContainsString('opennow-cta__status', $open_output);
+        $this->assertStringNotContainsString('hoursflow-cta__status', $open_output);
         $this->assertStringContainsString('Book online', $closed_output);
-        $this->assertStringNotContainsString('opennow-cta__status', $closed_output);
+        $this->assertStringNotContainsString('hoursflow-cta__status', $closed_output);
     }
 
     public function testNonExactHideStatusValuesAndMalformedContainersAreNoOp(): void
@@ -89,7 +89,7 @@ final class ShortcodeTest extends TestCase
             $output = (new Shortcode($this->renderer()))->render($attributes);
 
             $this->assertStringContainsString('We are open.', $output);
-            $this->assertStringContainsString('opennow-cta__status', $output);
+            $this->assertStringContainsString('hoursflow-cta__status', $output);
         }
     }
 
@@ -104,7 +104,7 @@ final class ShortcodeTest extends TestCase
             'opens' => '09:00',
             'closes' => '17:00',
         );
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = array(
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = array(
             'timezone' => 'UTC',
             'schedule' => $schedule,
             'cta' => array(

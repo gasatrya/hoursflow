@@ -1,4 +1,4 @@
-# OpenNow release checklist
+# HoursFlow release checklist
 
 Use this checklist from a clean checkout before publishing a package. It does
 not authorize a WordPress.org submission, Git tag, or hosted release.
@@ -24,15 +24,15 @@ not authorize a WordPress.org submission, Git tag, or hosted release.
 
 3. Confirm CI tests the extracted production package, records the exact
    WordPress/PHP/PHPUnit versions, and publishes
-   `opennow-0.1.0.zip` only after every required job passes. The package job
+   `hoursflow-0.1.0.zip` only after every required job passes. The package job
    must wait for the complete integration matrix.
 
 4. Confirm `npm run build:check`, `npm run i18n:pot:check`, and
    `npm run package:check` report reproducible output. Inspect the ZIP manifest:
-   it must have one `opennow/` root, contain runtime PHP, local assets, generated
+   it must have one `hoursflow/` root, contain runtime PHP, local assets, generated
    block files (including editor CSS and its RTL companion),
    `src/blocks/cta/index.js`, `src/blocks/cta/editor.scss`,
-   `src/blocks/cta/block.json`, and `languages/opennow.pot`. It must omit every
+   `src/blocks/cta/block.json`, and `languages/hoursflow.pot`. It must omit every
    other source file, source map, test, dependency directory,
    repository tool, and lock file.
 
@@ -48,15 +48,15 @@ Use a clean single-site WordPress installation with `WP_DEBUG` enabled.
    pickers display `#166534` and `#FFFFFF`. Save a valid timezone, all seven
    weekdays, both CTA states, and the displayed default colors, then confirm a
    valid custom pair is preserved. Confirm
-   `[opennow_cta]` and an override-free block show equivalent markup and state.
-   Confirm `[opennow_cta hide_status="1"]` hides the selected status, while
+   `[hoursflow_cta]` and an override-free block show equivalent markup and state.
+   Confirm `[hoursflow_cta hide_status="1"]` hides the selected status, while
    non-exact values are no-ops and all other shortcode attributes and content
    remain ignored. In the block editor, verify the real server-rendered
    preview, independent open/closed field overrides, the per-state
    `hideStatus: true` toggle, global fallback for omitted or invalid fields,
    hide priority over nonblank global/status overrides, explicit blank-status
    suppression, state isolation, and pruning back to the legacy empty
-   delimiter. On **Settings → OpenNow**, switch the live preview independently
+   delimiter. On **Settings → HoursFlow**, switch the live preview independently
    between Open and Closed and confirm unsaved label, optional status, and color
    edits update immediately. Blank colors must show `#166534` and `#FFFFFF`;
    blank status must disappear. Confirm the preview does not evaluate the
@@ -68,12 +68,12 @@ Use a clean single-site WordPress installation with `WP_DEBUG` enabled.
    instants. The automated evaluator suite is authoritative for these results.
 5. Confirm invalid configuration is rejected atomically and the previous valid
    settings remain active.
-6. View pages without a CTA and confirm OpenNow frontend CSS is absent. View a
+6. View pages without a CTA and confirm HoursFlow frontend CSS is absent. View a
    page with a valid shortcode or block and confirm only the unchanged local
    frontend CTA stylesheet is loaded. In the editor, confirm the generated
    editor stylesheet disables CTA navigation without changing public CSS.
    Confirm the settings script and page-scoped settings stylesheet appear only
-   on **Settings → OpenNow** for a user with `manage_options`. Confirm the
+   on **Settings → HoursFlow** for a user with `manage_options`. Confirm the
    developer card follows the preview and contains only the documented
    Gasatrya hire and donation destinations. No review or rating link is present
    until the WordPress.org slug is approved and live.
@@ -127,10 +127,10 @@ a screen reader check is recommended for the release environment.
 ## Metadata and lifecycle
 
 1. Confirm version `0.1.0`, WordPress minimum `6.6`, PHP minimum `7.4`, tested-up-to
-   `7.1`, requested author/URI metadata, text domain `opennow`, and GPL-2.0-or-later metadata agree across the
+   `7.1`, requested author/URI metadata, text domain `hoursflow`, and GPL-2.0-or-later metadata agree across the
    plugin header, readmes, changelog, package metadata, and POT file.
 2. Deactivate and reactivate; configuration must remain. Uninstall; both
-   `opennow_config` and `opennow_schema_version` must be deleted. Reinstalling
+   `hoursflow_config` and `hoursflow_schema_version` must be deleted. Reinstalling
    must start unconfigured.
 3. Re-read the public caching, limitations, privacy, external-service, and data
    retention disclosures before release. Do not raise compatibility claims or

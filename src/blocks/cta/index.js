@@ -135,7 +135,7 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 	return (
 		<>
 			<ToggleControl
-				label={ __( 'Override label', 'opennow' ) }
+				label={ __( 'Override label', 'hoursflow' ) }
 				checked={ labelEnabled }
 				onChange={ ( enabled ) =>
 					updateOverride(
@@ -149,10 +149,10 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 			/>
 			{ labelEnabled && (
 				<TextControl
-					label={ __( 'Label', 'opennow' ) }
+					label={ __( 'Label', 'hoursflow' ) }
 					help={ __(
 						'Enter non-empty plain text. Invalid or empty values fall back to the global label.',
-						'opennow'
+						'hoursflow'
 					) }
 					value={ getOverrideValue( stateOverrides, 'label' ) }
 					onChange={ ( value ) =>
@@ -169,7 +169,7 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 			) }
 
 			<ToggleControl
-				label={ __( 'Override action', 'opennow' ) }
+				label={ __( 'Override action', 'hoursflow' ) }
 				checked={ actionEnabled }
 				onChange={ ( enabled ) =>
 					updateOverride(
@@ -183,10 +183,10 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 			/>
 			{ actionEnabled && (
 				<TextControl
-					label={ __( 'Action', 'opennow' ) }
+					label={ __( 'Action', 'hoursflow' ) }
 					help={ __(
 						'Enter a root-relative URL, HTTPS URL, or tel: action. Invalid or empty values fall back to the global action.',
-						'opennow'
+						'hoursflow'
 					) }
 					value={ getOverrideValue( stateOverrides, 'action' ) }
 					onChange={ ( value ) =>
@@ -203,7 +203,7 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 			) }
 
 			<ToggleControl
-				label={ __( 'Override status', 'opennow' ) }
+				label={ __( 'Override status', 'hoursflow' ) }
 				checked={ statusEnabled }
 				onChange={ ( enabled ) =>
 					updateOverride(
@@ -217,10 +217,10 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 			/>
 			{ statusEnabled && (
 				<TextControl
-					label={ __( 'Status', 'opennow' ) }
+					label={ __( 'Status', 'hoursflow' ) }
 					help={ __(
 						'Enter plain text. A blank value explicitly hides the global status; the Hide status control hides it regardless of its value. Invalid values fall back to the global status.',
-						'opennow'
+						'hoursflow'
 					) }
 					value={ getOverrideValue( stateOverrides, 'status' ) }
 					onChange={ ( value ) =>
@@ -237,7 +237,7 @@ function CtaOverrideControls( { attributes, setAttributes, state } ) {
 			) }
 
 			<ToggleControl
-				label={ __( 'Hide status', 'opennow' ) }
+				label={ __( 'Hide status', 'hoursflow' ) }
 				checked={ hideStatusEnabled }
 				onChange={ ( enabled ) =>
 					updateOverride(
@@ -284,14 +284,14 @@ export function Edit( props = {} ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Open CTA', 'opennow' ) }>
+				<PanelBody title={ __( 'Open CTA', 'hoursflow' ) }>
 					<CtaOverrideControls
 						attributes={ attributes }
 						setAttributes={ setAttributes }
 						state="open"
 					/>
 				</PanelBody>
-				<PanelBody title={ __( 'Closed CTA', 'opennow' ) }>
+				<PanelBody title={ __( 'Closed CTA', 'hoursflow' ) }>
 					<CtaOverrideControls
 						attributes={ attributes }
 						setAttributes={ setAttributes }

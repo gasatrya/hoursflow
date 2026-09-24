@@ -1,16 +1,16 @@
 <?php
-namespace OpenNow\Tests;
+namespace HoursFlow\Tests;
 
-use OpenNow\Config\Color;
-use OpenNow\Config\Schema;
-use OpenNow\Config\Validator;
+use HoursFlow\Config\Color;
+use HoursFlow\Config\Schema;
+use HoursFlow\Config\Validator;
 use PHPUnit\Framework\TestCase;
 
 final class ConfigTest extends TestCase
 {
     protected function setUp(): void
     {
-        opennow_reset_wp_stubs();
+        hoursflow_reset_wp_stubs();
     }
 
     public function testSchemaDefaultsContainSevenClosedDaysAndAccessibleColors(): void

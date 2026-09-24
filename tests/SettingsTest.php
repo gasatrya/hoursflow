@@ -1,15 +1,15 @@
 <?php
-namespace OpenNow\Tests;
+namespace HoursFlow\Tests;
 
-use OpenNow\Admin\Settings;
-use OpenNow\Config\Schema;
+use HoursFlow\Admin\Settings;
+use HoursFlow\Config\Schema;
 use PHPUnit\Framework\TestCase;
 
 final class SettingsTest extends TestCase
 {
     protected function setUp(): void
     {
-        opennow_reset_wp_stubs();
+        hoursflow_reset_wp_stubs();
     }
 
     public function testSettingsRegistersOnlyTheAtomicOptionOnAdminInit(): void
@@ -17,36 +17,36 @@ final class SettingsTest extends TestCase
         $settings = new Settings();
         $settings->register();
 
-        $this->assertArrayHasKey('admin_init', $GLOBALS['opennow_test_hooks']);
-        $this->assertCount(2, $GLOBALS['opennow_test_hooks']['admin_init']);
-        $this->assertSame('registerSetting', $GLOBALS['opennow_test_hooks']['admin_init'][0]['callback'][1]);
-        $this->assertSame('handleReset', $GLOBALS['opennow_test_hooks']['admin_init'][1]['callback'][1]);
-        $this->assertArrayNotHasKey('admin_notices', $GLOBALS['opennow_test_hooks']);
-        $this->assertSame(array(), $GLOBALS['opennow_test_registered_settings']);
+        $this->assertArrayHasKey('admin_init', $GLOBALS['hoursflow_test_hooks']);
+        $this->assertCount(2, $GLOBALS['hoursflow_test_hooks']['admin_init']);
+        $this->assertSame('registerSetting', $GLOBALS['hoursflow_test_hooks']['admin_init'][0]['callback'][1]);
+        $this->assertSame('handleReset', $GLOBALS['hoursflow_test_hooks']['admin_init'][1]['callback'][1]);
+        $this->assertArrayNotHasKey('admin_notices', $GLOBALS['hoursflow_test_hooks']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_registered_settings']);
 
         do_action('admin_init');
 
         $this->assertArrayHasKey(
             Schema::OPTION_NAME,
-            $GLOBALS['opennow_test_registered_settings']
+            $GLOBALS['hoursflow_test_registered_settings']
         );
-        $registration = $GLOBALS['opennow_test_registered_settings'][Schema::OPTION_NAME];
-        $this->assertSame('opennow', $registration['group']);
+        $registration = $GLOBALS['hoursflow_test_registered_settings'][Schema::OPTION_NAME];
+        $this->assertSame('hoursflow', $registration['group']);
         $this->assertSame('array', $registration['args']['type']);
         $this->assertFalse($registration['args']['show_in_rest']);
         $this->assertIsArray($registration['args']['sanitize_callback']);
         $this->assertSame('sanitize', $registration['args']['sanitize_callback'][1]);
-        $this->assertCount(5, $GLOBALS['opennow_test_settings_sections'][Settings::PAGE_SLUG]);
-        $this->assertCount(1, $GLOBALS['opennow_test_settings_fields'][Settings::PAGE_SLUG][Settings::SCHEDULE_SECTION]);
-        $appearance_fields = $GLOBALS['opennow_test_settings_fields'][Settings::PAGE_SLUG][Settings::APPEARANCE_SECTION];
+        $this->assertCount(5, $GLOBALS['hoursflow_test_settings_sections'][Settings::PAGE_SLUG]);
+        $this->assertCount(1, $GLOBALS['hoursflow_test_settings_fields'][Settings::PAGE_SLUG][Settings::SCHEDULE_SECTION]);
+        $appearance_fields = $GLOBALS['hoursflow_test_settings_fields'][Settings::PAGE_SLUG][Settings::APPEARANCE_SECTION];
         $this->assertCount(2, $appearance_fields);
         $this->assertSame(
-            'opennow-appearance-background-color',
-            $appearance_fields['opennow_appearance_background_color']['args']['label_for']
+            'hoursflow-appearance-background-color',
+            $appearance_fields['hoursflow_appearance_background_color']['args']['label_for']
         );
         $this->assertSame(
-            'opennow-appearance-text-color',
-            $appearance_fields['opennow_appearance_text_color']['args']['label_for']
+            'hoursflow-appearance-text-color',
+            $appearance_fields['hoursflow_appearance_text_color']['args']['label_for']
         );
     }
 
@@ -58,15 +58,15 @@ final class SettingsTest extends TestCase
         do_action('admin_menu');
         do_action('admin_init');
 
-        $page = $GLOBALS['opennow_test_admin_pages'][Settings::PAGE_SLUG];
+        $page = $GLOBALS['hoursflow_test_admin_pages'][Settings::PAGE_SLUG];
         $this->assertSame(Settings::PAGE_CAPABILITY, $page['capability']);
         $this->assertSame(
             Settings::PAGE_CAPABILITY,
-            apply_filters('option_page_capability_opennow', 'different_capability')
+            apply_filters('option_page_capability_hoursflow', 'different_capability')
         );
         $_GET = array(
             'page' => Settings::PAGE_SLUG,
-            'opennow-reset' => '1',
+            'hoursflow-reset' => '1',
         );
 
         ob_start();
@@ -74,27 +74,27 @@ final class SettingsTest extends TestCase
         $output = (string) ob_get_clean();
 
         $this->assertStringContainsString('<form action="options.php" method="post">', $output);
-        $this->assertStringContainsString('name="option_page" value="opennow"', $output);
+        $this->assertStringContainsString('name="option_page" value="hoursflow"', $output);
         $this->assertStringContainsString('name="_wpnonce" value="test-nonce"', $output);
-        $this->assertStringContainsString('name="opennow_config[timezone]"', $output);
-        $this->assertStringContainsString('name="opennow_config[cta][open][label]"', $output);
-        $this->assertStringContainsString('name="opennow_config[cta][closed][action]"', $output);
-        $this->assertStringContainsString('name="opennow_config[appearance][background_color]"', $output);
-        $this->assertStringContainsString('name="opennow_config[appearance][text_color]"', $output);
-        $this->assertStringNotContainsString('type="hidden" name="opennow_config[appearance]', $output);
-        $this->assertStringContainsString('name="opennow_reset"', $output);
+        $this->assertStringContainsString('name="hoursflow_config[timezone]"', $output);
+        $this->assertStringContainsString('name="hoursflow_config[cta][open][label]"', $output);
+        $this->assertStringContainsString('name="hoursflow_config[cta][closed][action]"', $output);
+        $this->assertStringContainsString('name="hoursflow_config[appearance][background_color]"', $output);
+        $this->assertStringContainsString('name="hoursflow_config[appearance][text_color]"', $output);
+        $this->assertStringNotContainsString('type="hidden" name="hoursflow_config[appearance]', $output);
+        $this->assertStringContainsString('name="hoursflow_reset"', $output);
         $this->assertStringContainsString('formnovalidate="formnovalidate"', $output);
         $this->assertStringContainsString(
-            'data-opennow-reset-confirm="Are you sure you want to reset all settings to defaults?"',
+            'data-hoursflow-reset-confirm="Are you sure you want to reset all settings to defaults?"',
             $output
         );
         $this->assertStringNotContainsString('onclick=', $output);
         $this->assertStringContainsString('Reset to Defaults', $output);
         $this->assertStringContainsString('Are you sure you want to reset all settings to defaults?', $output);
         $this->assertSame(1, substr_count($output, 'Settings have been reset to defaults.'));
-        $this->assertSame(7, substr_count($output, 'data-opennow-schedule-day='));
+        $this->assertSame(7, substr_count($output, 'data-hoursflow-schedule-day='));
         $this->assertSame(7, substr_count($output, 'checked="checked"'));
-        $this->assertSame(array(), $GLOBALS['opennow_test_option_calls']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_option_calls']);
         $this->assertStringContainsString('value="America/New_York"', $output);
         $this->assertStringContainsString('value="UTC"', $output);
         $this->assertStringNotContainsString('Manual Offsets', $output);
@@ -103,64 +103,64 @@ final class SettingsTest extends TestCase
 
     public function testResetDeletesOnlyConfigurationAndRedirectsToTheSettingsPage(): void
     {
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->validConfig();
-        $GLOBALS['opennow_test_options'][Schema::SCHEMA_OPTION_NAME] = Schema::VERSION;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $this->validConfig();
+        $GLOBALS['hoursflow_test_options'][Schema::SCHEMA_OPTION_NAME] = Schema::VERSION;
         $_POST = array(
-            'opennow_reset' => 'Reset to Defaults',
+            'hoursflow_reset' => 'Reset to Defaults',
             '_wpnonce' => 'test-nonce',
         );
 
         try {
             (new Settings())->handleReset();
             $this->fail('Expected the redirect to stop request execution.');
-        } catch (\OpenNow_Test_Redirect_Exception $exception) {
+        } catch (\HoursFlow_Test_Redirect_Exception $exception) {
             $this->assertSame(
-                'https://example.test/wp-admin/options-general.php?page=opennow&opennow-reset=1',
+                'https://example.test/wp-admin/options-general.php?page=hoursflow&hoursflow-reset=1',
                 $exception->getMessage()
             );
         }
 
-        $this->assertArrayNotHasKey(Schema::OPTION_NAME, $GLOBALS['opennow_test_options']);
+        $this->assertArrayNotHasKey(Schema::OPTION_NAME, $GLOBALS['hoursflow_test_options']);
         $this->assertSame(
             Schema::VERSION,
-            $GLOBALS['opennow_test_options'][Schema::SCHEMA_OPTION_NAME]
+            $GLOBALS['hoursflow_test_options'][Schema::SCHEMA_OPTION_NAME]
         );
         $this->assertSame(
             array(array('function' => 'delete_option', 'option' => Schema::OPTION_NAME)),
-            $GLOBALS['opennow_test_option_calls']
+            $GLOBALS['hoursflow_test_option_calls']
         );
         $this->assertSame(
-            array(array('action' => 'opennow-options', 'query_arg' => '_wpnonce')),
-            $GLOBALS['opennow_test_nonce_checks']
+            array(array('action' => 'hoursflow-options', 'query_arg' => '_wpnonce')),
+            $GLOBALS['hoursflow_test_nonce_checks']
         );
-        $this->assertCount(1, $GLOBALS['opennow_test_redirects']);
+        $this->assertCount(1, $GLOBALS['hoursflow_test_redirects']);
     }
 
     public function testResetRejectsUnauthorizedAndInvalidNonceRequests(): void
     {
         $config = $this->validConfig();
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $config;
         $_POST = array(
-            'opennow_reset' => 'Reset to Defaults',
+            'hoursflow_reset' => 'Reset to Defaults',
             '_wpnonce' => 'test-nonce',
         );
-        $GLOBALS['opennow_test_current_user_can'] = false;
+        $GLOBALS['hoursflow_test_current_user_can'] = false;
 
         (new Settings())->handleReset();
 
-        $this->assertSame($config, $GLOBALS['opennow_test_options'][Schema::OPTION_NAME]);
-        $this->assertSame(array(), $GLOBALS['opennow_test_nonce_checks']);
-        $this->assertSame(array(), $GLOBALS['opennow_test_redirects']);
+        $this->assertSame($config, $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME]);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_nonce_checks']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_redirects']);
 
-        $GLOBALS['opennow_test_current_user_can'] = true;
+        $GLOBALS['hoursflow_test_current_user_can'] = true;
         $_POST['_wpnonce'] = 'invalid-nonce';
 
         (new Settings())->handleReset();
 
-        $this->assertSame($config, $GLOBALS['opennow_test_options'][Schema::OPTION_NAME]);
-        $this->assertCount(1, $GLOBALS['opennow_test_nonce_checks']);
-        $this->assertSame(array(), $GLOBALS['opennow_test_option_calls']);
-        $this->assertSame(array(), $GLOBALS['opennow_test_redirects']);
+        $this->assertSame($config, $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME]);
+        $this->assertCount(1, $GLOBALS['hoursflow_test_nonce_checks']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_option_calls']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_redirects']);
     }
 
     public function testResetNoticeAppearsOnlyOnTheAuthorizedSettingsPage(): void
@@ -168,7 +168,7 @@ final class SettingsTest extends TestCase
         $settings = new Settings();
         $_GET = array(
             'page' => Settings::PAGE_SLUG,
-            'opennow-reset' => '1',
+            'hoursflow-reset' => '1',
         );
 
         ob_start();
@@ -188,14 +188,14 @@ final class SettingsTest extends TestCase
 
         $_GET = array(
             'page' => 'other',
-            'opennow-reset' => '1',
+            'hoursflow-reset' => '1',
         );
         ob_start();
         $settings->renderResetNotice();
         $this->assertSame('', (string) ob_get_clean());
 
         $_GET['page'] = Settings::PAGE_SLUG;
-        $GLOBALS['opennow_test_current_user_can'] = false;
+        $GLOBALS['hoursflow_test_current_user_can'] = false;
         ob_start();
         $settings->renderResetNotice();
         $this->assertSame('', (string) ob_get_clean());
@@ -210,7 +210,7 @@ final class SettingsTest extends TestCase
             'background_color' => '#000000',
             'text_color' => '#FFFFFF',
         );
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $config;
 
         $settings = new Settings();
         $settings->register();
@@ -222,43 +222,43 @@ final class SettingsTest extends TestCase
         $output = (string) ob_get_clean();
         $xpath = $this->parseHtml($output);
 
-        $layout = $xpath->query('//*[@id="opennow-settings-layout"]')->item(0);
+        $layout = $xpath->query('//*[@id="hoursflow-settings-layout"]')->item(0);
         $this->assertInstanceOf(\DOMElement::class, $layout);
         $this->assertCount(1, $xpath->query('./form', $layout));
 
-        $preview = $xpath->query('./div[@id="opennow-cta-preview"]', $layout)->item(0);
+        $preview = $xpath->query('./div[@id="hoursflow-cta-preview"]', $layout)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $preview);
         $this->assertSame('region', $preview->getAttribute('role'));
-        $this->assertSame('opennow-cta-preview-heading', $preview->getAttribute('aria-labelledby'));
-        $this->assertSame('open', $preview->getAttribute('data-opennow-preview-state'));
-        $this->assertSame('#166534', $preview->getAttribute('data-opennow-preview-default-background-color'));
-        $this->assertSame('#FFFFFF', $preview->getAttribute('data-opennow-preview-default-text-color'));
+        $this->assertSame('hoursflow-cta-preview-heading', $preview->getAttribute('aria-labelledby'));
+        $this->assertSame('open', $preview->getAttribute('data-hoursflow-preview-state'));
+        $this->assertSame('#166534', $preview->getAttribute('data-hoursflow-preview-default-background-color'));
+        $this->assertSame('#FFFFFF', $preview->getAttribute('data-hoursflow-preview-default-text-color'));
 
         $group = $xpath->query('.//*[@role="group"]', $preview)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $group);
-        $this->assertSame('opennow-cta-preview-state-label', $group->getAttribute('aria-labelledby'));
+        $this->assertSame('hoursflow-cta-preview-state-label', $group->getAttribute('aria-labelledby'));
 
-        $open_button = $xpath->query('.//button[@data-opennow-preview-state-button="open"]', $preview)->item(0);
-        $closed_button = $xpath->query('.//button[@data-opennow-preview-state-button="closed"]', $preview)->item(0);
+        $open_button = $xpath->query('.//button[@data-hoursflow-preview-state-button="open"]', $preview)->item(0);
+        $closed_button = $xpath->query('.//button[@data-hoursflow-preview-state-button="closed"]', $preview)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $open_button);
         $this->assertInstanceOf(\DOMElement::class, $closed_button);
         $this->assertSame('button', $open_button->getAttribute('type'));
         $this->assertSame('button', $closed_button->getAttribute('type'));
         $this->assertSame('true', $open_button->getAttribute('aria-pressed'));
         $this->assertSame('false', $closed_button->getAttribute('aria-pressed'));
-        $this->assertSame('opennow-cta-preview-content', $open_button->getAttribute('aria-controls'));
-        $this->assertSame('opennow-cta-preview-content', $closed_button->getAttribute('aria-controls'));
+        $this->assertSame('hoursflow-cta-preview-content', $open_button->getAttribute('aria-controls'));
+        $this->assertSame('hoursflow-cta-preview-content', $closed_button->getAttribute('aria-controls'));
         $this->assertSame('Open', trim($open_button->textContent));
         $this->assertSame('Closed', trim($closed_button->textContent));
 
-        $content = $xpath->query('.//*[@id="opennow-cta-preview-content"]', $preview)->item(0);
+        $content = $xpath->query('.//*[@id="hoursflow-cta-preview-content"]', $preview)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $content);
-        $this->assertStringContainsString('opennow-cta--open', $content->getAttribute('class'));
-        $this->assertStringContainsString('--opennow-cta-background-color: #000000;', $content->getAttribute('style'));
-        $this->assertStringContainsString('--opennow-cta-text-color: #FFFFFF;', $content->getAttribute('style'));
+        $this->assertStringContainsString('hoursflow-cta--open', $content->getAttribute('class'));
+        $this->assertStringContainsString('--hoursflow-cta-background-color: #000000;', $content->getAttribute('style'));
+        $this->assertStringContainsString('--hoursflow-cta-text-color: #FFFFFF;', $content->getAttribute('style'));
 
-        $label = $xpath->query('.//*[@data-opennow-preview-label="1"]', $preview)->item(0);
-        $status = $xpath->query('.//*[@data-opennow-preview-status="1"]', $preview)->item(0);
+        $label = $xpath->query('.//*[@data-hoursflow-preview-label="1"]', $preview)->item(0);
+        $status = $xpath->query('.//*[@data-hoursflow-preview-status="1"]', $preview)->item(0);
         $this->assertSame('Call & Go', $label->textContent);
         $this->assertSame('Open "today" & later', $status->textContent);
         $this->assertFalse($status->hasAttribute('hidden'));
@@ -270,7 +270,7 @@ final class SettingsTest extends TestCase
 
     public function testSettingsPreviewUsesDefaultColorsAndHidesABlankStatus(): void
     {
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $this->validConfig();
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $this->validConfig();
         $settings = new Settings();
         $settings->register();
         do_action('admin_menu');
@@ -281,12 +281,12 @@ final class SettingsTest extends TestCase
         $output = (string) ob_get_clean();
         $xpath = $this->parseHtml($output);
 
-        $preview = $xpath->query('//*[@id="opennow-cta-preview"]')->item(0);
-        $content = $xpath->query('.//*[@id="opennow-cta-preview-content"]', $preview)->item(0);
-        $status = $xpath->query('.//*[@data-opennow-preview-status="1"]', $preview)->item(0);
+        $preview = $xpath->query('//*[@id="hoursflow-cta-preview"]')->item(0);
+        $content = $xpath->query('.//*[@id="hoursflow-cta-preview-content"]', $preview)->item(0);
+        $status = $xpath->query('.//*[@data-hoursflow-preview-status="1"]', $preview)->item(0);
 
-        $this->assertStringContainsString('--opennow-cta-background-color: #166534;', $content->getAttribute('style'));
-        $this->assertStringContainsString('--opennow-cta-text-color: #FFFFFF;', $content->getAttribute('style'));
+        $this->assertStringContainsString('--hoursflow-cta-background-color: #166534;', $content->getAttribute('style'));
+        $this->assertStringContainsString('--hoursflow-cta-text-color: #FFFFFF;', $content->getAttribute('style'));
         $this->assertTrue($status->hasAttribute('hidden'));
         $this->assertSame('', $status->textContent);
         $this->assertStringContainsString('unsaved settings changes', $preview->textContent);
@@ -305,26 +305,26 @@ final class SettingsTest extends TestCase
         $output = (string) ob_get_clean();
         $xpath = $this->parseHtml($output);
 
-        $layout = $xpath->query('//*[@id="opennow-settings-layout"]')->item(0);
+        $layout = $xpath->query('//*[@id="hoursflow-settings-layout"]')->item(0);
         $this->assertInstanceOf(\DOMElement::class, $layout);
         $this->assertCount(3, $xpath->query('./*', $layout));
         $this->assertSame('form', $xpath->query('./*[1]', $layout)->item(0)->nodeName);
-        $this->assertSame('opennow-cta-preview', $xpath->query('./*[2]', $layout)->item(0)->getAttribute('id'));
+        $this->assertSame('hoursflow-cta-preview', $xpath->query('./*[2]', $layout)->item(0)->getAttribute('id'));
 
-        $promotion = $xpath->query('./div[contains(@class, "opennow-developer-promotion")]', $layout)->item(0);
+        $promotion = $xpath->query('./div[contains(@class, "hoursflow-developer-promotion")]', $layout)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $promotion);
         $this->assertSame($promotion, $xpath->query('./*[3]', $layout)->item(0));
         $this->assertSame('region', $promotion->getAttribute('role'));
-        $this->assertSame('opennow-developer-promotion-heading', $promotion->getAttribute('aria-labelledby'));
+        $this->assertSame('hoursflow-developer-promotion-heading', $promotion->getAttribute('aria-labelledby'));
         $this->assertStringContainsString('Need a WordPress Developer?', $promotion->textContent);
         $this->assertStringContainsString(
             'I build custom plugins, themes, and high-performance WordPress sites for businesses that need more than off-the-shelf solutions.',
             $promotion->textContent
         );
 
-        $hire = $xpath->query('.//a[contains(@class, "opennow-developer-promotion__hire")]', $promotion)->item(0);
-        $donation = $xpath->query('.//a[contains(@class, "opennow-developer-promotion__support")]', $promotion)->item(0);
-        $review = $xpath->query('.//a[contains(@class, "opennow-developer-promotion__review")]', $promotion)->item(0);
+        $hire = $xpath->query('.//a[contains(@class, "hoursflow-developer-promotion__hire")]', $promotion)->item(0);
+        $donation = $xpath->query('.//a[contains(@class, "hoursflow-developer-promotion__support")]', $promotion)->item(0);
+        $review = $xpath->query('.//a[contains(@class, "hoursflow-developer-promotion__review")]', $promotion)->item(0);
         $this->assertInstanceOf(\DOMElement::class, $hire);
         $this->assertInstanceOf(\DOMElement::class, $donation);
         $this->assertNull($review);
@@ -351,7 +351,7 @@ final class SettingsTest extends TestCase
 
         $this->assertStringNotContainsString('utm_', $output);
         $this->assertStringNotContainsString('Rate this plugin', $output);
-        $this->assertStringNotContainsString('wordpress.org/support/plugin/opennow/reviews', $output);
+        $this->assertStringNotContainsString('wordpress.org/support/plugin/hoursflow/reviews', $output);
         $this->assertStringNotContainsString('buttonflow', strtolower($output));
         $this->assertCount(0, $xpath->query('.//*[@style]', $promotion));
         $this->assertCount(0, $xpath->query('.//img | .//script | .//iframe | .//link | .//object | .//embed', $promotion));
@@ -363,27 +363,27 @@ final class SettingsTest extends TestCase
         $settings->register();
         do_action('admin_menu');
 
-        $load_hook = 'load-settings_page_opennow';
-        $this->assertArrayHasKey($load_hook, $GLOBALS['opennow_test_hooks']);
-        $this->assertArrayNotHasKey('load-settings_page_other', $GLOBALS['opennow_test_hooks']);
-        $this->assertCount(1, $GLOBALS['opennow_test_hooks'][$load_hook]);
+        $load_hook = 'load-settings_page_hoursflow';
+        $this->assertArrayHasKey($load_hook, $GLOBALS['hoursflow_test_hooks']);
+        $this->assertArrayNotHasKey('load-settings_page_other', $GLOBALS['hoursflow_test_hooks']);
+        $this->assertCount(1, $GLOBALS['hoursflow_test_hooks'][$load_hook]);
         $this->assertSame(
             array($settings, 'registerContextualHelp'),
-            $GLOBALS['opennow_test_hooks'][$load_hook][0]['callback']
+            $GLOBALS['hoursflow_test_hooks'][$load_hook][0]['callback']
         );
 
-        $GLOBALS['opennow_test_current_screen'] = new \OpenNow_Test_Screen('settings_page_opennow');
+        $GLOBALS['hoursflow_test_current_screen'] = new \HoursFlow_Test_Screen('settings_page_hoursflow');
         do_action($load_hook);
 
-        $tabs = $GLOBALS['opennow_test_current_screen']->help_tabs;
+        $tabs = $GLOBALS['hoursflow_test_current_screen']->help_tabs;
         $this->assertCount(5, $tabs);
         $this->assertSame(
             array(
-                'opennow-timezone-help',
-                'opennow-appearance-help',
-                'opennow-weekly-hours-help',
-                'opennow-open-cta-help',
-                'opennow-closed-cta-help',
+                'hoursflow-timezone-help',
+                'hoursflow-appearance-help',
+                'hoursflow-weekly-hours-help',
+                'hoursflow-open-cta-help',
+                'hoursflow-closed-cta-help',
             ),
             array_column($tabs, 'id')
         );
@@ -404,7 +404,7 @@ final class SettingsTest extends TestCase
         $this->assertStringContainsString('native color picker', $tabs[1]['content']);
         $this->assertStringContainsString('legacy stored value is blank', $tabs[1]['content']);
         $this->assertStringContainsString('plugin default', $tabs[1]['content']);
-        $this->assertStringContainsString('shortcode and every OpenNow block', $tabs[1]['content']);
+        $this->assertStringContainsString('shortcode and every HoursFlow block', $tabs[1]['content']);
         $this->assertStringContainsString('WCAG 2.2 AA', $tabs[1]['content']);
         $this->assertStringContainsString('exact 24-hour HH:MM', $tabs[2]['content']);
         $this->assertStringContainsString('exactly one period', $tabs[2]['content']);
@@ -430,29 +430,29 @@ final class SettingsTest extends TestCase
         $settings->register();
         do_action('admin_menu');
 
-        $load_hook = 'load-settings_page_opennow';
-        $wrong_screen = new \OpenNow_Test_Screen('settings_page_other');
-        $GLOBALS['opennow_test_current_screen'] = $wrong_screen;
+        $load_hook = 'load-settings_page_hoursflow';
+        $wrong_screen = new \HoursFlow_Test_Screen('settings_page_other');
+        $GLOBALS['hoursflow_test_current_screen'] = $wrong_screen;
         do_action($load_hook);
         $this->assertCount(0, $wrong_screen->help_tabs);
 
-        $unauthorized_screen = new \OpenNow_Test_Screen('settings_page_opennow');
-        $GLOBALS['opennow_test_current_screen'] = $unauthorized_screen;
-        $GLOBALS['opennow_test_current_user_can'] = false;
+        $unauthorized_screen = new \HoursFlow_Test_Screen('settings_page_hoursflow');
+        $GLOBALS['hoursflow_test_current_screen'] = $unauthorized_screen;
+        $GLOBALS['hoursflow_test_current_user_can'] = false;
         do_action($load_hook);
         $this->assertCount(0, $unauthorized_screen->help_tabs);
     }
 
     public function testUnauthorizedPageDoesNotRegisterAContextualHelpLoadHook(): void
     {
-        $GLOBALS['opennow_test_current_user_can'] = false;
+        $GLOBALS['hoursflow_test_current_user_can'] = false;
         $settings = new Settings();
         $settings->register();
         do_action('admin_menu');
 
         $this->assertArrayNotHasKey(
-            'load-settings_page_opennow',
-            $GLOBALS['opennow_test_hooks']
+            'load-settings_page_hoursflow',
+            $GLOBALS['hoursflow_test_hooks']
         );
     }
 
@@ -463,7 +463,7 @@ final class SettingsTest extends TestCase
             'background_color' => '#000000',
             'text_color' => '#FFFFFF',
         );
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $config;
         $settings = new Settings();
 
         ob_start();
@@ -478,43 +478,43 @@ final class SettingsTest extends TestCase
         $this->assertCount(0, $xpath->query('//span[contains(concat(" ", normalize-space(@class), " "), " description ")]'));
 
         $controls = array(
-            'opennow-appearance-background-color' => array(
-                'name' => 'opennow_config[appearance][background_color]',
+            'hoursflow-appearance-background-color' => array(
+                'name' => 'hoursflow_config[appearance][background_color]',
                 'value' => '#000000',
                 'type' => 'color',
             ),
-            'opennow-appearance-text-color' => array(
-                'name' => 'opennow_config[appearance][text_color]',
+            'hoursflow-appearance-text-color' => array(
+                'name' => 'hoursflow_config[appearance][text_color]',
                 'value' => '#FFFFFF',
                 'type' => 'color',
             ),
-            'opennow-cta-open-label' => array(
-                'name' => 'opennow_config[cta][open][label]',
+            'hoursflow-cta-open-label' => array(
+                'name' => 'hoursflow_config[cta][open][label]',
                 'value' => 'Call Now',
                 'placeholder' => 'Example: Call now',
             ),
-            'opennow-cta-open-action' => array(
-                'name' => 'opennow_config[cta][open][action]',
+            'hoursflow-cta-open-action' => array(
+                'name' => 'hoursflow_config[cta][open][action]',
                 'value' => 'tel:+123456789',
                 'placeholder' => 'Example: tel:+123456789',
             ),
-            'opennow-cta-open-status' => array(
-                'name' => 'opennow_config[cta][open][status]',
+            'hoursflow-cta-open-status' => array(
+                'name' => 'hoursflow_config[cta][open][status]',
                 'value' => '',
                 'placeholder' => 'Example: Open now',
             ),
-            'opennow-cta-closed-label' => array(
-                'name' => 'opennow_config[cta][closed][label]',
+            'hoursflow-cta-closed-label' => array(
+                'name' => 'hoursflow_config[cta][closed][label]',
                 'value' => 'Book online',
                 'placeholder' => 'Example: Book online',
             ),
-            'opennow-cta-closed-action' => array(
-                'name' => 'opennow_config[cta][closed][action]',
+            'hoursflow-cta-closed-action' => array(
+                'name' => 'hoursflow_config[cta][closed][action]',
                 'value' => '/booking/',
                 'placeholder' => 'Example: /booking/',
             ),
-            'opennow-cta-closed-status' => array(
-                'name' => 'opennow_config[cta][closed][status]',
+            'hoursflow-cta-closed-status' => array(
+                'name' => 'hoursflow_config[cta][closed][status]',
                 'value' => '',
                 'placeholder' => 'Example: Reopens tomorrow at 09:00',
             ),
@@ -546,7 +546,7 @@ final class SettingsTest extends TestCase
             $this->assertSame('description', $description->getAttribute('class'));
             $this->assertSame($description_id, $description->getAttribute('id'));
 
-            if (false !== strpos($id, 'opennow-cta-')) {
+            if (false !== strpos($id, 'hoursflow-cta-')) {
                 $labels = $xpath->query('//label[@for="' . $id . '"]');
                 $this->assertCount(1, $labels);
                 $this->assertSame($id, $labels->item(0)->getAttribute('for'));
@@ -557,7 +557,7 @@ final class SettingsTest extends TestCase
     public function testCtaValidationErrorsKeepFieldAssociationsAndAriaInvalid(): void
     {
         $config = $this->validConfig();
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $config;
         $invalid = $config;
         $invalid['cta']['open']['label'] = '<strong>Call Now</strong>';
         $invalid['cta']['closed']['action'] = 'javascript:alert(1)';
@@ -570,17 +570,17 @@ final class SettingsTest extends TestCase
         $output = (string) ob_get_clean();
         $xpath = $this->parseHtml($output);
 
-        $open_label = $xpath->query('//input[@id="opennow-cta-open-label"]')->item(0);
+        $open_label = $xpath->query('//input[@id="hoursflow-cta-open-label"]')->item(0);
         $this->assertSame('true', $open_label->getAttribute('aria-invalid'));
         $this->assertSame(
-            'opennow-cta-open-label-description setting-error-opennow_cta_open_label',
+            'hoursflow-cta-open-label-description setting-error-hoursflow_cta_open_label',
             $open_label->getAttribute('aria-describedby')
         );
 
-        $closed_action = $xpath->query('//input[@id="opennow-cta-closed-action"]')->item(0);
+        $closed_action = $xpath->query('//input[@id="hoursflow-cta-closed-action"]')->item(0);
         $this->assertSame('true', $closed_action->getAttribute('aria-invalid'));
         $this->assertSame(
-            'opennow-cta-closed-action-description setting-error-opennow_cta_closed_action',
+            'hoursflow-cta-closed-action-description setting-error-hoursflow_cta_closed_action',
             $closed_action->getAttribute('aria-describedby')
         );
     }
@@ -588,7 +588,7 @@ final class SettingsTest extends TestCase
     public function testUnauthorizedUserCannotRenderSettingsPage(): void
     {
         $settings = new Settings();
-        $GLOBALS['opennow_test_current_user_can'] = false;
+        $GLOBALS['hoursflow_test_current_user_can'] = false;
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('You do not have permission');
@@ -603,26 +603,26 @@ final class SettingsTest extends TestCase
         do_action('admin_menu');
 
         do_action('admin_enqueue_scripts', 'settings_page_other');
-        $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_scripts']);
-        $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_enqueued_scripts']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_enqueued_styles']);
 
-        $GLOBALS['opennow_test_current_user_can'] = false;
-        do_action('admin_enqueue_scripts', 'settings_page_opennow');
-        $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_scripts']);
-        $this->assertSame(array(), $GLOBALS['opennow_test_enqueued_styles']);
+        $GLOBALS['hoursflow_test_current_user_can'] = false;
+        do_action('admin_enqueue_scripts', 'settings_page_hoursflow');
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_enqueued_scripts']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_enqueued_styles']);
 
-        $GLOBALS['opennow_test_current_user_can'] = true;
-        do_action('admin_enqueue_scripts', 'settings_page_opennow');
+        $GLOBALS['hoursflow_test_current_user_can'] = true;
+        do_action('admin_enqueue_scripts', 'settings_page_hoursflow');
 
-        $this->assertArrayHasKey('opennow-admin-settings', $GLOBALS['opennow_test_enqueued_scripts']);
-        $script = $GLOBALS['opennow_test_enqueued_scripts']['opennow-admin-settings'];
+        $this->assertArrayHasKey('hoursflow-admin-settings', $GLOBALS['hoursflow_test_enqueued_scripts']);
+        $script = $GLOBALS['hoursflow_test_enqueued_scripts']['hoursflow-admin-settings'];
         $this->assertStringEndsWith('/assets/admin/settings.js', $script['src']);
         $this->assertFileExists(dirname(__DIR__) . '/assets/admin/settings.js');
         $this->assertSame(array(), $script['deps']);
         $this->assertTrue($script['args']);
 
-        $this->assertArrayHasKey('opennow-admin-settings-style', $GLOBALS['opennow_test_enqueued_styles']);
-        $style = $GLOBALS['opennow_test_enqueued_styles']['opennow-admin-settings-style'];
+        $this->assertArrayHasKey('hoursflow-admin-settings-style', $GLOBALS['hoursflow_test_enqueued_styles']);
+        $style = $GLOBALS['hoursflow_test_enqueued_styles']['hoursflow-admin-settings-style'];
         $this->assertStringEndsWith('/assets/admin/settings.css', $style['src']);
         $this->assertFileExists(dirname(__DIR__) . '/assets/admin/settings.css');
         $this->assertSame(array(), $style['deps']);
@@ -637,7 +637,7 @@ final class SettingsTest extends TestCase
         $settings->renderAppearanceSection();
         $section = (string) ob_get_clean();
         $this->assertStringContainsString('global CTA background and text colors', $section);
-        $this->assertStringContainsString('for the shortcode and OpenNow blocks', $section);
+        $this->assertStringContainsString('for the shortcode and HoursFlow blocks', $section);
         $this->assertStringContainsString('must meet WCAG 2.2 AA contrast for normal text', $section);
 
         ob_start();
@@ -646,8 +646,8 @@ final class SettingsTest extends TestCase
         $output = (string) ob_get_clean();
 
         $this->assertSame(2, substr_count($output, 'type="color"'));
-        $this->assertStringContainsString('name="opennow_config[appearance][background_color]" value="#166534"', $output);
-        $this->assertStringContainsString('name="opennow_config[appearance][text_color]" value="#FFFFFF"', $output);
+        $this->assertStringContainsString('name="hoursflow_config[appearance][background_color]" value="#166534"', $output);
+        $this->assertStringContainsString('name="hoursflow_config[appearance][text_color]" value="#FFFFFF"', $output);
         $this->assertStringContainsString('Global CTA background color. Plugin default: #166534.', $output);
         $this->assertStringContainsString('Global CTA text color. Plugin default: #FFFFFF.', $output);
         $this->assertStringNotContainsString('type="text"', $output);
@@ -658,29 +658,29 @@ final class SettingsTest extends TestCase
         $this->assertStringNotContainsString('autocomplete=', $output);
 
         $config = $this->validConfig();
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $config;
         $settings = new Settings();
 
         ob_start();
         $settings->renderAppearanceField(array('color' => 'background_color'));
         $settings->renderAppearanceField(array('color' => 'text_color'));
         $legacy_blank_output = (string) ob_get_clean();
-        $this->assertStringContainsString('name="opennow_config[appearance][background_color]" value="#166534"', $legacy_blank_output);
-        $this->assertStringContainsString('name="opennow_config[appearance][text_color]" value="#FFFFFF"', $legacy_blank_output);
+        $this->assertStringContainsString('name="hoursflow_config[appearance][background_color]" value="#166534"', $legacy_blank_output);
+        $this->assertStringContainsString('name="hoursflow_config[appearance][text_color]" value="#FFFFFF"', $legacy_blank_output);
 
         $config['appearance'] = array(
             'background_color' => '#000000',
             'text_color' => '#FFFFFF',
         );
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $config;
         $settings = new Settings();
 
         ob_start();
         $settings->renderAppearanceField(array('color' => 'background_color'));
         $settings->renderAppearanceField(array('color' => 'text_color'));
         $custom_output = (string) ob_get_clean();
-        $this->assertStringContainsString('name="opennow_config[appearance][background_color]" value="#000000"', $custom_output);
-        $this->assertStringContainsString('name="opennow_config[appearance][text_color]" value="#FFFFFF"', $custom_output);
+        $this->assertStringContainsString('name="hoursflow_config[appearance][background_color]" value="#000000"', $custom_output);
+        $this->assertStringContainsString('name="hoursflow_config[appearance][text_color]" value="#FFFFFF"', $custom_output);
     }
 
     public function testAppearanceErrorsAreFieldSpecificAndConnectedToEachControl(): void
@@ -690,7 +690,7 @@ final class SettingsTest extends TestCase
             'background_color' => '#FFFFFF',
             'text_color' => '#FFFFFF',
         );
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $config;
 
         (new Settings())->sanitize($config);
         $settings = new Settings();
@@ -701,42 +701,42 @@ final class SettingsTest extends TestCase
         $output = (string) ob_get_clean();
 
         $this->assertSame(2, substr_count($output, 'aria-invalid="true"'));
-        $this->assertStringContainsString('opennow-appearance-background-color-description setting-error-opennow_appearance_background_color', $output);
-        $this->assertStringContainsString('opennow-appearance-text-color-description setting-error-opennow_appearance_text_color', $output);
-        $this->assertStringContainsString('Background color: The background and text colors must meet WCAG AA contrast for normal text.', $GLOBALS['opennow_test_settings_errors'][0]['message']);
-        $this->assertStringContainsString('Text color: The background and text colors must meet WCAG AA contrast for normal text.', $GLOBALS['opennow_test_settings_errors'][1]['message']);
+        $this->assertStringContainsString('hoursflow-appearance-background-color-description setting-error-hoursflow_appearance_background_color', $output);
+        $this->assertStringContainsString('hoursflow-appearance-text-color-description setting-error-hoursflow_appearance_text_color', $output);
+        $this->assertStringContainsString('Background color: The background and text colors must meet WCAG AA contrast for normal text.', $GLOBALS['hoursflow_test_settings_errors'][0]['message']);
+        $this->assertStringContainsString('Text color: The background and text colors must meet WCAG AA contrast for normal text.', $GLOBALS['hoursflow_test_settings_errors'][1]['message']);
     }
 
     public function testInvalidSubmissionReturnsTheExactExistingOptionAndAddsErrors(): void
     {
         $existing = array('retained' => 'unchanged');
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $existing;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $existing;
 
         $result = (new Settings())->sanitize(array('timezone' => '+02:00'));
 
         $this->assertSame($existing, $result);
         $this->assertCount(0, array_filter(
-            $GLOBALS['opennow_test_option_calls'],
+            $GLOBALS['hoursflow_test_option_calls'],
             static function ($call): bool {
                 return 'update_option' === $call['function'];
             }
         ));
-        $this->assertNotEmpty($GLOBALS['opennow_test_settings_errors']);
-        $this->assertSame(Schema::OPTION_NAME, $GLOBALS['opennow_test_settings_errors'][0]['setting']);
-        $this->assertSame('error', $GLOBALS['opennow_test_settings_errors'][0]['type']);
-        $this->assertStringStartsWith('opennow_', $GLOBALS['opennow_test_settings_errors'][0]['code']);
+        $this->assertNotEmpty($GLOBALS['hoursflow_test_settings_errors']);
+        $this->assertSame(Schema::OPTION_NAME, $GLOBALS['hoursflow_test_settings_errors'][0]['setting']);
+        $this->assertSame('error', $GLOBALS['hoursflow_test_settings_errors'][0]['type']);
+        $this->assertStringStartsWith('hoursflow_', $GLOBALS['hoursflow_test_settings_errors'][0]['code']);
 
         ob_start();
         (new Settings())->renderSettingsErrors();
         $error_output = (string) ob_get_clean();
         $this->assertStringContainsString('role="alert"', $error_output);
-        $this->assertStringContainsString('setting-error-opennow_', $error_output);
+        $this->assertStringContainsString('setting-error-hoursflow_', $error_output);
 
         ob_start();
         (new Settings())->renderTimezoneField();
         $timezone_output = (string) ob_get_clean();
         $this->assertStringContainsString('aria-invalid="true"', $timezone_output);
-        $this->assertStringContainsString('setting-error-opennow_timezone', $timezone_output);
+        $this->assertStringContainsString('setting-error-hoursflow_timezone', $timezone_output);
     }
 
     public function testInvalidSubmissionWithoutAnExistingOptionReturnsFalse(): void
@@ -744,7 +744,7 @@ final class SettingsTest extends TestCase
         $result = (new Settings())->sanitize(array());
 
         $this->assertFalse($result);
-        $this->assertNotEmpty($GLOBALS['opennow_test_settings_errors']);
+        $this->assertNotEmpty($GLOBALS['hoursflow_test_settings_errors']);
     }
 
     /**
@@ -756,7 +756,7 @@ final class SettingsTest extends TestCase
         $expected_context
     ): void {
         $existing = $this->validConfig();
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $existing;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $existing;
         $submitted = $existing;
         $mutator($submitted);
 
@@ -764,7 +764,7 @@ final class SettingsTest extends TestCase
 
         $this->assertSame($existing, $result);
         $matching_errors = array_values(array_filter(
-            $GLOBALS['opennow_test_settings_errors'],
+            $GLOBALS['hoursflow_test_settings_errors'],
             static function ($error) use ($expected_code): bool {
                 return $expected_code === $error['code'];
             }
@@ -780,21 +780,21 @@ final class SettingsTest extends TestCase
                 static function (&$config): void {
                     $config['timezone'] = '+02:00';
                 },
-                'opennow_timezone',
+                'hoursflow_timezone',
                 'Business timezone',
             ),
             'equal interval' => array(
                 static function (&$config): void {
                     $config['schedule']['monday']['closes'] = '09:00';
                 },
-                'opennow_schedule_monday',
+                'hoursflow_schedule_monday',
                 'Monday',
             ),
             'unsafe action' => array(
                 static function (&$config): void {
                     $config['cta']['open']['action'] = 'javascript:alert(1)';
                 },
-                'opennow_cta_open_action',
+                'hoursflow_cta_open_action',
                 'Open CTA',
             ),
         );
@@ -813,7 +813,7 @@ final class SettingsTest extends TestCase
         foreach (Schema::days() as $day) {
             $this->assertSame(array('type' => 'closed'), $result['schedule'][$day]);
         }
-        $this->assertSame(array(), $GLOBALS['opennow_test_settings_errors']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_settings_errors']);
     }
 
     public function testScheduleMarkupKeepsSevenAccessibleStatefulGroups(): void
@@ -830,7 +830,7 @@ final class SettingsTest extends TestCase
             'opens' => '09:00',
             'closes' => '17:00',
         );
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $config;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $config;
         $settings = new Settings();
 
         ob_start();
@@ -838,7 +838,7 @@ final class SettingsTest extends TestCase
         $output = (string) ob_get_clean();
         $xpath = $this->parseHtml($output);
 
-        $this->assertSame(7, $xpath->query('//fieldset[@data-opennow-schedule-day]')->length);
+        $this->assertSame(7, $xpath->query('//fieldset[@data-hoursflow-schedule-day]')->length);
         $this->assertStringContainsString('<legend>Localized weekday 1</legend>', $output);
         $this->assertStringContainsString('24-hour HH:MM local business time', $output);
         $this->assertStringContainsString('means overnight', $output);
@@ -848,36 +848,36 @@ final class SettingsTest extends TestCase
 
         foreach (Schema::days() as $day) {
             $fieldset = $xpath->query(
-                '//fieldset[@data-opennow-schedule-day="' . $day . '"]'
+                '//fieldset[@data-hoursflow-schedule-day="' . $day . '"]'
             )->item(0);
             $this->assertInstanceOf(\DOMElement::class, $fieldset);
             $is_open = 'monday' === $day;
             $state = $is_open ? 'open' : 'closed';
             $this->assertStringContainsString(
-                'opennow-schedule-day--' . $state,
+                'hoursflow-schedule-day--' . $state,
                 $fieldset->getAttribute('class')
             );
-            $this->assertSame($state, $fieldset->getAttribute('data-opennow-schedule-state'));
+            $this->assertSame($state, $fieldset->getAttribute('data-hoursflow-schedule-state'));
             $this->assertSame(
                 $is_open ? 'Open' : 'Closed',
                 $xpath->query(
-                    '//fieldset[@data-opennow-schedule-day="' . $day
-                    . '"]//*[@data-opennow-schedule-state-text]'
+                    '//fieldset[@data-hoursflow-schedule-day="' . $day
+                    . '"]//*[@data-hoursflow-schedule-state-text]'
                 )->item(0)->textContent
             );
-            $this->assertSame('Open', $fieldset->getAttribute('data-opennow-open-label'));
-            $this->assertSame('Closed', $fieldset->getAttribute('data-opennow-closed-label'));
+            $this->assertSame('Open', $fieldset->getAttribute('data-hoursflow-open-label'));
+            $this->assertSame('Closed', $fieldset->getAttribute('data-hoursflow-closed-label'));
             $this->assertSame(
                 1,
                 $xpath->query(
-                    '//fieldset[@data-opennow-schedule-day="' . $day
-                    . '"]/div[contains(concat(" ", normalize-space(@class), " "), " opennow-schedule-summary ")]'
+                    '//fieldset[@data-hoursflow-schedule-day="' . $day
+                    . '"]/div[contains(concat(" ", normalize-space(@class), " "), " hoursflow-schedule-summary ")]'
                 )->length
             );
 
-            $opens_id = 'opennow-schedule-' . $day . '-opens';
-            $closes_id = 'opennow-schedule-' . $day . '-closes';
-            $closed_id = 'opennow-schedule-' . $day . '-closed';
+            $opens_id = 'hoursflow-schedule-' . $day . '-opens';
+            $closes_id = 'hoursflow-schedule-' . $day . '-closes';
+            $closed_id = 'hoursflow-schedule-' . $day . '-closed';
             $checkbox = $xpath->query('//input[@id="' . $closed_id . '"]')->item(0);
             $opens = $xpath->query('//input[@id="' . $opens_id . '"]')->item(0);
             $closes = $xpath->query('//input[@id="' . $closes_id . '"]')->item(0);
@@ -888,12 +888,12 @@ final class SettingsTest extends TestCase
             $closed_label = $xpath->query('//label[@for="' . $closed_id . '"]')->item(0);
             $this->assertInstanceOf(\DOMElement::class, $closed_label);
             $this->assertStringContainsString(
-                'opennow-schedule-closed-toggle',
+                'hoursflow-schedule-closed-toggle',
                 $closed_label->getAttribute('class')
             );
             $this->assertSame($opens_id . ' ' . $closes_id, $checkbox->getAttribute('aria-controls'));
             $this->assertSame(
-                'opennow-schedule-closed-description',
+                'hoursflow-schedule-closed-description',
                 $checkbox->getAttribute('aria-describedby')
             );
             $this->assertSame('09:00', $opens->getAttribute('value'));
@@ -903,11 +903,11 @@ final class SettingsTest extends TestCase
             $this->assertSame(! $is_open, $opens->hasAttribute('disabled'));
             $this->assertSame(! $is_open, $closes->hasAttribute('disabled'));
             $this->assertStringContainsString(
-                'opennow-schedule-time-description',
+                'hoursflow-schedule-time-description',
                 $opens->getAttribute('aria-describedby')
             );
             $this->assertStringContainsString(
-                'opennow-schedule-time-description',
+                'hoursflow-schedule-time-description',
                 $closes->getAttribute('aria-describedby')
             );
             $this->assertSame(
@@ -934,7 +934,7 @@ final class SettingsTest extends TestCase
         $this->assertSame('Book online', $result['cta']['closed']['label']);
         $this->assertSame('', $result['appearance']['background_color']);
         $this->assertSame('', $result['appearance']['text_color']);
-        $this->assertSame(array(), $GLOBALS['opennow_test_settings_errors']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_settings_errors']);
     }
 
     private function parseHtml(string $html): \DOMXPath

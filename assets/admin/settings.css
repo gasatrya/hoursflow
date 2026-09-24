@@ -1,21 +1,21 @@
-#opennow-schedule,
-#opennow-schedule .opennow-schedule-day,
-#opennow-schedule .opennow-schedule-summary,
-#opennow-schedule .opennow-schedule-period,
-#opennow-schedule .opennow-schedule-row,
-#opennow-schedule .opennow-schedule-row input {
+#hoursflow-schedule,
+#hoursflow-schedule .hoursflow-schedule-day,
+#hoursflow-schedule .hoursflow-schedule-summary,
+#hoursflow-schedule .hoursflow-schedule-period,
+#hoursflow-schedule .hoursflow-schedule-row,
+#hoursflow-schedule .hoursflow-schedule-row input {
     box-sizing: border-box;
     min-width: 0;
     max-width: 100%;
 }
 
-#opennow-schedule {
+#hoursflow-schedule {
     max-width: 100%;
     min-width: 0;
     overflow-wrap: anywhere;
 }
 
-#opennow-schedule .opennow-schedule-day {
+#hoursflow-schedule .hoursflow-schedule-day {
     border: 1px solid #8C8F94;
     border-inline-start: 0.35rem solid #8C8F94;
     border-radius: 0.2rem;
@@ -26,22 +26,22 @@
     padding: 0.75rem 1rem 1rem;
 }
 
-#opennow-schedule .opennow-schedule-day--open {
+#hoursflow-schedule .hoursflow-schedule-day--open {
     border-inline-start-color: #166534;
 }
 
-#opennow-schedule .opennow-schedule-day--closed {
+#hoursflow-schedule .hoursflow-schedule-day--closed {
     border-inline-start-color: #646970;
 }
 
-#opennow-schedule .opennow-schedule-day legend {
+#hoursflow-schedule .hoursflow-schedule-day legend {
     font-size: 1rem;
     font-weight: 700;
     max-width: 100%;
     padding: 0 0.35rem;
 }
 
-#opennow-schedule .opennow-schedule-summary {
+#hoursflow-schedule .hoursflow-schedule-summary {
     align-items: center;
     display: flex;
     flex-wrap: wrap;
@@ -49,32 +49,32 @@
     margin: 0 0 0.75rem;
 }
 
-#opennow-schedule .opennow-schedule-state {
+#hoursflow-schedule .hoursflow-schedule-state {
     display: inline-block;
     font-weight: 700;
     max-width: 100%;
     overflow-wrap: anywhere;
 }
 
-#opennow-schedule .opennow-schedule-closed-toggle {
+#hoursflow-schedule .hoursflow-schedule-closed-toggle {
     align-items: center;
     display: inline-flex;
     gap: 0.4rem;
     margin: 0;
 }
 
-#opennow-schedule .opennow-schedule-closed-toggle input[type="checkbox"] {
+#hoursflow-schedule .hoursflow-schedule-closed-toggle input[type="checkbox"] {
     flex: 0 0 auto;
     margin: 0;
 }
 
-#opennow-schedule .opennow-schedule-period {
+#hoursflow-schedule .hoursflow-schedule-period {
     margin-top: 0.75rem;
     max-width: 100%;
     min-width: 0;
 }
 
-#opennow-schedule .opennow-schedule-row {
+#hoursflow-schedule .hoursflow-schedule-row {
     align-items: center;
     display: grid;
     gap: 0.5rem 1rem;
@@ -84,50 +84,50 @@
     padding: 0.25rem 0;
 }
 
-#opennow-schedule .opennow-schedule-row label {
+#hoursflow-schedule .hoursflow-schedule-row label {
     font-weight: 600;
     max-width: 100%;
     overflow-wrap: anywhere;
 }
 
-#opennow-schedule .opennow-schedule-row input {
+#hoursflow-schedule .hoursflow-schedule-row input {
     box-sizing: border-box;
     max-width: 100%;
     min-width: 0;
     width: 100%;
 }
 
-#opennow-schedule .opennow-schedule-row input:disabled {
+#hoursflow-schedule .hoursflow-schedule-row input:disabled {
     cursor: not-allowed;
     opacity: 0.55;
 }
 
-#opennow-schedule .opennow-schedule-day--closed .opennow-schedule-period {
+#hoursflow-schedule .hoursflow-schedule-day--closed .hoursflow-schedule-period {
     opacity: 0.7;
 }
 
 @media (max-width: 782px) {
 
-    #opennow-schedule .opennow-schedule-row {
+    #hoursflow-schedule .hoursflow-schedule-row {
         grid-template-columns: minmax(0, 1fr);
     }
 
-    #opennow-schedule .opennow-schedule-row input {
+    #hoursflow-schedule .hoursflow-schedule-row input {
         max-width: 100%;
         width: 100%;
     }
 }
 
-#opennow-settings-layout,
-#opennow-settings-layout > form,
-#opennow-settings-layout > #opennow-cta-preview,
-#opennow-settings-layout > .opennow-developer-promotion {
+#hoursflow-settings-layout,
+#hoursflow-settings-layout > form,
+#hoursflow-settings-layout > #hoursflow-cta-preview,
+#hoursflow-settings-layout > .hoursflow-developer-promotion {
     box-sizing: border-box;
     max-width: 100%;
     min-width: 0;
 }
 
-#opennow-settings-layout {
+#hoursflow-settings-layout {
     align-items: start;
     display: grid;
     gap: 1rem 2rem;
@@ -137,21 +137,21 @@
     overflow-wrap: anywhere;
 }
 
-#opennow-settings-layout > form {
+#hoursflow-settings-layout > form {
     grid-column: 1;
     grid-row: 1 / span 2;
     overflow-wrap: anywhere;
 }
 
-#opennow-settings-layout .opennow-settings-actions {
+#hoursflow-settings-layout .hoursflow-settings-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 20px;
 }
 
-#opennow-settings-layout > #opennow-cta-preview,
-#opennow-settings-layout > .opennow-developer-promotion {
+#hoursflow-settings-layout > #hoursflow-cta-preview,
+#hoursflow-settings-layout > .hoursflow-developer-promotion {
     background: #FFFFFF;
     border: 1px solid #CCD0D4;
     border-radius: 0.2rem;
@@ -160,14 +160,14 @@
     padding: 1rem;
 }
 
-#opennow-settings-layout > #opennow-cta-preview {
+#hoursflow-settings-layout > #hoursflow-cta-preview {
     grid-row: 1;
     position: sticky;
     top: 2rem;
     z-index: 1;
 }
 
-#opennow-settings-layout > .opennow-developer-promotion {
+#hoursflow-settings-layout > .hoursflow-developer-promotion {
     border-color: #CCD0D4;
     border-radius: 4px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
@@ -176,11 +176,11 @@
     padding: 20px;
 }
 
-#opennow-cta-preview h2 {
+#hoursflow-cta-preview h2 {
     margin-top: 0;
 }
 
-#opennow-cta-preview .opennow-cta-preview__state-group {
+#hoursflow-cta-preview .hoursflow-cta-preview__state-group {
     align-items: flex-end;
     border-bottom: 1px solid #C3C4C7;
     display: flex;
@@ -189,13 +189,13 @@
     margin: 1rem 0;
 }
 
-#opennow-cta-preview .opennow-cta-preview__state-label {
+#hoursflow-cta-preview .hoursflow-cta-preview__state-label {
     flex: 1 0 100%;
     font-weight: 600;
     padding-bottom: 0.35rem;
 }
 
-#opennow-cta-preview .opennow-cta-preview__state-button {
+#hoursflow-cta-preview .hoursflow-cta-preview__state-button {
     appearance: none;
     background: transparent;
     border: 0;
@@ -210,33 +210,33 @@
     padding: 0.5rem 0.75rem;
 }
 
-#opennow-cta-preview .opennow-cta-preview__state-button[aria-pressed="true"] {
+#hoursflow-cta-preview .hoursflow-cta-preview__state-button[aria-pressed="true"] {
     background: transparent;
     border-bottom-color: #2271B1;
     color: #1D2327;
     font-weight: 700;
 }
 
-#opennow-cta-preview .opennow-cta-preview__state-button:focus {
+#hoursflow-cta-preview .hoursflow-cta-preview__state-button:focus {
     box-shadow: 0 0 0 4px #FFFFFF;
     outline: 2px solid #000000;
     outline-offset: 2px;
 }
 
-#opennow-cta-preview .opennow-cta {
-    --opennow-cta-background-color: #166534;
-    --opennow-cta-text-color: #FFFFFF;
+#hoursflow-cta-preview .hoursflow-cta {
+    --hoursflow-cta-background-color: #166534;
+    --hoursflow-cta-text-color: #FFFFFF;
     box-sizing: border-box;
     max-width: 100%;
     min-width: 0;
     overflow-wrap: anywhere;
 }
 
-#opennow-cta-preview .opennow-cta__link {
+#hoursflow-cta-preview .hoursflow-cta__link {
     align-items: center;
-    background-color: var(--opennow-cta-background-color);
+    background-color: var(--hoursflow-cta-background-color);
     box-sizing: border-box;
-    color: var(--opennow-cta-text-color);
+    color: var(--hoursflow-cta-text-color);
     display: inline-flex;
     justify-content: center;
     max-width: 100%;
@@ -248,54 +248,54 @@
     text-align: center;
 }
 
-#opennow-cta-preview .opennow-cta__status {
+#hoursflow-cta-preview .hoursflow-cta__status {
     display: block;
     margin-top: 0.5em;
     max-width: 100%;
     overflow-wrap: anywhere;
 }
 
-#opennow-cta-preview .opennow-cta__status[hidden] {
+#hoursflow-cta-preview .hoursflow-cta__status[hidden] {
     display: none;
 }
 
-#opennow-settings-layout .opennow-developer-promotion h2 {
+#hoursflow-settings-layout .hoursflow-developer-promotion h2 {
     border-bottom: 1px solid #EEEEEE;
     font-size: 14px;
     margin-top: 0;
     padding-bottom: 10px;
 }
 
-#opennow-settings-layout .opennow-developer-promotion__hire {
+#hoursflow-settings-layout .hoursflow-developer-promotion__hire {
     box-sizing: border-box;
     text-align: center;
     width: 100%;
 }
 
-#opennow-settings-layout .opennow-developer-promotion hr {
+#hoursflow-settings-layout .hoursflow-developer-promotion hr {
     border: 0;
     border-top: 1px solid #EEEEEE;
     margin: 20px 0;
 }
 
-#opennow-settings-layout .opennow-developer-promotion__links {
+#hoursflow-settings-layout .hoursflow-developer-promotion__links {
     align-items: center;
     display: flex;
     gap: 12px;
     margin-bottom: 0;
 }
 
-#opennow-settings-layout .opennow-developer-promotion__links .dashicons,
-#opennow-settings-layout .opennow-developer-promotion__links a {
+#hoursflow-settings-layout .hoursflow-developer-promotion__links .dashicons,
+#hoursflow-settings-layout .hoursflow-developer-promotion__links a {
     text-decoration: none;
     vertical-align: middle;
 }
 
-#opennow-settings-layout .opennow-developer-promotion__coffee {
+#hoursflow-settings-layout .hoursflow-developer-promotion__coffee {
     color: #C9A96E;
 }
 
-#opennow-settings-layout .opennow-developer-promotion__links a:focus {
+#hoursflow-settings-layout .hoursflow-developer-promotion__links a:focus {
     box-shadow: 0 0 0 4px #FFFFFF;
     outline: 2px solid #000000;
     outline-offset: 2px;
@@ -303,20 +303,20 @@
 
 @media (max-width: 782px) {
 
-    #opennow-settings-layout {
+    #hoursflow-settings-layout {
         gap: 2rem;
         grid-template-columns: minmax(0, 1fr);
         grid-template-rows: auto;
     }
 
-    #opennow-settings-layout > form,
-    #opennow-settings-layout > #opennow-cta-preview,
-    #opennow-settings-layout > .opennow-developer-promotion {
+    #hoursflow-settings-layout > form,
+    #hoursflow-settings-layout > #hoursflow-cta-preview,
+    #hoursflow-settings-layout > .hoursflow-developer-promotion {
         grid-column: 1;
         grid-row: auto;
     }
 
-    #opennow-settings-layout > #opennow-cta-preview {
+    #hoursflow-settings-layout > #hoursflow-cta-preview {
         position: static;
     }
 }

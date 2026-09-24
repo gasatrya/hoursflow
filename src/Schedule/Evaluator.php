@@ -1,10 +1,10 @@
 <?php
-namespace OpenNow\Schedule;
+namespace HoursFlow\Schedule;
 
 defined( 'ABSPATH' ) || exit;
 
-use OpenNow\Config\Schema;
-use OpenNow\Config\Validator;
+use HoursFlow\Config\Schema;
+use HoursFlow\Config\Validator;
 
 /**
  * Evaluate a weekly schedule at an injected absolute instant.

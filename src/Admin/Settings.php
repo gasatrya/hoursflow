@@ -1,8 +1,8 @@
 <?php
-namespace OpenNow\Admin;
+namespace HoursFlow\Admin;
 
-use OpenNow\Config\Schema;
-use OpenNow\Config\Validator;
+use HoursFlow\Config\Schema;
+use HoursFlow\Config\Validator;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -11,13 +11,13 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Settings {
 
-	const PAGE_SLUG          = 'opennow';
+	const PAGE_SLUG          = 'hoursflow';
 	const PAGE_CAPABILITY    = 'manage_options';
-	const TIMEZONE_SECTION   = 'opennow_timezone_section';
-	const APPEARANCE_SECTION = 'opennow_appearance_section';
-	const SCHEDULE_SECTION   = 'opennow_schedule_section';
-	const OPEN_CTA_SECTION   = 'opennow_open_cta_section';
-	const CLOSED_CTA_SECTION = 'opennow_closed_cta_section';
+	const TIMEZONE_SECTION   = 'hoursflow_timezone_section';
+	const APPEARANCE_SECTION = 'hoursflow_appearance_section';
+	const SCHEDULE_SECTION   = 'hoursflow_schedule_section';
+	const OPEN_CTA_SECTION   = 'hoursflow_open_cta_section';
+	const CLOSED_CTA_SECTION = 'hoursflow_closed_cta_section';
 
 	private const HIRE_URL             = 'https://gasatrya.com/';
 	private const DONATION_URL         = 'https://gasatrya.com/donate/';
@@ -68,7 +68,7 @@ final class Settings {
 	 */
 	public function registerSetting() {
 		register_setting(
-			'opennow',
+			'hoursflow',
 			Schema::OPTION_NAME,
 			array(
 				'type'              => 'array',
@@ -87,8 +87,8 @@ final class Settings {
 	 */
 	public function registerPage() {
 		$this->page_hook = add_options_page(
-			__( 'OpenNow Settings', 'opennow' ),
-			__( 'OpenNow', 'opennow' ),
+			__( 'HoursFlow Settings', 'hoursflow' ),
+			__( 'HoursFlow', 'hoursflow' ),
 			self::PAGE_CAPABILITY,
 			self::PAGE_SLUG,
 			array( $this, 'renderPage' )
@@ -127,88 +127,88 @@ final class Settings {
 		}
 
 		$state_label = array(
-			'open'   => __( 'open', 'opennow' ),
-			'closed' => __( 'closed', 'opennow' ),
+			'open'   => __( 'open', 'hoursflow' ),
+			'closed' => __( 'closed', 'hoursflow' ),
 		);
 		$help_tabs   = array(
 			array(
-				'id'      => 'opennow-timezone-help',
-				'title'   => __( 'Business timezone', 'opennow' ),
+				'id'      => 'hoursflow-timezone-help',
+				'title'   => __( 'Business timezone', 'hoursflow' ),
 				'content' => '<p>'
 					. esc_html__(
 						'Choose UTC or a named IANA region/city timezone, such as UTC, America/New_York, or Asia/Jakarta.',
-						'opennow'
+						'hoursflow'
 					)
 					. '</p><p>'
 					. esc_html__(
-						'OpenNow evaluates weekly hours in the business timezone, not the visitor, browser, server, or WordPress site timezone. Raw UTC offsets such as UTC+1 are not supported.',
-						'opennow'
+						'HoursFlow evaluates weekly hours in the business timezone, not the visitor, browser, server, or WordPress site timezone. Raw UTC offsets such as UTC+1 are not supported.',
+						'hoursflow'
 					)
 					. '</p>',
 			),
 			array(
-				'id'      => 'opennow-appearance-help',
-				'title'   => __( 'CTA appearance', 'opennow' ),
+				'id'      => 'hoursflow-appearance-help',
+				'title'   => __( 'CTA appearance', 'hoursflow' ),
 				'content' => '<p>'
 					. esc_html__(
 						'Use the native color picker to choose optional six-digit hexadecimal colors such as #166534 or #FFFFFF.',
-						'opennow'
+						'hoursflow'
 					)
 					. '</p><p>'
 					. esc_html__(
-						'When a legacy stored value is blank, its picker shows the plugin default (#166534 for the background or #FFFFFF for the text). Legacy blanks remain valid and use that default at runtime; saving the displayed picker value stores an explicit color. These global CTA colors are shared by the shortcode and every OpenNow block. The effective background and text colors must meet WCAG 2.2 AA contrast for normal text.',
-						'opennow'
+						'When a legacy stored value is blank, its picker shows the plugin default (#166534 for the background or #FFFFFF for the text). Legacy blanks remain valid and use that default at runtime; saving the displayed picker value stores an explicit color. These global CTA colors are shared by the shortcode and every HoursFlow block. The effective background and text colors must meet WCAG 2.2 AA contrast for normal text.',
+						'hoursflow'
 					)
 					. '</p>',
 			),
 			array(
-				'id'      => 'opennow-weekly-hours-help',
-				'title'   => __( 'Weekly hours', 'opennow' ),
+				'id'      => 'hoursflow-weekly-hours-help',
+				'title'   => __( 'Weekly hours', 'hoursflow' ),
 				'content' => '<p>'
 					. esc_html__(
 						'For each weekday, choose closed or exactly one period and enter exact 24-hour HH:MM local business time, for example 09:30.',
-						'opennow'
+						'hoursflow'
 					)
 					. '</p><p>'
 					. esc_html__(
 						'A closed day has no opening or closing times. Opening and closing times must differ; a closing time earlier than the opening time means overnight. Do not enter 24:00 or multiple periods.',
-						'opennow'
+						'hoursflow'
 					)
 					. '</p>',
 			),
 			array(
-				'id'      => 'opennow-open-cta-help',
-				'title'   => __( 'CTA while open', 'opennow' ),
+				'id'      => 'hoursflow-open-cta-help',
+				'title'   => __( 'CTA while open', 'hoursflow' ),
 				'content' => '<p>'
 					. esc_html(
 						sprintf(
 							/* translators: %s: the business state, either open or closed. */
-							__( 'Provide a required plain-text label and action for the CTA shown while the business is %s. Labels and status text must be plain text; angle brackets are not allowed.', 'opennow' ),
+							__( 'Provide a required plain-text label and action for the CTA shown while the business is %s. Labels and status text must be plain text; angle brackets are not allowed.', 'hoursflow' ),
 							$state_label['open']
 						)
 					)
 					. '</p><p>'
 					. esc_html__(
 						'Use a root-relative URL such as /booking/, an HTTPS URL such as https://example.com/book, or a telephone action such as tel:+123456789. An optional plain-text status may accompany the CTA; leave it blank to omit it.',
-						'opennow'
+						'hoursflow'
 					)
 					. '</p>',
 			),
 			array(
-				'id'      => 'opennow-closed-cta-help',
-				'title'   => __( 'CTA while closed', 'opennow' ),
+				'id'      => 'hoursflow-closed-cta-help',
+				'title'   => __( 'CTA while closed', 'hoursflow' ),
 				'content' => '<p>'
 					. esc_html(
 						sprintf(
 							/* translators: %s: the business state, either open or closed. */
-							__( 'Provide a required plain-text label and action for the CTA shown while the business is %s. Labels and status text must be plain text; angle brackets are not allowed.', 'opennow' ),
+							__( 'Provide a required plain-text label and action for the CTA shown while the business is %s. Labels and status text must be plain text; angle brackets are not allowed.', 'hoursflow' ),
 							$state_label['closed']
 						)
 					)
 					. '</p><p>'
 					. esc_html__(
 						'Use a root-relative URL such as /booking/, an HTTPS URL such as https://example.com/book, or a telephone action such as tel:+123456789. An optional plain-text status may accompany the CTA; leave it blank to omit it.',
-						'opennow'
+						'hoursflow'
 					)
 					. '</p>',
 			),
@@ -244,63 +244,63 @@ final class Settings {
 
 		add_settings_section(
 			self::TIMEZONE_SECTION,
-			__( 'Business timezone', 'opennow' ),
+			__( 'Business timezone', 'hoursflow' ),
 			array( $this, 'renderTimezoneSection' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
-			'opennow_timezone',
-			__( 'Business timezone', 'opennow' ),
+			'hoursflow_timezone',
+			__( 'Business timezone', 'hoursflow' ),
 			array( $this, 'renderTimezoneField' ),
 			self::PAGE_SLUG,
 			self::TIMEZONE_SECTION,
 			array(
-				'label_for' => 'opennow-timezone',
+				'label_for' => 'hoursflow-timezone',
 			)
 		);
 
 		add_settings_section(
 			self::APPEARANCE_SECTION,
-			__( 'CTA appearance', 'opennow' ),
+			__( 'CTA appearance', 'hoursflow' ),
 			array( $this, 'renderAppearanceSection' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
-			'opennow_appearance_background_color',
-			__( 'Background color', 'opennow' ),
+			'hoursflow_appearance_background_color',
+			__( 'Background color', 'hoursflow' ),
 			array( $this, 'renderAppearanceField' ),
 			self::PAGE_SLUG,
 			self::APPEARANCE_SECTION,
 			array(
 				'color'     => 'background_color',
-				'label_for' => 'opennow-appearance-background-color',
+				'label_for' => 'hoursflow-appearance-background-color',
 			)
 		);
 
 		add_settings_field(
-			'opennow_appearance_text_color',
-			__( 'Text color', 'opennow' ),
+			'hoursflow_appearance_text_color',
+			__( 'Text color', 'hoursflow' ),
 			array( $this, 'renderAppearanceField' ),
 			self::PAGE_SLUG,
 			self::APPEARANCE_SECTION,
 			array(
 				'color'     => 'text_color',
-				'label_for' => 'opennow-appearance-text-color',
+				'label_for' => 'hoursflow-appearance-text-color',
 			)
 		);
 
 		add_settings_section(
 			self::SCHEDULE_SECTION,
-			__( 'Weekly hours', 'opennow' ),
+			__( 'Weekly hours', 'hoursflow' ),
 			array( $this, 'renderScheduleSection' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
-			'opennow_schedule',
-			__( 'Monday to Sunday', 'opennow' ),
+			'hoursflow_schedule',
+			__( 'Monday to Sunday', 'hoursflow' ),
 			array( $this, 'renderScheduleField' ),
 			self::PAGE_SLUG,
 			self::SCHEDULE_SECTION
@@ -308,39 +308,39 @@ final class Settings {
 
 		add_settings_section(
 			self::OPEN_CTA_SECTION,
-			__( 'CTA while open', 'opennow' ),
+			__( 'CTA while open', 'hoursflow' ),
 			array( $this, 'renderOpenCtaSection' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
-			'opennow_cta_open',
-			__( 'Open CTA', 'opennow' ),
+			'hoursflow_cta_open',
+			__( 'Open CTA', 'hoursflow' ),
 			array( $this, 'renderCtaField' ),
 			self::PAGE_SLUG,
 			self::OPEN_CTA_SECTION,
 			array(
 				'state'     => 'open',
-				'label_for' => 'opennow-cta-open-label',
+				'label_for' => 'hoursflow-cta-open-label',
 			)
 		);
 
 		add_settings_section(
 			self::CLOSED_CTA_SECTION,
-			__( 'CTA while closed', 'opennow' ),
+			__( 'CTA while closed', 'hoursflow' ),
 			array( $this, 'renderClosedCtaSection' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
-			'opennow_cta_closed',
-			__( 'Closed CTA', 'opennow' ),
+			'hoursflow_cta_closed',
+			__( 'Closed CTA', 'hoursflow' ),
 			array( $this, 'renderCtaField' ),
 			self::PAGE_SLUG,
 			self::CLOSED_CTA_SECTION,
 			array(
 				'state'     => 'closed',
-				'label_for' => 'opennow-cta-closed-label',
+				'label_for' => 'hoursflow-cta-closed-label',
 			)
 		);
 	}
@@ -352,30 +352,30 @@ final class Settings {
 	 */
 	public function renderPage() {
 		if ( ! current_user_can( self::PAGE_CAPABILITY ) ) {
-			wp_die( esc_html__( 'You do not have permission to access these settings.', 'opennow' ) );
+			wp_die( esc_html__( 'You do not have permission to access these settings.', 'hoursflow' ) );
 			return;
 		}
 
 		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'OpenNow Settings', 'opennow' ) . '</h1>';
+		echo '<h1>' . esc_html__( 'HoursFlow Settings', 'hoursflow' ) . '</h1>';
 		$this->renderResetNotice();
 		$this->renderSettingsErrors();
-		echo '<div id="opennow-settings-layout">';
+		echo '<div id="hoursflow-settings-layout">';
 		echo '<form action="options.php" method="post">';
-		settings_fields( 'opennow' );
+		settings_fields( 'hoursflow' );
 		do_settings_sections( self::PAGE_SLUG );
-		echo '<div class="opennow-settings-actions">';
-		submit_button( __( 'Save Changes', 'opennow' ), 'primary', 'submit', false );
+		echo '<div class="hoursflow-settings-actions">';
+		submit_button( __( 'Save Changes', 'hoursflow' ), 'primary', 'submit', false );
 		submit_button(
-			__( 'Reset to Defaults', 'opennow' ),
+			__( 'Reset to Defaults', 'hoursflow' ),
 			'secondary',
-			'opennow_reset',
+			'hoursflow_reset',
 			false,
 			array(
-				'formnovalidate'             => 'formnovalidate',
-				'data-opennow-reset-confirm' => __(
+				'formnovalidate'               => 'formnovalidate',
+				'data-hoursflow-reset-confirm' => __(
 					'Are you sure you want to reset all settings to defaults?',
-					'opennow'
+					'hoursflow'
 				),
 			)
 		);
@@ -393,7 +393,7 @@ final class Settings {
 	 * @return void
 	 */
 	public function handleReset() {
-		if ( ! isset( $_POST['opennow_reset'], $_POST['_wpnonce'] ) ) {
+		if ( ! isset( $_POST['hoursflow_reset'], $_POST['_wpnonce'] ) ) {
 			return;
 		}
 
@@ -401,7 +401,7 @@ final class Settings {
 			return;
 		}
 
-		if ( ! check_admin_referer( 'opennow-options' ) ) {
+		if ( ! check_admin_referer( 'hoursflow-options' ) ) {
 			return;
 		}
 
@@ -410,8 +410,8 @@ final class Settings {
 		wp_safe_redirect(
 			add_query_arg(
 				array(
-					'page'          => self::PAGE_SLUG,
-					'opennow-reset' => '1',
+					'page'            => self::PAGE_SLUG,
+					'hoursflow-reset' => '1',
 				),
 				admin_url( 'options-general.php' )
 			)
@@ -428,7 +428,7 @@ final class Settings {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$reset = isset( $_GET['opennow-reset'] ) ? sanitize_key( wp_unslash( $_GET['opennow-reset'] ) ) : '';
+		$reset = isset( $_GET['hoursflow-reset'] ) ? sanitize_key( wp_unslash( $_GET['hoursflow-reset'] ) ) : '';
 
 		if ( self::PAGE_SLUG !== $page
 			|| '1' !== $reset
@@ -438,7 +438,7 @@ final class Settings {
 		}
 
 		echo '<div class="notice notice-success is-dismissible"><p>'
-			. esc_html__( 'Settings have been reset to defaults.', 'opennow' )
+			. esc_html__( 'Settings have been reset to defaults.', 'hoursflow' )
 			. '</p></div>';
 	}
 
@@ -459,13 +459,13 @@ final class Settings {
 			return;
 		}
 
-		$plugin_file = defined( 'OPENNOW_PLUGIN_FILE' )
-			? OPENNOW_PLUGIN_FILE
-			: dirname( __DIR__, 2 ) . DIRECTORY_SEPARATOR . 'opennow.php';
-		$version     = defined( 'OPENNOW_VERSION' ) ? OPENNOW_VERSION : null;
+		$plugin_file = defined( 'HOURSFLOW_PLUGIN_FILE' )
+			? HOURSFLOW_PLUGIN_FILE
+			: dirname( __DIR__, 2 ) . DIRECTORY_SEPARATOR . 'hoursflow.php';
+		$version     = defined( 'HOURSFLOW_VERSION' ) ? HOURSFLOW_VERSION : null;
 
 		wp_enqueue_script(
-			'opennow-admin-settings',
+			'hoursflow-admin-settings',
 			plugins_url( 'assets/admin/settings.js', $plugin_file ),
 			array(),
 			$version,
@@ -473,7 +473,7 @@ final class Settings {
 		);
 
 		wp_enqueue_style(
-			'opennow-admin-settings-style',
+			'hoursflow-admin-settings-style',
 			plugins_url( 'assets/admin/settings.css', $plugin_file ),
 			array(),
 			$version
@@ -492,7 +492,7 @@ final class Settings {
 		}
 
 		echo '<div role="alert" aria-label="'
-			. esc_attr__( 'OpenNow settings errors', 'opennow' )
+			. esc_attr__( 'HoursFlow settings errors', 'hoursflow' )
 			. '">';
 		settings_errors( Schema::OPTION_NAME );
 		echo '</div>';
@@ -507,7 +507,7 @@ final class Settings {
 		echo '<p class="description">'
 			. esc_html__(
 				'Choose the named timezone used for all weekly hours. Times are entered as local business time.',
-				'opennow'
+				'hoursflow'
 			)
 			. '</p>';
 	}
@@ -521,7 +521,7 @@ final class Settings {
 		echo '<p class="description">'
 			. esc_html__(
 				'Set each day to closed or one period. A closing time earlier than the opening time is an overnight period.',
-				'opennow'
+				'hoursflow'
 			)
 			. '</p>';
 	}
@@ -557,20 +557,20 @@ final class Settings {
 		$timezone = is_string( $config['timezone'] ) ? $config['timezone'] : '';
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic attributes are escaped by getErrorAttributes().
-		echo '<select id="opennow-timezone" name="opennow_config[timezone]"'
+		echo '<select id="hoursflow-timezone" name="hoursflow_config[timezone]"'
 			. $this->getErrorAttributes(
-				'opennow-timezone-description',
-				array( 'opennow_timezone' )
+				'hoursflow-timezone-description',
+				array( 'hoursflow_timezone' )
 			)
 			. ' required="required">';
 		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WordPress supplies this escaped choice markup.
 		echo $this->getTimezoneChoice( $timezone );
 		echo '</select>';
-		echo '<p class="description" id="opennow-timezone-description">'
+		echo '<p class="description" id="hoursflow-timezone-description">'
 			. esc_html__(
 				'Select UTC or a named IANA region/city timezone. Manual UTC offsets are not supported.',
-				'opennow'
+				'hoursflow'
 			)
 			. '</p>';
 	}
@@ -583,8 +583,8 @@ final class Settings {
 	public function renderAppearanceSection() {
 		echo '<p class="description">'
 			. esc_html__(
-				'Choose global CTA background and text colors for the shortcode and OpenNow blocks. Colors must meet WCAG 2.2 AA contrast for normal text.',
-				'opennow'
+				'Choose global CTA background and text colors for the shortcode and HoursFlow blocks. Colors must meet WCAG 2.2 AA contrast for normal text.',
+				'hoursflow'
 			)
 			. '</p>';
 	}
@@ -609,16 +609,16 @@ final class Settings {
 			: '';
 		$defaults       = Schema::defaultAppearance();
 		$display_value  = '' === $value ? $defaults[ $color ] : $value;
-		$id             = 'opennow-appearance-' . str_replace( '_', '-', $color );
+		$id             = 'hoursflow-appearance-' . str_replace( '_', '-', $color );
 		$description_id = $id . '-description';
-		$error_code     = 'opennow_appearance_' . $color;
+		$error_code     = 'hoursflow_appearance_' . $color;
 		$description    = 'background_color' === $color
-			? __( 'Global CTA background color. Plugin default: #166534.', 'opennow' )
-			: __( 'Global CTA text color. Plugin default: #FFFFFF.', 'opennow' );
+			? __( 'Global CTA background color. Plugin default: #166534.', 'hoursflow' )
+			: __( 'Global CTA text color. Plugin default: #FFFFFF.', 'hoursflow' );
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Every dynamic attribute in this control is escaped.
 		echo '<p><input type="color" id="' . esc_attr( $id )
-			. '" name="opennow_config[appearance][' . esc_attr( $color ) . ']" value="'
+			. '" name="hoursflow_config[appearance][' . esc_attr( $color ) . ']" value="'
 			. esc_attr( $display_value )
 			. '"'
 			. $this->getErrorAttributes( $description_id, array( $error_code ) )
@@ -641,17 +641,17 @@ final class Settings {
 
 		$config = $this->getEditorConfig();
 
-		echo '<div id="opennow-schedule">';
-		echo '<p class="description" id="opennow-schedule-closed-description">'
+		echo '<div id="hoursflow-schedule">';
+		echo '<p class="description" id="hoursflow-schedule-closed-description">'
 			. esc_html__(
 				'Check Closed all day to omit period times for a closed day.',
-				'opennow'
+				'hoursflow'
 			)
 			. '</p>';
-		echo '<p class="description" id="opennow-schedule-time-description">'
+		echo '<p class="description" id="hoursflow-schedule-time-description">'
 			. esc_html__(
 				'Enter exact 24-hour HH:MM local business time, for example 09:30. A closing time earlier than the opening time means overnight.',
-				'opennow'
+				'hoursflow'
 			)
 			. '</p>';
 
@@ -664,8 +664,8 @@ final class Settings {
 			'saturday'  => 6,
 			'sunday'    => 0,
 		);
-		$open_label   = __( 'Open', 'opennow' );
-		$closed_label = __( 'Closed', 'opennow' );
+		$open_label   = __( 'Open', 'hoursflow' );
+		$closed_label = __( 'Closed', 'hoursflow' );
 
 		foreach ( Schema::days() as $day ) {
 			$entry       = $config['schedule'][ $day ];
@@ -674,91 +674,91 @@ final class Settings {
 			$state_label = $is_closed ? $closed_label : $open_label;
 			$opens       = $is_closed ? self::DEFAULT_OPENING_TIME : $entry['opens'];
 			$closes      = $is_closed ? self::DEFAULT_CLOSING_TIME : $entry['closes'];
-			$opens_id    = 'opennow-schedule-' . $day . '-opens';
-			$closes_id   = 'opennow-schedule-' . $day . '-closes';
-			$closed_id   = 'opennow-schedule-' . $day . '-closed';
+			$opens_id    = 'hoursflow-schedule-' . $day . '-opens';
+			$closes_id   = 'hoursflow-schedule-' . $day . '-closes';
+			$closed_id   = 'hoursflow-schedule-' . $day . '-closed';
 			$disabled    = $is_closed ? ' disabled="disabled"' : '';
 			$required    = $is_closed ? '' : ' required="required"';
 
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- All fieldset attributes are escaped below.
-			echo '<fieldset class="opennow-schedule-day opennow-schedule-day--' . esc_attr( $state )
-				. '" data-opennow-schedule-day="' . esc_attr( $day )
-				. '" data-opennow-schedule-state="' . esc_attr( $state )
-				. '" data-opennow-open-label="' . esc_attr( $open_label )
-				. '" data-opennow-closed-label="' . esc_attr( $closed_label )
+			echo '<fieldset class="hoursflow-schedule-day hoursflow-schedule-day--' . esc_attr( $state )
+				. '" data-hoursflow-schedule-day="' . esc_attr( $day )
+				. '" data-hoursflow-schedule-state="' . esc_attr( $state )
+				. '" data-hoursflow-open-label="' . esc_attr( $open_label )
+				. '" data-hoursflow-closed-label="' . esc_attr( $closed_label )
 				. '">';
 			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The localized weekday label is escaped.
 			echo '<legend>' . esc_html( $this->getWeekdayLabel( $day, $day_numbers ) ) . '</legend>';
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The schedule key is escaped.
-			echo '<input type="hidden" name="opennow_config[schedule]['
+			echo '<input type="hidden" name="hoursflow_config[schedule]['
 				. esc_attr( $day )
 				. '][type]" value="period" />';
-			echo '<div class="opennow-schedule-summary">';
+			echo '<div class="hoursflow-schedule-summary">';
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The localized state label is escaped.
-			echo '<span class="opennow-schedule-state" data-opennow-schedule-state-text="1">'
+			echo '<span class="hoursflow-schedule-state" data-hoursflow-schedule-state-text="1">'
 				. esc_html( $state_label )
 				. '</span>';
-			echo '<label class="opennow-schedule-closed-toggle" for="' . esc_attr( $closed_id ) . '">';
+			echo '<label class="hoursflow-schedule-closed-toggle" for="' . esc_attr( $closed_id ) . '">';
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- All checkbox attributes are escaped.
-			echo '<input type="checkbox" id="' . esc_attr( $closed_id ) . '" name="opennow_config[schedule]['
+			echo '<input type="checkbox" id="' . esc_attr( $closed_id ) . '" name="hoursflow_config[schedule]['
 				. esc_attr( $day )
-				. '][type]" value="closed" data-opennow-closed-toggle="1"'
+				. '][type]" value="closed" data-hoursflow-closed-toggle="1"'
 				. ' aria-controls="'
 				. esc_attr( $opens_id . ' ' . $closes_id )
 				. '"'
 				. $this->getErrorAttributes(
-					'opennow-schedule-closed-description',
+					'hoursflow-schedule-closed-description',
 					array(
-						'opennow_schedule_' . $day,
-						'opennow_schedule_' . $day . '_type',
+						'hoursflow_schedule_' . $day,
+						'hoursflow_schedule_' . $day . '_type',
 					)
 				)
 				. ( $is_closed ? ' checked="checked"' : '' )
 				. ' />';
 			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo esc_html__( 'Closed all day', 'opennow' );
+			echo esc_html__( 'Closed all day', 'hoursflow' );
 			echo '</label>';
 			echo '</div>';
 
-			echo '<div class="opennow-schedule-period">';
-			echo '<div class="opennow-schedule-row opennow-schedule-row--opening">';
+			echo '<div class="hoursflow-schedule-period">';
+			echo '<div class="hoursflow-schedule-row hoursflow-schedule-row--opening">';
 			echo '<label for="' . esc_attr( $opens_id ) . '">'
-				. esc_html__( 'Opening time', 'opennow' )
+				. esc_html__( 'Opening time', 'hoursflow' )
 				. '</label>';
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- All opening-time attributes are escaped.
 			echo '<input type="text" id="' . esc_attr( $opens_id )
-				. '" name="opennow_config[schedule][' . esc_attr( $day ) . '][opens]" value="'
+				. '" name="hoursflow_config[schedule][' . esc_attr( $day ) . '][opens]" value="'
 				. esc_attr( $opens )
-				. '" placeholder="' . esc_attr__( 'Example: 09:00', 'opennow' )
+				. '" placeholder="' . esc_attr__( 'Example: 09:00', 'hoursflow' )
 				. '" maxlength="5" pattern="[0-9]{2}:[0-9]{2}" inputmode="numeric"'
-				. ' autocomplete="off" data-opennow-time-input="1"'
+				. ' autocomplete="off" data-hoursflow-time-input="1"'
 				. $this->getErrorAttributes(
-					'opennow-schedule-time-description',
+					'hoursflow-schedule-time-description',
 					array(
-						'opennow_schedule_' . $day,
-						'opennow_schedule_' . $day . '_opens',
+						'hoursflow_schedule_' . $day,
+						'hoursflow_schedule_' . $day . '_opens',
 					)
 				)
 				. $disabled . $required . ' />';
 			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo '</div>';
-			echo '<div class="opennow-schedule-row opennow-schedule-row--closing">';
+			echo '<div class="hoursflow-schedule-row hoursflow-schedule-row--closing">';
 			echo '<label for="' . esc_attr( $closes_id ) . '">'
-				. esc_html__( 'Closing time', 'opennow' )
+				. esc_html__( 'Closing time', 'hoursflow' )
 				. '</label>';
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- All closing-time attributes are escaped.
 			echo '<input type="text" id="' . esc_attr( $closes_id )
-				. '" name="opennow_config[schedule][' . esc_attr( $day ) . '][closes]" value="'
+				. '" name="hoursflow_config[schedule][' . esc_attr( $day ) . '][closes]" value="'
 				. esc_attr( $closes )
-				. '" placeholder="' . esc_attr__( 'Example: 17:00', 'opennow' )
+				. '" placeholder="' . esc_attr__( 'Example: 17:00', 'hoursflow' )
 				. '" maxlength="5" pattern="[0-9]{2}:[0-9]{2}" inputmode="numeric"'
-				. ' autocomplete="off" data-opennow-time-input="1"'
+				. ' autocomplete="off" data-hoursflow-time-input="1"'
 				. $this->getErrorAttributes(
-					'opennow-schedule-time-description',
+					'hoursflow-schedule-time-description',
 					array(
-						'opennow_schedule_' . $day,
-						'opennow_schedule_' . $day . '_closes',
+						'hoursflow_schedule_' . $day,
+						'hoursflow_schedule_' . $day . '_closes',
 					)
 				)
 				. $disabled . $required . ' />';
@@ -798,50 +798,50 @@ final class Settings {
 			&& preg_match( '/\\A#[0-9A-Fa-f]{6}\\z/', $config['appearance']['text_color'] )
 			? $config['appearance']['text_color']
 			: $defaults['text_color'];
-		$style       = '--opennow-cta-background-color: ' . $background
-			. '; --opennow-cta-text-color: ' . $text_color . ';';
+		$style       = '--hoursflow-cta-background-color: ' . $background
+			. '; --hoursflow-cta-text-color: ' . $text_color . ';';
 
-		echo '<div id="opennow-cta-preview" role="region" aria-labelledby="opennow-cta-preview-heading"'
-			. ' data-opennow-preview="1" data-opennow-preview-state="open"'
-			. ' data-opennow-preview-default-background-color="'
+		echo '<div id="hoursflow-cta-preview" role="region" aria-labelledby="hoursflow-cta-preview-heading"'
+			. ' data-hoursflow-preview="1" data-hoursflow-preview-state="open"'
+			. ' data-hoursflow-preview-default-background-color="'
 			. esc_attr( $defaults['background_color'] )
-			. '" data-opennow-preview-default-text-color="'
+			. '" data-hoursflow-preview-default-text-color="'
 			. esc_attr( $defaults['text_color'] )
 			. '">';
-		echo '<h2 id="opennow-cta-preview-heading">'
-			. esc_html__( 'Live CTA preview', 'opennow' )
+		echo '<h2 id="hoursflow-cta-preview-heading">'
+			. esc_html__( 'Live CTA preview', 'hoursflow' )
 			. '</h2>';
-		echo '<p class="description" id="opennow-cta-preview-instructions">'
+		echo '<p class="description" id="hoursflow-cta-preview-instructions">'
 			. esc_html__(
 				'Preview the open and closed CTA with unsaved settings changes. This visual preview never navigates or performs the configured action.',
-				'opennow'
+				'hoursflow'
 			)
 			. '</p>';
-		echo '<div class="opennow-cta-preview__state-group" role="group" aria-labelledby="opennow-cta-preview-state-label">';
-		echo '<span id="opennow-cta-preview-state-label" class="opennow-cta-preview__state-label">'
-			. esc_html__( 'Preview state', 'opennow' )
+		echo '<div class="hoursflow-cta-preview__state-group" role="group" aria-labelledby="hoursflow-cta-preview-state-label">';
+		echo '<span id="hoursflow-cta-preview-state-label" class="hoursflow-cta-preview__state-label">'
+			. esc_html__( 'Preview state', 'hoursflow' )
 			. '</span>';
-		echo '<button type="button" class="opennow-cta-preview__state-button"'
-			. ' data-opennow-preview-state-button="open" aria-pressed="true"'
-			. ' aria-controls="opennow-cta-preview-content">'
-			. esc_html__( 'Open', 'opennow' )
+		echo '<button type="button" class="hoursflow-cta-preview__state-button"'
+			. ' data-hoursflow-preview-state-button="open" aria-pressed="true"'
+			. ' aria-controls="hoursflow-cta-preview-content">'
+			. esc_html__( 'Open', 'hoursflow' )
 			. '</button>';
-		echo '<button type="button" class="opennow-cta-preview__state-button"'
-			. ' data-opennow-preview-state-button="closed" aria-pressed="false"'
-			. ' aria-controls="opennow-cta-preview-content">'
-			. esc_html__( 'Closed', 'opennow' )
+		echo '<button type="button" class="hoursflow-cta-preview__state-button"'
+			. ' data-hoursflow-preview-state-button="closed" aria-pressed="false"'
+			. ' aria-controls="hoursflow-cta-preview-content">'
+			. esc_html__( 'Closed', 'hoursflow' )
 			. '</button>';
 		echo '</div>';
-		echo '<div id="opennow-cta-preview-content" class="opennow-cta opennow-cta--open"'
-			. ' data-opennow-preview-content="1" data-opennow-preview-state="open" style="'
+		echo '<div id="hoursflow-cta-preview-content" class="hoursflow-cta hoursflow-cta--open"'
+			. ' data-hoursflow-preview-content="1" data-hoursflow-preview-state="open" style="'
 			. esc_attr( $style ) . '">';
-		echo '<span class="opennow-cta__link" data-opennow-preview-label="1">'
+		echo '<span class="hoursflow-cta__link" data-hoursflow-preview-label="1">'
 			. esc_html( $open_label )
 			. '</span>';
 		if ( '' === trim( $open_status ) ) {
-			echo '<span class="opennow-cta__status" data-opennow-preview-status="1" hidden="hidden">';
+			echo '<span class="hoursflow-cta__status" data-hoursflow-preview-status="1" hidden="hidden">';
 		} else {
-			echo '<span class="opennow-cta__status" data-opennow-preview-status="1">';
+			echo '<span class="hoursflow-cta__status" data-hoursflow-preview-status="1">';
 		}
 		echo esc_html( $open_status ) . '</span>';
 		echo '</div>';
@@ -854,35 +854,35 @@ final class Settings {
 	 * @return void
 	 */
 	private function renderDeveloperPromotion() {
-		echo '<div class="opennow-developer-promotion" role="region" aria-labelledby="opennow-developer-promotion-heading">';
-		echo '<h2 id="opennow-developer-promotion-heading">'
-			. esc_html__( 'Need a WordPress Developer?', 'opennow' )
+		echo '<div class="hoursflow-developer-promotion" role="region" aria-labelledby="hoursflow-developer-promotion-heading">';
+		echo '<h2 id="hoursflow-developer-promotion-heading">'
+			. esc_html__( 'Need a WordPress Developer?', 'hoursflow' )
 			. '</h2>';
 		echo '<p>'
 			. esc_html__(
 				'I build custom plugins, themes, and high-performance WordPress sites for businesses that need more than off-the-shelf solutions.',
-				'opennow'
+				'hoursflow'
 			)
 			. '</p>';
-		echo '<p class="opennow-developer-promotion__hire-row">';
-		echo '<a class="button button-primary opennow-developer-promotion__hire" href="'
+		echo '<p class="hoursflow-developer-promotion__hire-row">';
+		echo '<a class="button button-primary hoursflow-developer-promotion__hire" href="'
 			. esc_url( self::HIRE_URL, array( 'https' ) )
 			. '" target="_blank" rel="noopener noreferrer" aria-label="'
-			. esc_attr__( 'Hire a WordPress developer (opens in a new tab)', 'opennow' )
+			. esc_attr__( 'Hire a WordPress developer (opens in a new tab)', 'hoursflow' )
 			. '">'
-			. esc_html__( 'Hire Me', 'opennow' )
+			. esc_html__( 'Hire Me', 'hoursflow' )
 			. '</a>';
 		echo '</p>';
 		echo '<hr />';
-		echo '<p class="opennow-developer-promotion__links">';
-		echo '<span class="opennow-developer-promotion__link">';
-		echo '<span class="dashicons dashicons-coffee opennow-developer-promotion__coffee" aria-hidden="true"></span>';
-		echo '<a class="opennow-developer-promotion__support" href="'
+		echo '<p class="hoursflow-developer-promotion__links">';
+		echo '<span class="hoursflow-developer-promotion__link">';
+		echo '<span class="dashicons dashicons-coffee hoursflow-developer-promotion__coffee" aria-hidden="true"></span>';
+		echo '<a class="hoursflow-developer-promotion__support" href="'
 			. esc_url( self::DONATION_URL, array( 'https' ) )
 			. '" target="_blank" rel="noopener noreferrer" aria-label="'
-			. esc_attr__( 'Buy me a coffee to support OpenNow (opens in a new tab)', 'opennow' )
+			. esc_attr__( 'Buy me a coffee to support HoursFlow (opens in a new tab)', 'hoursflow' )
 			. '">'
-			. esc_html__( 'Buy me a coffee', 'opennow' )
+			. esc_html__( 'Buy me a coffee', 'hoursflow' )
 			. '</a>';
 		echo '</span>';
 		echo '</p>';
@@ -911,7 +911,7 @@ final class Settings {
 				'action' => '',
 				'status' => '',
 			);
-		$base_id               = 'opennow-cta-' . $state;
+		$base_id               = 'hoursflow-cta-' . $state;
 		$label_id              = $base_id . '-label';
 		$action_id             = $base_id . '-action';
 		$status_id             = $base_id . '-status';
@@ -919,14 +919,14 @@ final class Settings {
 		$action_description_id = $action_id . '-description';
 		$status_description_id = $status_id . '-description';
 		$label_placeholder     = 'open' === $state
-			? __( 'Example: Call now', 'opennow' )
-			: __( 'Example: Book online', 'opennow' );
+			? __( 'Example: Call now', 'hoursflow' )
+			: __( 'Example: Book online', 'hoursflow' );
 		$action_placeholder    = 'open' === $state
-			? __( 'Example: tel:+123456789', 'opennow' )
-			: __( 'Example: /booking/', 'opennow' );
+			? __( 'Example: tel:+123456789', 'hoursflow' )
+			: __( 'Example: /booking/', 'hoursflow' );
 		$status_placeholder    = 'open' === $state
-			? __( 'Example: Open now', 'opennow' )
-			: __( 'Example: Reopens tomorrow at 09:00', 'opennow' );
+			? __( 'Example: Open now', 'hoursflow' )
+			: __( 'Example: Reopens tomorrow at 09:00', 'hoursflow' );
 
 		echo '<div id="' . esc_attr( $base_id ) . '">';
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The complete description is escaped.
@@ -934,70 +934,70 @@ final class Settings {
 			. esc_html(
 				sprintf(
 					/* translators: %s: the business state, either open or closed. */
-					__( 'Configure the CTA shown when the business is %s. Enter administrator content as plain text.', 'opennow' ),
-					'open' === $state ? __( 'open', 'opennow' ) : __( 'closed', 'opennow' )
+					__( 'Configure the CTA shown when the business is %s. Enter administrator content as plain text.', 'hoursflow' ),
+					'open' === $state ? __( 'open', 'hoursflow' ) : __( 'closed', 'hoursflow' )
 				)
 			)
 			. '</p>';
 
 		echo '<p><label for="' . esc_attr( $label_id ) . '">'
-			. esc_html__( 'CTA label', 'opennow' )
+			. esc_html__( 'CTA label', 'hoursflow' )
 			. '</label><br />';
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- All label-control attributes are escaped.
 		echo '<input type="text" class="regular-text" id="' . esc_attr( $label_id )
-			. '" name="opennow_config[cta][' . esc_attr( $state ) . '][label]" value="'
+			. '" name="hoursflow_config[cta][' . esc_attr( $state ) . '][label]" value="'
 			. esc_attr( $cta['label'] )
 			. '" placeholder="' . esc_attr( $label_placeholder )
 			. '" required="required" autocomplete="off"'
 			. $this->getErrorAttributes(
 				$label_description_id,
-				array( 'opennow_cta_' . $state, 'opennow_cta_' . $state . '_label' )
+				array( 'hoursflow_cta_' . $state, 'hoursflow_cta_' . $state . '_label' )
 			)
 			. ' />';
 		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '</p>';
 		echo '<p class="description" id="' . esc_attr( $label_description_id ) . '">'
-			. esc_html__( 'Required plain-text button label; angle brackets are not allowed.', 'opennow' )
+			. esc_html__( 'Required plain-text button label; angle brackets are not allowed.', 'hoursflow' )
 			. '</p>';
 
 		echo '<p><label for="' . esc_attr( $action_id ) . '">'
-			. esc_html__( 'CTA action', 'opennow' )
+			. esc_html__( 'CTA action', 'hoursflow' )
 			. '</label><br />';
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- All action-control attributes are escaped.
 		echo '<input type="text" class="regular-text" id="' . esc_attr( $action_id )
-			. '" name="opennow_config[cta][' . esc_attr( $state ) . '][action]" value="'
+			. '" name="hoursflow_config[cta][' . esc_attr( $state ) . '][action]" value="'
 			. esc_attr( $cta['action'] )
 			. '" placeholder="' . esc_attr( $action_placeholder )
 			. '" required="required" inputmode="url" autocomplete="off"'
 			. $this->getErrorAttributes(
 				$action_description_id,
-				array( 'opennow_cta_' . $state, 'opennow_cta_' . $state . '_action' )
+				array( 'hoursflow_cta_' . $state, 'hoursflow_cta_' . $state . '_action' )
 			)
 			. ' />';
 		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '</p>';
 		echo '<p class="description" id="' . esc_attr( $action_description_id ) . '">'
-			. esc_html__( 'Required root-relative URL, HTTPS URL, or telephone action (tel:).', 'opennow' )
+			. esc_html__( 'Required root-relative URL, HTTPS URL, or telephone action (tel:).', 'hoursflow' )
 			. '</p>';
 
 		echo '<p><label for="' . esc_attr( $status_id ) . '">'
-			. esc_html__( 'CTA status', 'opennow' )
+			. esc_html__( 'CTA status', 'hoursflow' )
 			. '</label><br />';
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- All status-control attributes are escaped.
 		echo '<input type="text" class="regular-text" id="' . esc_attr( $status_id )
-			. '" name="opennow_config[cta][' . esc_attr( $state ) . '][status]" value="'
+			. '" name="hoursflow_config[cta][' . esc_attr( $state ) . '][status]" value="'
 			. esc_attr( $cta['status'] )
 			. '" placeholder="' . esc_attr( $status_placeholder )
 			. '" autocomplete="off"'
 			. $this->getErrorAttributes(
 				$status_description_id,
-				array( 'opennow_cta_' . $state, 'opennow_cta_' . $state . '_status' )
+				array( 'hoursflow_cta_' . $state, 'hoursflow_cta_' . $state . '_status' )
 			)
 			. ' />';
 		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '</p>';
 		echo '<p class="description" id="' . esc_attr( $status_description_id ) . '">'
-			. esc_html__( 'Optional plain-text status shown with this CTA.', 'opennow' )
+			. esc_html__( 'Optional plain-text status shown with this CTA.', 'hoursflow' )
 			. '</p>';
 		echo '</div>';
 	}
@@ -1122,14 +1122,14 @@ final class Settings {
 	 */
 	private function renderCtaSectionDescription( $state ) {
 		$state_label = 'open' === $state
-			? __( 'open', 'opennow' )
-			: __( 'closed', 'opennow' );
+			? __( 'open', 'hoursflow' )
+			: __( 'closed', 'hoursflow' );
 
 		echo '<p class="description">'
 			. esc_html(
 				sprintf(
 					/* translators: %s: the business state, either open or closed. */
-					__( 'Set the label, action, and optional status for the CTA used while the business is %s.', 'opennow' ),
+					__( 'Set the label, action, and optional status for the CTA used while the business is %s.', 'hoursflow' ),
 					$state_label
 				)
 			)
@@ -1167,13 +1167,13 @@ final class Settings {
 		}
 
 		$fallbacks = array(
-			'monday'    => __( 'Monday', 'opennow' ),
-			'tuesday'   => __( 'Tuesday', 'opennow' ),
-			'wednesday' => __( 'Wednesday', 'opennow' ),
-			'thursday'  => __( 'Thursday', 'opennow' ),
-			'friday'    => __( 'Friday', 'opennow' ),
-			'saturday'  => __( 'Saturday', 'opennow' ),
-			'sunday'    => __( 'Sunday', 'opennow' ),
+			'monday'    => __( 'Monday', 'hoursflow' ),
+			'tuesday'   => __( 'Tuesday', 'hoursflow' ),
+			'wednesday' => __( 'Wednesday', 'hoursflow' ),
+			'thursday'  => __( 'Thursday', 'hoursflow' ),
+			'friday'    => __( 'Friday', 'hoursflow' ),
+			'saturday'  => __( 'Saturday', 'hoursflow' ),
+			'sunday'    => __( 'Sunday', 'hoursflow' ),
 		);
 
 		return isset( $fallbacks[ $day ] ) ? $fallbacks[ $day ] : $day;
@@ -1225,8 +1225,8 @@ final class Settings {
 		if ( 'timezone' === $root ) {
 			return sprintf(
 				/* translators: 1: field label, 2: validation message. */
-				__( '%1$s: %2$s', 'opennow' ),
-				__( 'Business timezone', 'opennow' ),
+				__( '%1$s: %2$s', 'hoursflow' ),
+				__( 'Business timezone', 'hoursflow' ),
 				$message
 			);
 		}
@@ -1234,28 +1234,28 @@ final class Settings {
 		if ( 'schedule' === $root ) {
 			if ( ! isset( $parts[1] ) || ! in_array( $parts[1], Schema::days(), true ) ) {
 				/* translators: %s: validation message. */
-				return sprintf( __( 'Weekly hours: %s', 'opennow' ), $message );
+				return sprintf( __( 'Weekly hours: %s', 'hoursflow' ), $message );
 			}
 
 			$day_label = $this->getWeekdayLabel( $parts[1] );
 			if ( ! isset( $parts[2] ) ) {
 				/* translators: 1: field label, 2: validation message. */
-				return sprintf( __( '%1$s: %2$s', 'opennow' ), $day_label, $message );
+				return sprintf( __( '%1$s: %2$s', 'hoursflow' ), $day_label, $message );
 			}
 
 			$schedule_labels = array(
-				'type'   => __( 'Day status', 'opennow' ),
-				'opens'  => __( 'Opening time', 'opennow' ),
-				'closes' => __( 'Closing time', 'opennow' ),
+				'type'   => __( 'Day status', 'hoursflow' ),
+				'opens'  => __( 'Opening time', 'hoursflow' ),
+				'closes' => __( 'Closing time', 'hoursflow' ),
 			);
 			if ( ! isset( $schedule_labels[ $parts[2] ] ) ) {
 				/* translators: 1: field label, 2: validation message. */
-				return sprintf( __( '%1$s: %2$s', 'opennow' ), $day_label, $message );
+				return sprintf( __( '%1$s: %2$s', 'hoursflow' ), $day_label, $message );
 			}
 
 			return sprintf(
 				/* translators: 1: section label, 2: field label, 3: validation message. */
-				__( '%1$s — %2$s: %3$s', 'opennow' ),
+				__( '%1$s — %2$s: %3$s', 'hoursflow' ),
 				$day_label,
 				$schedule_labels[ $parts[2] ],
 				$message
@@ -1265,30 +1265,30 @@ final class Settings {
 		if ( 'cta' === $root ) {
 			if ( ! isset( $parts[1] ) || ! in_array( $parts[1], array( 'open', 'closed' ), true ) ) {
 				/* translators: %s: validation message. */
-				return sprintf( __( 'CTA settings: %s', 'opennow' ), $message );
+				return sprintf( __( 'CTA settings: %s', 'hoursflow' ), $message );
 			}
 
 			$state_label = 'open' === $parts[1]
-				? __( 'Open CTA', 'opennow' )
-				: __( 'Closed CTA', 'opennow' );
+				? __( 'Open CTA', 'hoursflow' )
+				: __( 'Closed CTA', 'hoursflow' );
 			if ( ! isset( $parts[2] ) ) {
 				/* translators: 1: field label, 2: validation message. */
-				return sprintf( __( '%1$s: %2$s', 'opennow' ), $state_label, $message );
+				return sprintf( __( '%1$s: %2$s', 'hoursflow' ), $state_label, $message );
 			}
 
 			$cta_labels = array(
-				'label'  => __( 'Label', 'opennow' ),
-				'action' => __( 'Action', 'opennow' ),
-				'status' => __( 'Status', 'opennow' ),
+				'label'  => __( 'Label', 'hoursflow' ),
+				'action' => __( 'Action', 'hoursflow' ),
+				'status' => __( 'Status', 'hoursflow' ),
 			);
 			if ( ! isset( $cta_labels[ $parts[2] ] ) ) {
 				/* translators: 1: field label, 2: validation message. */
-				return sprintf( __( '%1$s: %2$s', 'opennow' ), $state_label, $message );
+				return sprintf( __( '%1$s: %2$s', 'hoursflow' ), $state_label, $message );
 			}
 
 			return sprintf(
 				/* translators: 1: section label, 2: field label, 3: validation message. */
-				__( '%1$s — %2$s: %3$s', 'opennow' ),
+				__( '%1$s — %2$s: %3$s', 'hoursflow' ),
 				$state_label,
 				$cta_labels[ $parts[2] ],
 				$message
@@ -1297,25 +1297,25 @@ final class Settings {
 
 		if ( 'appearance' === $root ) {
 			$appearance_labels = array(
-				'background_color' => __( 'Background color', 'opennow' ),
-				'text_color'       => __( 'Text color', 'opennow' ),
+				'background_color' => __( 'Background color', 'hoursflow' ),
+				'text_color'       => __( 'Text color', 'hoursflow' ),
 			);
 			if ( isset( $parts[1] ) && isset( $appearance_labels[ $parts[1] ] ) ) {
 				return sprintf(
 					/* translators: 1: field label, 2: validation message. */
-					__( '%1$s: %2$s', 'opennow' ),
+					__( '%1$s: %2$s', 'hoursflow' ),
 					$appearance_labels[ $parts[1] ],
 					$message
 				);
 			}
 
 			/* translators: %s: validation message. */
-			return sprintf( __( 'Appearance: %s', 'opennow' ), $message );
+			return sprintf( __( 'Appearance: %s', 'hoursflow' ), $message );
 		}
 
 		if ( 'config' === $root ) {
 			/* translators: %s: validation message. */
-			return sprintf( __( 'Configuration: %s', 'opennow' ), $message );
+			return sprintf( __( 'Configuration: %s', 'hoursflow' ), $message );
 		}
 
 		return $message;

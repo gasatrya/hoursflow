@@ -1,6 +1,6 @@
 {
-    "name": "opennow/opennow-cta",
-    "description": "A lightweight WordPress CTA foundation driven by business hours.",
+    "name": "hoursflow/hoursflow-business-hours-cta",
+    "description": "HoursFlow — Business Hours CTA for WordPress.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "require": {
@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "OpenNow\\": "src/"
+            "HoursFlow\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "OpenNow\\Tests\\": "tests/"
+            "HoursFlow\\Tests\\": "tests/"
         }
     },
     "config": {
@@ -45,8 +45,8 @@
         "phpcs": "@lint:phpcs",
         "format:php": "@php vendor/bin/phpcbf --standard=phpcs.xml.dist",
         "i18n:audit": [
-            "vendor/bin/wp i18n audit . --slug=opennow --domain=opennow --include=opennow.php,uninstall.php,src --skip-js --skip-block-json --format=plaintext",
-            "vendor/bin/wp i18n audit src/blocks/cta --slug=opennow --domain=opennow --exclude=*.test.js --skip-php --skip-block-json --format=plaintext"
+            "vendor/bin/wp i18n audit . --slug=hoursflow --domain=hoursflow --include=hoursflow.php,uninstall.php,src --skip-js --skip-block-json --format=plaintext",
+            "vendor/bin/wp i18n audit src/blocks/cta --slug=hoursflow --domain=hoursflow --exclude=*.test.js --skip-php --skip-block-json --format=plaintext"
         ],
         "i18n:pot": "node tools/make-pot.js",
         "check": "@check:php",

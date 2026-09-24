@@ -1,9 +1,9 @@
-.opennow-cta {
-    --opennow-cta-background-color: #166534;
-    --opennow-cta-text-color: #FFFFFF;
+.hoursflow-cta {
+    --hoursflow-cta-background-color: #166534;
+    --hoursflow-cta-text-color: #FFFFFF;
 }
 
-.opennow-cta__link {
+.hoursflow-cta__link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -18,36 +18,36 @@
     overflow-wrap: anywhere;
 }
 
-.opennow-cta__link:not(.has-background) {
-    background-color: var(--opennow-cta-background-color);
+.hoursflow-cta__link:not(.has-background) {
+    background-color: var(--hoursflow-cta-background-color);
 }
 
-.opennow-cta__link:not(.has-text-color) {
-    color: var(--opennow-cta-text-color);
+.hoursflow-cta__link:not(.has-text-color) {
+    color: var(--hoursflow-cta-text-color);
 }
 
-.opennow-cta__link:hover {
+.hoursflow-cta__link:hover {
     text-decoration: underline;
 }
 
-.opennow-cta__link:focus {
+.hoursflow-cta__link:focus {
     box-shadow: 0 0 0 4px #000000;
     outline: 2px solid #FFFFFF;
     outline-offset: 2px;
 }
 
-.opennow-cta__link:focus:not(:focus-visible) {
+.hoursflow-cta__link:focus:not(:focus-visible) {
     box-shadow: none;
     outline: none;
 }
 
-.opennow-cta__link:focus-visible {
+.hoursflow-cta__link:focus-visible {
     box-shadow: 0 0 0 4px #000000;
     outline: 2px solid #FFFFFF;
     outline-offset: 2px;
 }
 
-.opennow-cta__status {
+.hoursflow-cta__status {
     display: block;
     margin-top: 0.5em;
     overflow-wrap: anywhere;

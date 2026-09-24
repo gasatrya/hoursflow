@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: opennow-${{ github.workflow }}-${{ github.ref }}
+  group: hoursflow-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -72,7 +72,7 @@ jobs:
       WP_TESTS_DIR: ${{ github.workspace }}/.wordpress-tests-${{ matrix.lane }}
       WP_CORE_DIR: ${{ github.workspace }}/.wordpress-${{ matrix.lane }}
       WP_TESTS_PHPUNIT_POLYFILLS_PATH: ${{ github.workspace }}/vendor/yoast/phpunit-polyfills
-      OPENNOW_TEST_PLUGIN_FILE: ${{ github.workspace }}/.wordpress-${{ matrix.lane }}/wp-content/plugins/opennow/opennow.php
+      HOURSFLOW_TEST_PLUGIN_FILE: ${{ github.workspace }}/.wordpress-${{ matrix.lane }}/wp-content/plugins/hoursflow/hoursflow.php
     services:
       mysql:
         image: mysql:8.0
@@ -117,12 +117,12 @@ jobs:
 
       - name: Build and install the dependency-free production package
         run: |
-          node tools/package.js --output "${RUNNER_TEMP}/opennow-0.1.0.zip"
+          node tools/package.js --output "${RUNNER_TEMP}/hoursflow-0.1.0.zip"
           mkdir -p "${WP_CORE_DIR}/wp-content/plugins"
-          unzip -q "${RUNNER_TEMP}/opennow-0.1.0.zip" -d "${WP_CORE_DIR}/wp-content/plugins"
-          test -f "${OPENNOW_TEST_PLUGIN_FILE}"
-          test ! -e "${WP_CORE_DIR}/wp-content/plugins/opennow/vendor"
-          test ! -e "${WP_CORE_DIR}/wp-content/plugins/opennow/node_modules"
+          unzip -q "${RUNNER_TEMP}/hoursflow-0.1.0.zip" -d "${WP_CORE_DIR}/wp-content/plugins"
+          test -f "${HOURSFLOW_TEST_PLUGIN_FILE}"
+          test ! -e "${WP_CORE_DIR}/wp-content/plugins/hoursflow/vendor"
+          test ! -e "${WP_CORE_DIR}/wp-content/plugins/hoursflow/node_modules"
 
       - name: Record integration versions
         run: |
@@ -170,27 +170,27 @@ jobs:
         run: |
           npm run package:check
           npm run package
-          unzip -t dist/opennow-0.1.0.zip
-          unzip -Z1 dist/opennow-0.1.0.zip > package-files.txt
-          grep -Fx 'opennow/opennow.php' package-files.txt
-          grep -Fx 'opennow/uninstall.php' package-files.txt
-          grep -Fx 'opennow/languages/opennow.pot' package-files.txt
-          grep -Fx 'opennow/src/blocks/cta/index.js' package-files.txt
-          grep -Fx 'opennow/src/blocks/cta/editor.scss' package-files.txt
-          grep -Fx 'opennow/src/blocks/cta/block.json' package-files.txt
+          unzip -t dist/hoursflow-0.1.0.zip
+          unzip -Z1 dist/hoursflow-0.1.0.zip > package-files.txt
+          grep -Fx 'hoursflow/hoursflow.php' package-files.txt
+          grep -Fx 'hoursflow/uninstall.php' package-files.txt
+          grep -Fx 'hoursflow/languages/hoursflow.pot' package-files.txt
+          grep -Fx 'hoursflow/src/blocks/cta/index.js' package-files.txt
+          grep -Fx 'hoursflow/src/blocks/cta/editor.scss' package-files.txt
+          grep -Fx 'hoursflow/src/blocks/cta/block.json' package-files.txt
           test "$(awk '
-            /^opennow\/src\// && $0 !~ /\.php$/ && $0 !~ /^opennow\/src\/blocks\/cta\/(block\.json|editor\.scss|index\.js)$/ { count++ }
+            /^hoursflow\/src\// && $0 !~ /\.php$/ && $0 !~ /^hoursflow\/src\/blocks\/cta\/(block\.json|editor\.scss|index\.js)$/ { count++ }
             END { print count + 0 }
           ' package-files.txt)" -eq 0
           ! grep -E '\.map$' package-files.txt
-          ! grep -E '^opennow/(tests|docs|vendor|node_modules|tools)/' package-files.txt
-          ! grep -E '^opennow/(composer|package|phpunit|phpcs)' package-files.txt
-          unzip -p dist/opennow-0.1.0.zip opennow/opennow.php | grep -F 'Plugin Name: OpenNow CTA'
-          sha256sum dist/opennow-0.1.0.zip
+          ! grep -E '^hoursflow/(tests|docs|vendor|node_modules|tools)/' package-files.txt
+          ! grep -E '^hoursflow/(composer|package|phpunit|phpcs)' package-files.txt
+          unzip -p dist/hoursflow-0.1.0.zip hoursflow/hoursflow.php | grep -F 'Plugin Name: HoursFlow — Business Hours CTA'
+          sha256sum dist/hoursflow-0.1.0.zip
 
       - name: Upload production package
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: opennow-0.1.0-${{ github.sha }}
-          path: dist/opennow-0.1.0.zip
+          name: hoursflow-0.1.0-${{ github.sha }}
+          path: dist/hoursflow-0.1.0.zip
           if-no-files-found: error

@@ -1,13 +1,13 @@
-# OpenNow CTA
+# HoursFlow — Business Hours CTA
 
-OpenNow CTA helps visitors find the right next action for a business's current
+HoursFlow — Business Hours CTA helps visitors find the right next action for a business's current
 weekly schedule. Configure one open CTA and one closed CTA, then present them
 through a shortcode or dynamic block. It is a focused, server-rendered plugin:
 there is no account or remote service to configure.
 
 ## Who is this for?
 
-OpenNow CTA is for small businesses, studios, practices, shops, and service
+HoursFlow CTA is for small businesses, studios, practices, shops, and service
 teams that want a clear schedule-aware action while keeping their labels,
 destinations, and status copy in WordPress.
 
@@ -30,10 +30,10 @@ destinations, and status copy in WordPress.
 
 ## Install and configure
 
-1. Download the production `opennow-0.1.0.zip`, or copy this plugin directory to
-   `wp-content/plugins/opennow/`.
-2. In **Plugins**, activate **OpenNow CTA**.
-3. Open **Settings → OpenNow** and save one complete configuration. Choose a
+1. Download the production `hoursflow-0.1.0.zip`, or copy this plugin directory to
+   `wp-content/plugins/hoursflow/`.
+2. In **Plugins**, activate **HoursFlow CTA**.
+3. Open **Settings → HoursFlow** and save one complete configuration. Choose a
    named IANA business timezone, enter the Monday–Sunday schedule, and provide
    both the open and closed CTA label/action pairs. Status text is optional.
 4. Add the shortcode or block described below to a page.
@@ -48,7 +48,7 @@ screens. A live preview beside the form (stacked below it on narrow screens)
 lets administrators inspect either CTA state using current unsaved label,
 optional status, and color values without evaluating the schedule. Beneath the
 preview, a page-scoped developer card offers explicit links to hire Gasatrya or
-support OpenNow; it does not load remote content or make a request until an
+support HoursFlow; it does not load remote content or make a request until an
 administrator follows a link.
 
 ## Add a CTA
@@ -56,16 +56,16 @@ administrator follows a link.
 Use the shortcode anywhere WordPress processes shortcodes:
 
 ```text
-[opennow_cta]
-[opennow_cta hide_status="1"]
+[hoursflow_cta]
+[hoursflow_cta hide_status="1"]
 ```
 
 `hide_status="1"` is the only recognized shortcode attribute spelling and
 value. It hides the status for whichever state is selected at render time; all
 other attribute values, attribute containers, attributes, and enclosed content
-are ignored. The default `[opennow_cta]` behavior is unchanged.
+are ignored. The default `[hoursflow_cta]` behavior is unchanged.
 
-Or insert the **OpenNow CTA** block (`opennow/cta`) in the block editor. The
+Or insert the **HoursFlow CTA** block (`hoursflow/cta`) in the block editor. The
 block is dynamic and uses the same server renderer as the shortcode. Its editor
 preview shows the current server-rendered output, including the current
 business state.
@@ -115,7 +115,7 @@ result. There is no DST override or ambiguity setting.
 
 ## Appearance and accessibility
 
-The OpenNow settings expose global CTA link background and text colors shared
+The HoursFlow settings expose global CTA link background and text colors shared
 by the shortcode and used as the default for every block. Individual blocks
 can override both colors through WordPress's built-in color panel; content and
 state overrides do not change appearance. The global color pickers display
@@ -139,8 +139,8 @@ safely. It does not set fixed dimensions or load fonts.
 The output uses a native, keyboard-operable link with a visible focus style.
 Open/closed state is not conveyed by color alone, and the plugin does not add a
 fake button role or an `aria-live` announcement. Themes may style the stable
-hooks `.opennow-cta`, `.opennow-cta--open`, `.opennow-cta--closed`,
-`.opennow-cta__link`, and `.opennow-cta__status`.
+hooks `.hoursflow-cta`, `.hoursflow-cta--open`, `.hoursflow-cta--closed`,
+`.hoursflow-cta__link`, and `.hoursflow-cta__status`.
 
 The settings preview has keyboard-operable Open and Closed controls whose
 selected state is announced. It reflects unsaved label, optional status, and
@@ -151,31 +151,31 @@ action. Preview state selection neither predicts nor changes the schedule.
 ## Caching and limitations
 
 State is evaluated on the server when the shortcode or dynamic block renders.
-OpenNow does not use browser timers, AJAX, REST polling, cache variation,
+HoursFlow does not use browser timers, AJAX, REST polling, cache variation,
 scheduled purges, or a computed-state cache. Cached page HTML can therefore
 remain stale for up to the site's page-cache TTL. If a site needs a maximum
 staleness of **N** minutes, configure a cache TTL of no more than **N** minutes
-or arrange boundary purges in its own caching system; OpenNow performs neither.
+or arrange boundary purges in its own caching system; HoursFlow performs neither.
 
 The administrator is responsible for keeping status copy such as “reopen at
-9 AM” accurate. OpenNow does not calculate or translate that copy, provide
+9 AM” accurate. HoursFlow does not calculate or translate that copy, provide
 holiday hours, or integrate with booking, CRM, CDNs, or page-cache systems.
 
 ## Privacy and external services
 
-OpenNow makes no external requests and loads no remote scripts, fonts, images,
+HoursFlow makes no external requests and loads no remote scripts, fonts, images,
 stylesheets, or other assets. It collects no visitor data, sets no cookies, and
 performs no tracking, telemetry, scheduled network activity, or remote license
 checks. Ordinary user-initiated navigation is the only outbound
 behavior: a visitor may follow an administrator-configured HTTPS or telephone
 CTA, and an administrator may follow the clearly labeled Gasatrya hire or
-donation links on **Settings → OpenNow**. The settings card loads no remote
+donation links on **Settings → HoursFlow**. The settings card loads no remote
 content before a link is activated.
 
 ## Deactivation and uninstall
 
-Deactivation stops OpenNow behavior but retains the saved settings so a later
-reactivation restores them. Uninstall permanently deletes the OpenNow
+Deactivation stops HoursFlow behavior but retains the saved settings so a later
+reactivation restores them. Uninstall permanently deletes the HoursFlow
 configuration and schema marker. The plugin creates no custom tables, posts,
 pages, user metadata, or transient business data. Reinstalling after uninstall
 starts unconfigured.
@@ -211,7 +211,7 @@ bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 7.1.1
 WP_VERSION=7.1.1 composer test:integration
 ```
 
-The production package is generated as `dist/opennow-0.1.0.zip` and is
+The production package is generated as `dist/hoursflow-0.1.0.zip` and is
 intentionally ignored by Git. It contains runtime PHP, local assets, generated
 block files, the translation template, and the three readable block source
 files `src/blocks/cta/index.js`, `src/blocks/cta/editor.scss`, and
@@ -219,5 +219,5 @@ files `src/blocks/cta/index.js`, `src/blocks/cta/editor.scss`, and
 file `src/blocks/cta/index.js` is the human-readable source for the compiled
 `build/blocks/cta/index.js`.
 
-See the [release checklist on GitHub](https://github.com/gasatrya/opennow/blob/main/docs/release-checklist.md)
+See the [release checklist on GitHub](https://github.com/gasatrya/hoursflow/blob/main/docs/release-checklist.md)
 for integration, accessibility, package, and release verification.

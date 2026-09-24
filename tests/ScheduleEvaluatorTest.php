@@ -1,15 +1,15 @@
 <?php
-namespace OpenNow\Tests;
+namespace HoursFlow\Tests;
 
-use OpenNow\Config\Schema;
-use OpenNow\Schedule\Evaluator;
+use HoursFlow\Config\Schema;
+use HoursFlow\Schedule\Evaluator;
 use PHPUnit\Framework\TestCase;
 
 final class ScheduleEvaluatorTest extends TestCase
 {
     protected function setUp(): void
     {
-        opennow_reset_wp_stubs();
+        hoursflow_reset_wp_stubs();
     }
 
     public function testSameDayPeriodsAreHalfOpenAtMinutePrecision(): void
@@ -97,7 +97,7 @@ final class ScheduleEvaluatorTest extends TestCase
 
         try {
             date_default_timezone_set('Pacific/Auckland');
-            $GLOBALS['opennow_test_options']['timezone_string'] = 'Asia/Tokyo';
+            $GLOBALS['hoursflow_test_options']['timezone_string'] = 'Asia/Tokyo';
             $schedule = $this->schedule(array(
                 'monday' => array(
                     'type' => 'period',

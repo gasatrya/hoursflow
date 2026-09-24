@@ -1,10 +1,10 @@
 <?php
-namespace OpenNow;
+namespace HoursFlow;
 
-use OpenNow\Admin\Settings;
-use OpenNow\Frontend\Block;
-use OpenNow\Frontend\Renderer;
-use OpenNow\Frontend\Shortcode;
+use HoursFlow\Admin\Settings;
+use HoursFlow\Frontend\Block;
+use HoursFlow\Frontend\Renderer;
+use HoursFlow\Frontend\Shortcode;
 
 defined( 'ABSPATH' ) || exit;
 

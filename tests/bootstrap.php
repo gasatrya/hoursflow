@@ -4,32 +4,32 @@ if (!defined('ABSPATH')) {
     define('ABSPATH', __DIR__ . DIRECTORY_SEPARATOR);
 }
 
-$GLOBALS['opennow_test_options'] = array();
-$GLOBALS['opennow_test_option_calls'] = array();
-$GLOBALS['opennow_test_hooks'] = array();
-$GLOBALS['opennow_test_shortcodes'] = array();
-$GLOBALS['opennow_test_registered_blocks'] = array();
-$GLOBALS['opennow_test_activation_hooks'] = array();
-$GLOBALS['opennow_test_deactivation_hooks'] = array();
-$GLOBALS['opennow_test_registered_settings'] = array();
-$GLOBALS['opennow_test_settings_errors'] = array();
-$GLOBALS['opennow_test_filters'] = array();
-$GLOBALS['opennow_test_admin_pages'] = array();
-$GLOBALS['opennow_test_settings_sections'] = array();
-$GLOBALS['opennow_test_settings_fields'] = array();
-$GLOBALS['opennow_test_enqueued_scripts'] = array();
-$GLOBALS['opennow_test_enqueued_styles'] = array();
-$GLOBALS['opennow_test_current_user_can'] = true;
-$GLOBALS['opennow_test_is_admin'] = false;
-$GLOBALS['opennow_test_current_screen'] = null;
-$GLOBALS['opennow_test_nonce_checks'] = array();
-$GLOBALS['opennow_test_redirects'] = array();
+$GLOBALS['hoursflow_test_options'] = array();
+$GLOBALS['hoursflow_test_option_calls'] = array();
+$GLOBALS['hoursflow_test_hooks'] = array();
+$GLOBALS['hoursflow_test_shortcodes'] = array();
+$GLOBALS['hoursflow_test_registered_blocks'] = array();
+$GLOBALS['hoursflow_test_activation_hooks'] = array();
+$GLOBALS['hoursflow_test_deactivation_hooks'] = array();
+$GLOBALS['hoursflow_test_registered_settings'] = array();
+$GLOBALS['hoursflow_test_settings_errors'] = array();
+$GLOBALS['hoursflow_test_filters'] = array();
+$GLOBALS['hoursflow_test_admin_pages'] = array();
+$GLOBALS['hoursflow_test_settings_sections'] = array();
+$GLOBALS['hoursflow_test_settings_fields'] = array();
+$GLOBALS['hoursflow_test_enqueued_scripts'] = array();
+$GLOBALS['hoursflow_test_enqueued_styles'] = array();
+$GLOBALS['hoursflow_test_current_user_can'] = true;
+$GLOBALS['hoursflow_test_is_admin'] = false;
+$GLOBALS['hoursflow_test_current_screen'] = null;
+$GLOBALS['hoursflow_test_nonce_checks'] = array();
+$GLOBALS['hoursflow_test_redirects'] = array();
 
-if (!class_exists('OpenNow_Test_Screen')) {
+if (!class_exists('HoursFlow_Test_Screen')) {
     /**
      * Minimal WP_Screen test double.
      */
-    class OpenNow_Test_Screen
+    class HoursFlow_Test_Screen
     {
         /**
          * @var string
@@ -60,20 +60,20 @@ if (!class_exists('OpenNow_Test_Screen')) {
     }
 }
 
-if (!class_exists('OpenNow_Test_Redirect_Exception')) {
+if (!class_exists('HoursFlow_Test_Redirect_Exception')) {
     /**
      * Stops execution after a redirect during unit tests.
      */
-    class OpenNow_Test_Redirect_Exception extends RuntimeException
+    class HoursFlow_Test_Redirect_Exception extends RuntimeException
     {
     }
 }
 
-if (!class_exists('OpenNow_Test_Locale')) {
+if (!class_exists('HoursFlow_Test_Locale')) {
     /**
      * Minimal WP_Locale test double.
      */
-    class OpenNow_Test_Locale
+    class HoursFlow_Test_Locale
     {
         public function get_weekday($weekday_number)
         {
@@ -92,7 +92,7 @@ if (!class_exists('OpenNow_Test_Locale')) {
     }
 }
 
-$GLOBALS['wp_locale'] = new OpenNow_Test_Locale();
+$GLOBALS['wp_locale'] = new HoursFlow_Test_Locale();
 
 if (!class_exists('WP_Error')) {
     /**
@@ -258,8 +258,8 @@ if (!function_exists('is_wp_error')) {
 if (!function_exists('get_option')) {
     function get_option($option, $default = false)
     {
-        return array_key_exists($option, $GLOBALS['opennow_test_options'])
-            ? $GLOBALS['opennow_test_options'][$option]
+        return array_key_exists($option, $GLOBALS['hoursflow_test_options'])
+            ? $GLOBALS['hoursflow_test_options'][$option]
             : $default;
     }
 }
@@ -267,7 +267,7 @@ if (!function_exists('get_option')) {
 if (!function_exists('add_option')) {
     function add_option($option, $value = '', $deprecated = '', $autoload = null)
     {
-        $GLOBALS['opennow_test_option_calls'][] = array(
+        $GLOBALS['hoursflow_test_option_calls'][] = array(
             'function' => 'add_option',
             'option' => $option,
             'value' => $value,
@@ -275,11 +275,11 @@ if (!function_exists('add_option')) {
             'autoload' => $autoload,
         );
 
-        if (array_key_exists($option, $GLOBALS['opennow_test_options'])) {
+        if (array_key_exists($option, $GLOBALS['hoursflow_test_options'])) {
             return false;
         }
 
-        $GLOBALS['opennow_test_options'][$option] = $value;
+        $GLOBALS['hoursflow_test_options'][$option] = $value;
         return true;
     }
 }
@@ -287,13 +287,13 @@ if (!function_exists('add_option')) {
 if (!function_exists('update_option')) {
     function update_option($option, $value, $autoload = null)
     {
-        $GLOBALS['opennow_test_option_calls'][] = array(
+        $GLOBALS['hoursflow_test_option_calls'][] = array(
             'function' => 'update_option',
             'option' => $option,
             'value' => $value,
             'autoload' => $autoload,
         );
-        $GLOBALS['opennow_test_options'][$option] = $value;
+        $GLOBALS['hoursflow_test_options'][$option] = $value;
         return true;
     }
 }
@@ -301,11 +301,11 @@ if (!function_exists('update_option')) {
 if (!function_exists('delete_option')) {
     function delete_option($option)
     {
-        $GLOBALS['opennow_test_option_calls'][] = array(
+        $GLOBALS['hoursflow_test_option_calls'][] = array(
             'function' => 'delete_option',
             'option' => $option,
         );
-        unset($GLOBALS['opennow_test_options'][$option]);
+        unset($GLOBALS['hoursflow_test_options'][$option]);
         return true;
     }
 }
@@ -313,14 +313,14 @@ if (!function_exists('delete_option')) {
 if (!function_exists('add_shortcode')) {
     function add_shortcode($tag, $callback)
     {
-        $GLOBALS['opennow_test_shortcodes'][$tag] = $callback;
+        $GLOBALS['hoursflow_test_shortcodes'][$tag] = $callback;
     }
 }
 
 if (!function_exists('register_block_type')) {
     function register_block_type($block_type, $args = array())
     {
-        $GLOBALS['opennow_test_registered_blocks'][] = array(
+        $GLOBALS['hoursflow_test_registered_blocks'][] = array(
             'block_type' => $block_type,
             'args' => $args,
         );
@@ -332,11 +332,11 @@ if (!function_exists('register_block_type')) {
 if (!function_exists('add_action')) {
     function add_action($hook, $callback, $priority = 10, $accepted_args = 1)
     {
-        if (!isset($GLOBALS['opennow_test_hooks'][$hook])) {
-            $GLOBALS['opennow_test_hooks'][$hook] = array();
+        if (!isset($GLOBALS['hoursflow_test_hooks'][$hook])) {
+            $GLOBALS['hoursflow_test_hooks'][$hook] = array();
         }
 
-        $GLOBALS['opennow_test_hooks'][$hook][] = array(
+        $GLOBALS['hoursflow_test_hooks'][$hook][] = array(
             'callback' => $callback,
             'priority' => $priority,
             'accepted_args' => $accepted_args,
@@ -348,11 +348,11 @@ if (!function_exists('add_action')) {
 if (!function_exists('do_action')) {
     function do_action($hook, ...$args)
     {
-        if (empty($GLOBALS['opennow_test_hooks'][$hook])) {
+        if (empty($GLOBALS['hoursflow_test_hooks'][$hook])) {
             return;
         }
 
-        foreach ($GLOBALS['opennow_test_hooks'][$hook] as $registered) {
+        foreach ($GLOBALS['hoursflow_test_hooks'][$hook] as $registered) {
             call_user_func_array($registered['callback'], $args);
         }
     }
@@ -361,11 +361,11 @@ if (!function_exists('do_action')) {
 if (!function_exists('add_filter')) {
     function add_filter($hook, $callback, $priority = 10, $accepted_args = 1)
     {
-        if (!isset($GLOBALS['opennow_test_filters'][$hook])) {
-            $GLOBALS['opennow_test_filters'][$hook] = array();
+        if (!isset($GLOBALS['hoursflow_test_filters'][$hook])) {
+            $GLOBALS['hoursflow_test_filters'][$hook] = array();
         }
 
-        $GLOBALS['opennow_test_filters'][$hook][] = array(
+        $GLOBALS['hoursflow_test_filters'][$hook][] = array(
             'callback' => $callback,
             'priority' => $priority,
             'accepted_args' => $accepted_args,
@@ -377,11 +377,11 @@ if (!function_exists('add_filter')) {
 if (!function_exists('apply_filters')) {
     function apply_filters($hook, $value, ...$args)
     {
-        if (empty($GLOBALS['opennow_test_filters'][$hook])) {
+        if (empty($GLOBALS['hoursflow_test_filters'][$hook])) {
             return $value;
         }
 
-        foreach ($GLOBALS['opennow_test_filters'][$hook] as $registered) {
+        foreach ($GLOBALS['hoursflow_test_filters'][$hook] as $registered) {
             $filter_args = array_merge(array($value), $args);
             $value = call_user_func_array(
                 $registered['callback'],
@@ -396,7 +396,7 @@ if (!function_exists('apply_filters')) {
 if (!function_exists('register_activation_hook')) {
     function register_activation_hook($file, $callback)
     {
-        $GLOBALS['opennow_test_activation_hooks'][] = array(
+        $GLOBALS['hoursflow_test_activation_hooks'][] = array(
             'file' => $file,
             'callback' => $callback,
         );
@@ -406,7 +406,7 @@ if (!function_exists('register_activation_hook')) {
 if (!function_exists('register_deactivation_hook')) {
     function register_deactivation_hook($file, $callback)
     {
-        $GLOBALS['opennow_test_deactivation_hooks'][] = array(
+        $GLOBALS['hoursflow_test_deactivation_hooks'][] = array(
             'file' => $file,
             'callback' => $callback,
         );
@@ -416,14 +416,14 @@ if (!function_exists('register_deactivation_hook')) {
 if (!function_exists('is_admin')) {
     function is_admin()
     {
-        return (bool) $GLOBALS['opennow_test_is_admin'];
+        return (bool) $GLOBALS['hoursflow_test_is_admin'];
     }
 }
 
 if (!function_exists('register_setting')) {
     function register_setting($group, $option, $args = array())
     {
-        $GLOBALS['opennow_test_registered_settings'][$option] = array(
+        $GLOBALS['hoursflow_test_registered_settings'][$option] = array(
             'group' => $group,
             'args' => $args,
         );
@@ -434,7 +434,7 @@ if (!function_exists('add_options_page')) {
     function add_options_page($page_title, $menu_title, $capability, $menu_slug, $callback)
     {
         $hook = 'settings_page_' . $menu_slug;
-        $GLOBALS['opennow_test_admin_pages'][$menu_slug] = array(
+        $GLOBALS['hoursflow_test_admin_pages'][$menu_slug] = array(
             'page_title' => $page_title,
             'menu_title' => $menu_title,
             'capability' => $capability,
@@ -449,11 +449,11 @@ if (!function_exists('add_options_page')) {
 if (!function_exists('add_settings_section')) {
     function add_settings_section($id, $title, $callback, $page)
     {
-        if (!isset($GLOBALS['opennow_test_settings_sections'][$page])) {
-            $GLOBALS['opennow_test_settings_sections'][$page] = array();
+        if (!isset($GLOBALS['hoursflow_test_settings_sections'][$page])) {
+            $GLOBALS['hoursflow_test_settings_sections'][$page] = array();
         }
 
-        $GLOBALS['opennow_test_settings_sections'][$page][$id] = array(
+        $GLOBALS['hoursflow_test_settings_sections'][$page][$id] = array(
             'title' => $title,
             'callback' => $callback,
         );
@@ -463,14 +463,14 @@ if (!function_exists('add_settings_section')) {
 if (!function_exists('add_settings_field')) {
     function add_settings_field($id, $title, $callback, $page, $section = 'default', $args = array())
     {
-        if (!isset($GLOBALS['opennow_test_settings_fields'][$page])) {
-            $GLOBALS['opennow_test_settings_fields'][$page] = array();
+        if (!isset($GLOBALS['hoursflow_test_settings_fields'][$page])) {
+            $GLOBALS['hoursflow_test_settings_fields'][$page] = array();
         }
-        if (!isset($GLOBALS['opennow_test_settings_fields'][$page][$section])) {
-            $GLOBALS['opennow_test_settings_fields'][$page][$section] = array();
+        if (!isset($GLOBALS['hoursflow_test_settings_fields'][$page][$section])) {
+            $GLOBALS['hoursflow_test_settings_fields'][$page][$section] = array();
         }
 
-        $GLOBALS['opennow_test_settings_fields'][$page][$section][$id] = array(
+        $GLOBALS['hoursflow_test_settings_fields'][$page][$section][$id] = array(
             'title' => $title,
             'callback' => $callback,
             'args' => $args,
@@ -489,19 +489,19 @@ if (!function_exists('settings_fields')) {
 if (!function_exists('do_settings_sections')) {
     function do_settings_sections($page)
     {
-        if (empty($GLOBALS['opennow_test_settings_sections'][$page])) {
+        if (empty($GLOBALS['hoursflow_test_settings_sections'][$page])) {
             return;
         }
 
-        foreach ($GLOBALS['opennow_test_settings_sections'][$page] as $section_id => $section) {
+        foreach ($GLOBALS['hoursflow_test_settings_sections'][$page] as $section_id => $section) {
             echo '<h2>' . esc_html($section['title']) . '</h2>';
             call_user_func($section['callback'], array('id' => $section_id));
 
-            if (empty($GLOBALS['opennow_test_settings_fields'][$page][$section_id])) {
+            if (empty($GLOBALS['hoursflow_test_settings_fields'][$page][$section_id])) {
                 continue;
             }
 
-            foreach ($GLOBALS['opennow_test_settings_fields'][$page][$section_id] as $field) {
+            foreach ($GLOBALS['hoursflow_test_settings_fields'][$page][$section_id] as $field) {
                 call_user_func($field['callback'], $field['args']);
             }
         }
@@ -512,7 +512,7 @@ if (!function_exists('get_settings_errors')) {
     function get_settings_errors($setting = '', $sanitize = false)
     {
         return array_values(array_filter(
-            $GLOBALS['opennow_test_settings_errors'],
+            $GLOBALS['hoursflow_test_settings_errors'],
             static function ($error) use ($setting): bool {
                 return '' === $setting || $setting === $error['setting'];
             }
@@ -551,14 +551,14 @@ if (!function_exists('submit_button')) {
 if (!function_exists('current_user_can')) {
     function current_user_can($capability)
     {
-        return (bool) $GLOBALS['opennow_test_current_user_can'];
+        return (bool) $GLOBALS['hoursflow_test_current_user_can'];
     }
 }
 
 if (!function_exists('get_current_screen')) {
     function get_current_screen()
     {
-        return $GLOBALS['opennow_test_current_screen'];
+        return $GLOBALS['hoursflow_test_current_screen'];
     }
 }
 
@@ -572,7 +572,7 @@ if (!function_exists('wp_die')) {
 if (!function_exists('check_admin_referer')) {
     function check_admin_referer($action = -1, $query_arg = '_wpnonce')
     {
-        $GLOBALS['opennow_test_nonce_checks'][] = array(
+        $GLOBALS['hoursflow_test_nonce_checks'][] = array(
             'action' => $action,
             'query_arg' => $query_arg,
         );
@@ -599,13 +599,13 @@ if (!function_exists('add_query_arg')) {
 if (!function_exists('wp_safe_redirect')) {
     function wp_safe_redirect($location, $status = 302, $x_redirect_by = 'WordPress')
     {
-        $GLOBALS['opennow_test_redirects'][] = array(
+        $GLOBALS['hoursflow_test_redirects'][] = array(
             'location' => $location,
             'status' => $status,
             'x_redirect_by' => $x_redirect_by,
         );
 
-        throw new OpenNow_Test_Redirect_Exception($location);
+        throw new HoursFlow_Test_Redirect_Exception($location);
     }
 }
 
@@ -670,14 +670,14 @@ if (!function_exists('safecss_filter_attr')) {
 if (!function_exists('plugins_url')) {
     function plugins_url($path = '', $plugin = '')
     {
-        return 'https://example.test/wp-content/plugins/opennow/' . ltrim($path, '/');
+        return 'https://example.test/wp-content/plugins/hoursflow/' . ltrim($path, '/');
     }
 }
 
 if (!function_exists('wp_enqueue_script')) {
     function wp_enqueue_script($handle, $src = '', $deps = array(), $ver = false, $args = array())
     {
-        $GLOBALS['opennow_test_enqueued_scripts'][$handle] = array(
+        $GLOBALS['hoursflow_test_enqueued_scripts'][$handle] = array(
             'src' => $src,
             'deps' => $deps,
             'ver' => $ver,
@@ -689,7 +689,7 @@ if (!function_exists('wp_enqueue_script')) {
 if (!function_exists('wp_enqueue_style')) {
     function wp_enqueue_style($handle, $src = '', $deps = array(), $ver = false, $media = 'all')
     {
-        $GLOBALS['opennow_test_enqueued_styles'][$handle] = array(
+        $GLOBALS['hoursflow_test_enqueued_styles'][$handle] = array(
             'src' => $src,
             'deps' => $deps,
             'ver' => $ver,
@@ -701,7 +701,7 @@ if (!function_exists('wp_enqueue_style')) {
 if (!function_exists('add_settings_error')) {
     function add_settings_error($setting, $code, $message, $type = 'error')
     {
-        $GLOBALS['opennow_test_settings_errors'][] = array(
+        $GLOBALS['hoursflow_test_settings_errors'][] = array(
             'setting' => $setting,
             'code' => $code,
             'message' => $message,
@@ -718,36 +718,36 @@ if (!function_exists('wp_parse_url')) {
 }
 
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Autoloader.php';
-\OpenNow\Autoloader::register(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src');
+\HoursFlow\Autoloader::register(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src');
 
 /**
  * Reset mutable WordPress test doubles between tests.
  *
  * @return void
  */
-function opennow_reset_wp_stubs()
+function hoursflow_reset_wp_stubs()
 {
-    $GLOBALS['opennow_test_options'] = array();
-    $GLOBALS['opennow_test_option_calls'] = array();
-    $GLOBALS['opennow_test_hooks'] = array();
-    $GLOBALS['opennow_test_shortcodes'] = array();
-    $GLOBALS['opennow_test_registered_blocks'] = array();
-    $GLOBALS['opennow_test_activation_hooks'] = array();
-    $GLOBALS['opennow_test_deactivation_hooks'] = array();
-    $GLOBALS['opennow_test_registered_settings'] = array();
-    $GLOBALS['opennow_test_settings_errors'] = array();
-    $GLOBALS['opennow_test_filters'] = array();
-    $GLOBALS['opennow_test_admin_pages'] = array();
-    $GLOBALS['opennow_test_settings_sections'] = array();
-    $GLOBALS['opennow_test_settings_fields'] = array();
-    $GLOBALS['opennow_test_enqueued_scripts'] = array();
-    $GLOBALS['opennow_test_enqueued_styles'] = array();
-    $GLOBALS['opennow_test_current_user_can'] = true;
-    $GLOBALS['opennow_test_is_admin'] = false;
-    $GLOBALS['opennow_test_current_screen'] = null;
-    $GLOBALS['opennow_test_nonce_checks'] = array();
-    $GLOBALS['opennow_test_redirects'] = array();
+    $GLOBALS['hoursflow_test_options'] = array();
+    $GLOBALS['hoursflow_test_option_calls'] = array();
+    $GLOBALS['hoursflow_test_hooks'] = array();
+    $GLOBALS['hoursflow_test_shortcodes'] = array();
+    $GLOBALS['hoursflow_test_registered_blocks'] = array();
+    $GLOBALS['hoursflow_test_activation_hooks'] = array();
+    $GLOBALS['hoursflow_test_deactivation_hooks'] = array();
+    $GLOBALS['hoursflow_test_registered_settings'] = array();
+    $GLOBALS['hoursflow_test_settings_errors'] = array();
+    $GLOBALS['hoursflow_test_filters'] = array();
+    $GLOBALS['hoursflow_test_admin_pages'] = array();
+    $GLOBALS['hoursflow_test_settings_sections'] = array();
+    $GLOBALS['hoursflow_test_settings_fields'] = array();
+    $GLOBALS['hoursflow_test_enqueued_scripts'] = array();
+    $GLOBALS['hoursflow_test_enqueued_styles'] = array();
+    $GLOBALS['hoursflow_test_current_user_can'] = true;
+    $GLOBALS['hoursflow_test_is_admin'] = false;
+    $GLOBALS['hoursflow_test_current_screen'] = null;
+    $GLOBALS['hoursflow_test_nonce_checks'] = array();
+    $GLOBALS['hoursflow_test_redirects'] = array();
     $_GET = array();
     $_POST = array();
-    $GLOBALS['wp_locale'] = new OpenNow_Test_Locale();
+    $GLOBALS['wp_locale'] = new HoursFlow_Test_Locale();
 }

@@ -6,7 +6,7 @@
          beStrictAboutTestsThatDoNotTestAnything="false"
          convertDeprecationsToExceptions="false">
     <testsuites>
-        <testsuite name="OpenNow foundation">
+        <testsuite name="HoursFlow foundation">
             <directory suffix="Test.php">tests</directory>
             <exclude>tests/integration</exclude>
         </testsuite>

@@ -17,7 +17,7 @@ jest.mock(
 	() => ( {
 		InspectorControls: jest.fn(),
 		useBlockProps: jest.fn( () => ( {
-			className: 'wp-block-opennow-cta',
+			className: 'wp-block-hoursflow-cta',
 		} ) ),
 	} ),
 	{ virtual: true }
@@ -75,7 +75,7 @@ function controlsFrom( panel ) {
 	return controls.type( controls.props ).props.children;
 }
 
-describe( 'OpenNow CTA block', () => {
+describe( 'HoursFlow CTA block', () => {
 	test( 'registers metadata with an editor and null serializer', () => {
 		expect( registerBlockType ).toHaveBeenCalledTimes( 1 );
 		expect( registerBlockType ).toHaveBeenCalledWith( metadata, {
@@ -100,7 +100,7 @@ describe( 'OpenNow CTA block', () => {
 
 		expect( previewGuard.type ).toBe( Disabled );
 		expect( preview.type ).toBe( ServerSideRender );
-		expect( preview.props.block ).toBe( 'opennow/cta' );
+		expect( preview.props.block ).toBe( 'hoursflow/cta' );
 		expect( preview.props.attributes ).toEqual( attributes );
 		expect( preview.props.httpMethod ).toBe( 'POST' );
 		expect( useBlockProps ).toHaveBeenCalledWith();
@@ -146,10 +146,10 @@ describe( 'OpenNow CTA block', () => {
 		expect(
 			openControls.filter( ( control ) => control.type === TextControl )
 		).toHaveLength( 0 );
-		expect( __ ).toHaveBeenCalledWith( 'Override label', 'opennow' );
-		expect( __ ).toHaveBeenCalledWith( 'Override action', 'opennow' );
-		expect( __ ).toHaveBeenCalledWith( 'Override status', 'opennow' );
-		expect( __ ).toHaveBeenCalledWith( 'Hide status', 'opennow' );
+		expect( __ ).toHaveBeenCalledWith( 'Override label', 'hoursflow' );
+		expect( __ ).toHaveBeenCalledWith( 'Override action', 'hoursflow' );
+		expect( __ ).toHaveBeenCalledWith( 'Override status', 'hoursflow' );
+		expect( __ ).toHaveBeenCalledWith( 'Hide status', 'hoursflow' );
 	} );
 
 	test( 'provides translated guidance for each editable override field', () => {
@@ -178,15 +178,15 @@ describe( 'OpenNow CTA block', () => {
 		);
 		expect( __ ).toHaveBeenCalledWith(
 			'Enter non-empty plain text. Invalid or empty values fall back to the global label.',
-			'opennow'
+			'hoursflow'
 		);
 		expect( __ ).toHaveBeenCalledWith(
 			'Enter a root-relative URL, HTTPS URL, or tel: action. Invalid or empty values fall back to the global action.',
-			'opennow'
+			'hoursflow'
 		);
 		expect( __ ).toHaveBeenCalledWith(
 			'Enter plain text. A blank value explicitly hides the global status; the Hide status control hides it regardless of its value. Invalid values fall back to the global status.',
-			'opennow'
+			'hoursflow'
 		);
 	} );
 

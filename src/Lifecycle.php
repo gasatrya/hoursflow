@@ -1,7 +1,7 @@
 <?php
-namespace OpenNow;
+namespace HoursFlow;
 
-use OpenNow\Config\Schema;
+use HoursFlow\Config\Schema;
 
 defined( 'ABSPATH' ) || exit;
 

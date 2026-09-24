@@ -9,7 +9,7 @@ import {
 
 import metadata from './block.json';
 
-describe( 'OpenNow CTA serialization', () => {
+describe( 'HoursFlow CTA serialization', () => {
 	beforeAll( () => {
 		registerBlockType( metadata, {
 			attributes: {
@@ -35,7 +35,7 @@ describe( 'OpenNow CTA serialization', () => {
 		const block = createBlock( metadata.name );
 
 		expect( block.attributes ).toEqual( {} );
-		expect( serialize( block ) ).toBe( '<!-- wp:opennow/cta /-->' );
+		expect( serialize( block ) ).toBe( '<!-- wp:hoursflow/cta /-->' );
 	} );
 
 	test( 'serializes sparse overrides including an explicitly blank status and round-trips them', () => {
@@ -52,7 +52,7 @@ describe( 'OpenNow CTA serialization', () => {
 
 		expect( block.attributes ).toEqual( attributes );
 		expect( serialized ).toBe(
-			'<!-- wp:opennow/cta {"overrides":{"open":{"label":"Call this block","status":""}}} /-->'
+			'<!-- wp:hoursflow/cta {"overrides":{"open":{"label":"Call this block","status":""}}} /-->'
 		);
 		expect( parse( serialized )[ 0 ].attributes ).toEqual( attributes );
 	} );
@@ -108,7 +108,7 @@ describe( 'OpenNow CTA serialization', () => {
 
 		expect( block.attributes ).toEqual( attributes );
 		expect( serialized ).toBe(
-			'<!-- wp:opennow/cta {"overrides":{"open":{"hideStatus":true},"closed":{"hideStatus":true}}} /-->'
+			'<!-- wp:hoursflow/cta {"overrides":{"open":{"hideStatus":true},"closed":{"hideStatus":true}}} /-->'
 		);
 		expect( parse( serialized )[ 0 ].attributes ).toEqual( attributes );
 	} );

@@ -24,7 +24,7 @@ if [[ ! "$DB_NAME" =~ ^[A-Za-z0-9_]+$ ]]; then
     exit 1
 fi
 
-opennow_download() {
+hoursflow_download() {
     local url="$1"
     local destination="$2"
 
@@ -38,7 +38,7 @@ opennow_download() {
     fi
 }
 
-opennow_create_database() {
+hoursflow_create_database() {
     if ! command -v mysql >/dev/null 2>&1; then
         echo "mysql is required to create the WordPress test database." >&2
         exit 1
@@ -51,7 +51,7 @@ opennow_create_database() {
         --execute="CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
 }
 
-opennow_install_core() {
+hoursflow_install_core() {
     local archive
     local temporary_directory
     local version_file
@@ -59,7 +59,7 @@ opennow_install_core() {
 
     archive="$(mktemp)"
     temporary_directory="$(mktemp -d)"
-    opennow_download "https://wordpress.org/wordpress-${WP_VERSION}.tar.gz" "$archive"
+    hoursflow_download "https://wordpress.org/wordpress-${WP_VERSION}.tar.gz" "$archive"
     tar --extract --gzip --file="$archive" --directory="$temporary_directory"
     rm -rf "$WP_CORE_DIR"
     mkdir -p "$WP_CORE_DIR"
@@ -78,14 +78,14 @@ opennow_install_core() {
     rm -f "$archive"
 }
 
-opennow_install_test_suite() {
+hoursflow_install_test_suite() {
     local archive
     local temporary_directory
     local test_directory
 
     archive="$(mktemp)"
     temporary_directory="$(mktemp -d)"
-    opennow_download \
+    hoursflow_download \
         "https://github.com/WordPress/wordpress-develop/archive/refs/tags/${WP_VERSION}.tar.gz" \
         "$archive"
     tar --extract --gzip --file="$archive" --directory="$temporary_directory"
@@ -104,7 +104,7 @@ opennow_install_test_suite() {
     rm -f "$archive"
 }
 
-opennow_write_test_config() {
+hoursflow_write_test_config() {
     cat > "$WP_TESTS_DIR/wp-tests-config.php" <<PHP
 <?php
 
@@ -116,15 +116,15 @@ define( 'DB_CHARSET', 'utf8' );
 define( 'DB_COLLATE', '' );
 define( 'WP_TESTS_DOMAIN', 'localhost' );
 define( 'WP_TESTS_EMAIL', 'admin@example.org' );
-define( 'WP_TESTS_TITLE', 'OpenNow Integration Tests' );
+define( 'WP_TESTS_TITLE', 'HoursFlow Integration Tests' );
 define( 'WP_PHP_BINARY', 'php' );
 define( 'ABSPATH', '${WP_CORE_DIR}/' );
 PHP
 }
 
-opennow_create_database
-opennow_install_core
-opennow_install_test_suite
-opennow_write_test_config
+hoursflow_create_database
+hoursflow_install_core
+hoursflow_install_test_suite
+hoursflow_write_test_config
 
 echo "Installed WordPress ${WP_VERSION} and its matching PHPUnit test suite."

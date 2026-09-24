@@ -1,5 +1,5 @@
 <?php
-namespace OpenNow\Config;
+namespace HoursFlow\Config;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,7 +21,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				'config',
-				__( 'The OpenNow configuration must be an array.', 'opennow' )
+				__( 'The HoursFlow configuration must be an array.', 'hoursflow' )
 			);
 			return $errors;
 		}
@@ -31,7 +31,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				'config',
-				__( 'The OpenNow configuration contains missing or unknown fields.', 'opennow' )
+				__( 'The HoursFlow configuration contains missing or unknown fields.', 'hoursflow' )
 			);
 		}
 
@@ -52,7 +52,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				'timezone',
-				__( 'A named business timezone is required.', 'opennow' )
+				__( 'A named business timezone is required.', 'hoursflow' )
 			);
 		} else {
 			$timezone = self::canonicalTimezone( $value['timezone'] );
@@ -60,7 +60,7 @@ final class Validator {
 				self::addError(
 					$errors,
 					'timezone',
-					__( 'Enter a valid named business timezone.', 'opennow' )
+					__( 'Enter a valid named business timezone.', 'hoursflow' )
 				);
 			} else {
 				$canonical['timezone'] = $timezone;
@@ -72,7 +72,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				'schedule',
-				__( 'The weekly schedule must contain one entry for every day.', 'opennow' )
+				__( 'The weekly schedule must contain one entry for every day.', 'hoursflow' )
 			);
 			foreach ( Schema::days() as $day ) {
 				$canonical['schedule'][ $day ] = Schema::closedScheduleEntry();
@@ -82,7 +82,7 @@ final class Validator {
 				self::addError(
 					$errors,
 					'schedule',
-					__( 'The weekly schedule contains missing or unknown days.', 'opennow' )
+					__( 'The weekly schedule contains missing or unknown days.', 'hoursflow' )
 				);
 			}
 
@@ -92,7 +92,7 @@ final class Validator {
 					self::addError(
 						$errors,
 						$field,
-						__( 'Every day needs a valid closed or period entry.', 'opennow' )
+						__( 'Every day needs a valid closed or period entry.', 'hoursflow' )
 					);
 					$canonical['schedule'][ $day ] = Schema::closedScheduleEntry();
 					continue;
@@ -112,14 +112,14 @@ final class Validator {
 			self::addError(
 				$errors,
 				'cta',
-				__( 'The CTA settings must contain open and closed states.', 'opennow' )
+				__( 'The CTA settings must contain open and closed states.', 'hoursflow' )
 			);
 		} else {
 			if ( ! self::hasExactKeys( $cta, array( 'open', 'closed' ) ) ) {
 				self::addError(
 					$errors,
 					'cta',
-					__( 'The CTA settings contain missing or unknown states.', 'opennow' )
+					__( 'The CTA settings contain missing or unknown states.', 'hoursflow' )
 				);
 			}
 
@@ -129,7 +129,7 @@ final class Validator {
 					self::addError(
 						$errors,
 						$field,
-						__( 'Each CTA state needs a label, action, and status field.', 'opennow' )
+						__( 'Each CTA state needs a label, action, and status field.', 'hoursflow' )
 					);
 					continue;
 				}
@@ -146,14 +146,14 @@ final class Validator {
 			self::addError(
 				$errors,
 				'appearance',
-				__( 'The appearance settings must contain both colors.', 'opennow' )
+				__( 'The appearance settings must contain both colors.', 'hoursflow' )
 			);
 		} else {
 			if ( ! self::hasExactKeys( $appearance, array( 'background_color', 'text_color' ) ) ) {
 				self::addError(
 					$errors,
 					'appearance',
-					__( 'The appearance settings contain missing or unknown fields.', 'opennow' )
+					__( 'The appearance settings contain missing or unknown fields.', 'hoursflow' )
 				);
 			}
 
@@ -168,7 +168,7 @@ final class Validator {
 				self::addError(
 					$errors,
 					'appearance.background_color',
-					__( 'Use a six-digit background color such as #166534, or leave it blank.', 'opennow' )
+					__( 'Use a six-digit background color such as #166534, or leave it blank.', 'hoursflow' )
 				);
 			} else {
 				$canonical['appearance']['background_color'] = $background;
@@ -178,7 +178,7 @@ final class Validator {
 				self::addError(
 					$errors,
 					'appearance.text_color',
-					__( 'Use a six-digit text color such as #FFFFFF, or leave it blank.', 'opennow' )
+					__( 'Use a six-digit text color such as #FFFFFF, or leave it blank.', 'hoursflow' )
 				);
 			} else {
 				$canonical['appearance']['text_color'] = $text;
@@ -188,12 +188,12 @@ final class Validator {
 				self::addError(
 					$errors,
 					'appearance.background_color',
-					__( 'The background and text colors must meet WCAG AA contrast for normal text.', 'opennow' )
+					__( 'The background and text colors must meet WCAG AA contrast for normal text.', 'hoursflow' )
 				);
 				self::addError(
 					$errors,
 					'appearance.text_color',
-					__( 'The background and text colors must meet WCAG AA contrast for normal text.', 'opennow' )
+					__( 'The background and text colors must meet WCAG AA contrast for normal text.', 'hoursflow' )
 				);
 			}
 		}
@@ -444,7 +444,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field,
-				__( 'A schedule entry must be either closed or one period.', 'opennow' )
+				__( 'A schedule entry must be either closed or one period.', 'hoursflow' )
 			);
 			return null;
 		}
@@ -455,7 +455,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field . '.type',
-				__( 'Choose either closed or period for this day.', 'opennow' )
+				__( 'Choose either closed or period for this day.', 'hoursflow' )
 			);
 			return null;
 		}
@@ -466,7 +466,7 @@ final class Validator {
 				self::addError(
 					$errors,
 					$field,
-					__( 'A closed day may not contain period fields or unknown fields.', 'opennow' )
+					__( 'A closed day may not contain period fields or unknown fields.', 'hoursflow' )
 				);
 				return null;
 			}
@@ -478,7 +478,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field . '.type',
-				__( 'Choose either closed or period for this day.', 'opennow' )
+				__( 'Choose either closed or period for this day.', 'hoursflow' )
 			);
 			return null;
 		}
@@ -488,7 +488,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field,
-				__( 'A period must contain only type, opens, and closes fields.', 'opennow' )
+				__( 'A period must contain only type, opens, and closes fields.', 'hoursflow' )
 			);
 			$valid = false;
 		}
@@ -498,7 +498,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field . '.opens',
-				__( 'Enter an opening time in HH:MM format.', 'opennow' )
+				__( 'Enter an opening time in HH:MM format.', 'hoursflow' )
 			);
 			$valid = false;
 		}
@@ -508,7 +508,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field . '.closes',
-				__( 'Enter a closing time in HH:MM format.', 'opennow' )
+				__( 'Enter a closing time in HH:MM format.', 'hoursflow' )
 			);
 			$valid = false;
 		}
@@ -517,7 +517,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field,
-				__( 'Opening and closing times must be different.', 'opennow' )
+				__( 'Opening and closing times must be different.', 'hoursflow' )
 			);
 			$valid = false;
 		}
@@ -544,7 +544,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field,
-				__( 'Each CTA state must be an array with label, action, and status fields.', 'opennow' )
+				__( 'Each CTA state must be an array with label, action, and status fields.', 'hoursflow' )
 			);
 			return null;
 		}
@@ -554,7 +554,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field,
-				__( 'Each CTA state must contain only label, action, and status fields.', 'opennow' )
+				__( 'Each CTA state must contain only label, action, and status fields.', 'hoursflow' )
 			);
 			$valid = false;
 		}
@@ -566,7 +566,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field . '.label',
-				__( 'Enter a non-empty plain-text CTA label.', 'opennow' )
+				__( 'Enter a non-empty plain-text CTA label.', 'hoursflow' )
 			);
 			$valid = false;
 		}
@@ -576,7 +576,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field . '.action',
-				__( 'Enter a valid root-relative, HTTPS, or telephone CTA action.', 'opennow' )
+				__( 'Enter a valid root-relative, HTTPS, or telephone CTA action.', 'hoursflow' )
 			);
 			$valid = false;
 		}
@@ -588,7 +588,7 @@ final class Validator {
 			self::addError(
 				$errors,
 				$field . '.status',
-				__( 'Enter plain-text status text or leave it blank.', 'opennow' )
+				__( 'Enter plain-text status text or leave it blank.', 'hoursflow' )
 			);
 			$valid = false;
 		}
@@ -829,7 +829,7 @@ final class Validator {
 	 * @return void
 	 */
 	private static function addError( $errors, $field, $message ) {
-		$code = 'opennow_' . strtolower( (string) preg_replace( '/[^a-zA-Z0-9]+/', '_', $field ) );
+		$code = 'hoursflow_' . strtolower( (string) preg_replace( '/[^a-zA-Z0-9]+/', '_', $field ) );
 		$errors->add(
 			$code,
 			$message,

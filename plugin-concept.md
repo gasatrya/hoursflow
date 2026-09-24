@@ -1,8 +1,8 @@
-# OpenNow CTA
+# HoursFlow — Business Hours CTA
 
 ## What It Is
 
-OpenNow CTA is a lightweight WordPress plugin that automatically changes a website's call-to-action based on whether the business is currently open or closed.
+HoursFlow CTA is a lightweight WordPress plugin that automatically changes a website's call-to-action based on whether the business is currently open or closed.
 
 Instead of showing the same CTA all day, the site can show the most useful action for the current situation.
 
@@ -33,7 +33,7 @@ But the best action changes depending on the time.
 
 A "Call Now" button is less useful when the business is closed. At that point, sending the visitor to a booking form, WhatsApp, or contact form may convert better.
 
-OpenNow CTA solves this automatically.
+HoursFlow CTA solves this automatically.
 
 ---
 
@@ -98,14 +98,14 @@ The first version should stay small.
 Possible shortcode:
 
 ```text
-[opennow_cta]
+[hoursflow_cta]
 ```
 
 ---
 
 ## What It Should Not Become
 
-OpenNow CTA should not become:
+HoursFlow CTA should not become:
 
 - A complete booking system
 - A business-directory plugin
@@ -152,7 +152,7 @@ The second version is probably stronger because users immediately understand wha
 
 ## Main Principle
 
-OpenNow CTA should follow the same philosophy as ButtonFlow:
+HoursFlow CTA should follow the same philosophy as ButtonFlow:
 
 **One specific problem, solved well, with very little overhead.**
 

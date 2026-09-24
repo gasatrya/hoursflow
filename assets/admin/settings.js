@@ -7,22 +7,22 @@
 
 	function updateDay( dayFieldset ) {
 		const closedToggle = dayFieldset.querySelector(
-			'[data-opennow-closed-toggle]'
+			'[data-hoursflow-closed-toggle]'
 		);
 		if ( ! closedToggle ) {
 			return;
 		}
 
 		const timeInputs = dayFieldset.querySelectorAll(
-			'[data-opennow-time-input]'
+			'[data-hoursflow-time-input]'
 		);
 		const isClosed = closedToggle.checked;
 		const state = isClosed ? 'closed' : 'open';
 		const stateLabelAttribute = isClosed
-			? 'data-opennow-closed-label'
-			: 'data-opennow-open-label';
+			? 'data-hoursflow-closed-label'
+			: 'data-hoursflow-open-label';
 		const stateText = dayFieldset.querySelector(
-			'[data-opennow-schedule-state-text]'
+			'[data-hoursflow-schedule-state-text]'
 		);
 
 		for ( let index = 0; index < timeInputs.length; index += 1 ) {
@@ -31,14 +31,14 @@
 		}
 
 		dayFieldset.classList.toggle(
-			'opennow-schedule-day--closed',
+			'hoursflow-schedule-day--closed',
 			isClosed
 		);
 		dayFieldset.classList.toggle(
-			'opennow-schedule-day--open',
+			'hoursflow-schedule-day--open',
 			! isClosed
 		);
-		dayFieldset.setAttribute( 'data-opennow-schedule-state', state );
+		dayFieldset.setAttribute( 'data-hoursflow-schedule-state', state );
 
 		if ( stateText ) {
 			stateText.textContent =
@@ -48,13 +48,13 @@
 
 	function initializeSchedule() {
 		const dayFieldsets = document.querySelectorAll(
-			'[data-opennow-schedule-day]'
+			'[data-hoursflow-schedule-day]'
 		);
 
 		for ( let index = 0; index < dayFieldsets.length; index += 1 ) {
 			const dayFieldset = dayFieldsets[ index ];
 			const closedToggle = dayFieldset.querySelector(
-				'[data-opennow-closed-toggle]'
+				'[data-hoursflow-closed-toggle]'
 			);
 
 			updateDay( dayFieldset );
@@ -67,20 +67,22 @@
 	}
 
 	function initializeResetConfirmation() {
-		const form = document.querySelector( '#opennow-settings-layout form' );
+		const form = document.querySelector(
+			'#hoursflow-settings-layout form'
+		);
 		if ( ! form || 'function' !== typeof form.addEventListener ) {
 			return;
 		}
 
 		const resetButton = form.querySelector(
-			'[data-opennow-reset-confirm]'
+			'[data-hoursflow-reset-confirm]'
 		);
 		if ( ! resetButton ) {
 			return;
 		}
 
 		const message =
-			resetButton.getAttribute( 'data-opennow-reset-confirm' ) || '';
+			resetButton.getAttribute( 'data-hoursflow-reset-confirm' ) || '';
 		if ( '' === message.trim() || 'function' !== typeof window.confirm ) {
 			return;
 		}
@@ -112,7 +114,7 @@
 
 	function getPreviewState( preview ) {
 		return normalizeState(
-			preview.getAttribute( 'data-opennow-preview-state' )
+			preview.getAttribute( 'data-hoursflow-preview-state' )
 		);
 	}
 
@@ -128,7 +130,7 @@
 
 	function updatePreviewColors( preview ) {
 		const content = preview.querySelector(
-			'[data-opennow-preview-content]'
+			'[data-hoursflow-preview-content]'
 		);
 		if (
 			! content ||
@@ -140,47 +142,49 @@
 
 		const backgroundDefault = getPreviewDefaultColor(
 			preview,
-			'data-opennow-preview-default-background-color',
+			'data-hoursflow-preview-default-background-color',
 			DEFAULT_BACKGROUND_COLOR
 		);
 		const textDefault = getPreviewDefaultColor(
 			preview,
-			'data-opennow-preview-default-text-color',
+			'data-hoursflow-preview-default-text-color',
 			DEFAULT_TEXT_COLOR
 		);
 		const background = getPreviewColor(
-			'opennow-appearance-background-color',
+			'hoursflow-appearance-background-color',
 			backgroundDefault
 		);
 		const text = getPreviewColor(
-			'opennow-appearance-text-color',
+			'hoursflow-appearance-text-color',
 			textDefault
 		);
 
 		content.style.setProperty(
-			'--opennow-cta-background-color',
+			'--hoursflow-cta-background-color',
 			background
 		);
-		content.style.setProperty( '--opennow-cta-text-color', text );
+		content.style.setProperty( '--hoursflow-cta-text-color', text );
 	}
 
 	function updatePreviewContent( preview, state ) {
 		const content = preview.querySelector(
-			'[data-opennow-preview-content]'
+			'[data-hoursflow-preview-content]'
 		);
 		if ( ! content ) {
 			return;
 		}
 
-		const label = getPreviewFieldValue( 'opennow-cta-' + state + '-label' );
+		const label = getPreviewFieldValue(
+			'hoursflow-cta-' + state + '-label'
+		);
 		const status = getPreviewFieldValue(
-			'opennow-cta-' + state + '-status'
+			'hoursflow-cta-' + state + '-status'
 		);
 		const labelElement = content.querySelector(
-			'[data-opennow-preview-label]'
+			'[data-hoursflow-preview-label]'
 		);
 		const statusElement = content.querySelector(
-			'[data-opennow-preview-status]'
+			'[data-hoursflow-preview-status]'
 		);
 
 		if ( labelElement && null !== label ) {
@@ -195,29 +199,32 @@
 	function updatePreviewState( preview, state ) {
 		const selectedState = normalizeState( state );
 		const buttons = preview.querySelectorAll(
-			'[data-opennow-preview-state-button]'
+			'[data-hoursflow-preview-state-button]'
 		);
 		const content = preview.querySelector(
-			'[data-opennow-preview-content]'
+			'[data-hoursflow-preview-content]'
 		);
 
-		preview.setAttribute( 'data-opennow-preview-state', selectedState );
+		preview.setAttribute( 'data-hoursflow-preview-state', selectedState );
 		if ( content ) {
 			content.classList.toggle(
-				'opennow-cta--open',
+				'hoursflow-cta--open',
 				'open' === selectedState
 			);
 			content.classList.toggle(
-				'opennow-cta--closed',
+				'hoursflow-cta--closed',
 				'closed' === selectedState
 			);
-			content.setAttribute( 'data-opennow-preview-state', selectedState );
+			content.setAttribute(
+				'data-hoursflow-preview-state',
+				selectedState
+			);
 		}
 
 		for ( let index = 0; index < buttons.length; index += 1 ) {
 			const button = buttons[ index ];
 			const buttonState = normalizeState(
-				button.getAttribute( 'data-opennow-preview-state-button' )
+				button.getAttribute( 'data-hoursflow-preview-state-button' )
 			);
 			button.setAttribute(
 				'aria-pressed',
@@ -250,21 +257,21 @@
 
 	function initializePreview() {
 		const preview =
-			document.querySelector( '[data-opennow-preview]' ) ||
-			document.getElementById( 'opennow-cta-preview' );
+			document.querySelector( '[data-hoursflow-preview]' ) ||
+			document.getElementById( 'hoursflow-cta-preview' );
 		if ( ! preview ) {
 			return;
 		}
 
 		const buttons = preview.querySelectorAll(
-			'[data-opennow-preview-state-button]'
+			'[data-hoursflow-preview-state-button]'
 		);
 		for ( let index = 0; index < buttons.length; index += 1 ) {
 			const button = buttons[ index ];
 			button.addEventListener( 'click', function () {
 				updatePreviewState(
 					preview,
-					button.getAttribute( 'data-opennow-preview-state-button' )
+					button.getAttribute( 'data-hoursflow-preview-state-button' )
 				);
 			} );
 		}
@@ -275,26 +282,26 @@
 		for ( const state of [ 'open', 'closed' ] ) {
 			bindPreviewField(
 				preview,
-				'opennow-cta-' + state + '-label',
+				'hoursflow-cta-' + state + '-label',
 				state,
 				'text'
 			);
 			bindPreviewField(
 				preview,
-				'opennow-cta-' + state + '-status',
+				'hoursflow-cta-' + state + '-status',
 				state,
 				'text'
 			);
 		}
 		bindPreviewField(
 			preview,
-			'opennow-appearance-background-color',
+			'hoursflow-appearance-background-color',
 			'open',
 			'color'
 		);
 		bindPreviewField(
 			preview,
-			'opennow-appearance-text-color',
+			'hoursflow-appearance-text-color',
 			'open',
 			'color'
 		);

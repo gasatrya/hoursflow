@@ -1,15 +1,15 @@
 <?php
-namespace OpenNow\Tests;
+namespace HoursFlow\Tests;
 
-use OpenNow\Config\Repository;
-use OpenNow\Config\Schema;
+use HoursFlow\Config\Repository;
+use HoursFlow\Config\Schema;
 use PHPUnit\Framework\TestCase;
 
 final class RepositoryTest extends TestCase
 {
     protected function setUp(): void
     {
-        opennow_reset_wp_stubs();
+        hoursflow_reset_wp_stubs();
     }
 
     public function testAbsentAndLegacyOptionsReturnSafeDeterministicRuntimeShape(): void
@@ -18,13 +18,13 @@ final class RepositoryTest extends TestCase
 
         $runtime = $repository->getRuntimeConfig();
         $this->assertSame(Schema::runtimeDefaults(), $runtime);
-        $this->assertSame(array(), $GLOBALS['opennow_test_option_calls']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_option_calls']);
 
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = 'legacy value';
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = 'legacy value';
         $runtime = $repository->get();
 
         $this->assertSame(Schema::runtimeDefaults(), $runtime);
-        $this->assertSame(array(), $GLOBALS['opennow_test_option_calls']);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_option_calls']);
     }
 
     public function testRepositorySalvagesEachSectionWithoutWritingBack(): void
@@ -58,7 +58,7 @@ final class RepositoryTest extends TestCase
                 'text_color' => '#FFFFFF',
             ),
         );
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = $stored;
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = $stored;
 
         $runtime = (new Repository())->getRuntimeConfig();
 
@@ -81,14 +81,14 @@ final class RepositoryTest extends TestCase
         );
         $this->assertNull($runtime['cta']['closed']);
         $this->assertSame(Schema::defaultAppearance(), $runtime['appearance']);
-        $this->assertSame($stored, $GLOBALS['opennow_test_options'][Schema::OPTION_NAME]);
-        $this->assertSame(array(), $GLOBALS['opennow_test_option_calls']);
+        $this->assertSame($stored, $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME]);
+        $this->assertSame(array(), $GLOBALS['hoursflow_test_option_calls']);
         $this->assertCount(7, $runtime['schedule']);
     }
 
     public function testRepositoryUsesAValidMixedEffectiveColorPair(): void
     {
-        $GLOBALS['opennow_test_options'][Schema::OPTION_NAME] = array(
+        $GLOBALS['hoursflow_test_options'][Schema::OPTION_NAME] = array(
             'appearance' => array(
                 'background_color' => '#000000',
                 'text_color' => '',
