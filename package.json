@@ -4,12 +4,12 @@
   "private": true,
   "description": "Build and test tooling for HoursFlow — Business Hours CTA for WordPress.",
   "scripts": {
-    "audit:production": "npm audit --omit=dev --audit-level=high",
+    "audit:production": "pnpm audit --prod --audit-level high",
     "build": "wp-scripts build",
     "build:check": "node tools/check-build.js",
     "check": "node tools/check.js",
-    "format": "wp-scripts format assets/admin/settings.js assets/admin/settings.test.js src/blocks/cta && prettier --write --config node_modules/@wordpress/prettier-config/lib/index.js tools/*.js",
-    "format:check": "prettier --check --config node_modules/@wordpress/prettier-config/lib/index.js assets/admin/settings.js assets/admin/settings.test.js src/blocks/cta tools/*.js",
+    "format": "prettier --write --paren-spacing --config node_modules/@wordpress/prettier-config/lib/index.js assets/admin/settings.js assets/admin/settings.test.js src/blocks/cta tools/*.js",
+    "format:check": "prettier --check --paren-spacing --config node_modules/@wordpress/prettier-config/lib/index.js assets/admin/settings.js assets/admin/settings.test.js src/blocks/cta tools/*.js",
     "i18n:pot": "node tools/make-pot.js",
     "i18n:pot:check": "node tools/check-pot.js",
     "lint:css": "npm run lint:style",
@@ -22,8 +22,10 @@
   },
   "devDependencies": {
     "@wordpress/blocks": "13.0.3",
+    "@wordpress/prettier-config": "4.55.0",
     "@wordpress/scripts": "28.0.2",
     "typescript": "5.4.5",
+    "wp-prettier": "2.8.5",
     "yazl": "3.3.1"
   }
 }

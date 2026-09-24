@@ -32,13 +32,15 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
-          cache: npm
+
+      - name: Install pnpm
+        run: npm install --global pnpm@12.5.1
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Install npm dependencies
-        run: npm ci --ignore-scripts
+      - name: Install pnpm dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Record tool versions
         run: |
@@ -102,12 +104,14 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
-          cache: npm
+
+      - name: Install pnpm
+        run: npm install --global pnpm@12.5.1
 
       - name: Install locked development dependencies
         run: |
           composer install --no-interaction --no-progress --prefer-dist
-          npm ci --ignore-scripts
+          pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Verify generated block assets
         run: npm run build:check
@@ -154,12 +158,14 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
-          cache: npm
+
+      - name: Install pnpm
+        run: npm install --global pnpm@12.5.1
 
       - name: Install locked development dependencies
         run: |
           composer install --no-interaction --no-progress --prefer-dist
-          npm ci --ignore-scripts
+          pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Verify generated build and POT reproducibility
         run: |
