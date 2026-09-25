@@ -1,0 +1,37 @@
+name: Update WordPress.org readme
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hoursflow-wordpress-org-readme
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Update SVN trunk and stable-tag readme
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Verify stable tag matches plugin version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          grep -Fx "Stable tag: $version" readme.txt
+          grep -Fx " * Version: $version" hoursflow.php
+
+      - name: Update readme only (no code or asset changes)
+        uses: 10up/action-wordpress-plugin-asset-update@2480306f6f693672726d08b5917ea114cb2825f7 # stable
+        env:
+          SLUG: hoursflow
+          IGNORE_OTHER_FILES: 'true'
+          SKIP_ASSETS: 'true'
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}

@@ -141,15 +141,8 @@ final class RepositoryContractTest extends TestCase
         $this->assertStringContainsString("Tested up to: 7.1\n", $readme);
         $this->assertStringContainsString("Stable tag: 0.1.0\n", $readme);
         $this->assertStringContainsString("Donate link: https://gasatrya.com/donate/\n", $readme);
-        $this->assertStringNotContainsString('https://wordpress.org/support/plugin/hoursflow/', $readme);
-        $this->assertStringContainsString("plugin page's Support tab once the plugin is published", $readme);
-        $this->assertStringContainsString('https://github.com/gasatrya/hoursflow/issues', $readme);
-        $this->assertStringContainsString('https://github.com/gasatrya/hoursflow', $readme);
-        $this->assertStringContainsString('src/blocks/cta/index.js', $readme);
-        $this->assertStringContainsString('build/blocks/cta/index.js', $readme);
-        $this->assertStringContainsString('pnpm install --frozen-lockfile --ignore-scripts', $readme);
-        $this->assertStringContainsString('npm run build:check', $readme);
-        $this->assertStringContainsString('npm run package:check', $readme);
+        $this->assertStringNotContainsString('== Support ==', $readme);
+        $this->assertStringNotContainsString('== Source and build ==', $readme);
         $this->assertDoesNotMatchRegularExpression('/\\]\\((?!https?:|#)/', $readme);
         $this->assertSame(1, preg_match('/Donate link:[^\\n]+\\n\\n([^\\n]+)/', $readme, $short_description));
         $this->assertLessThanOrEqual(150, strlen(trim($short_description[1])));

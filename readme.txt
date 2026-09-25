@@ -176,33 +176,6 @@ purges in the site's caching system.
 This release is designed for a single site. Multisite and network activation
 are not claimed.
 
-== Support ==
-
-For questions, use the plugin page's Support tab once the plugin is published on WordPress.org.
-
-For reproducible bugs and feature discussion, use [GitHub issues](https://github.com/gasatrya/hoursflow/issues).
-
-== Source and build ==
-
-The public source repository is [github.com/gasatrya/hoursflow](https://github.com/gasatrya/hoursflow).
-The human-readable block source in `src/blocks/cta/index.js` corresponds to the
-compiled `build/blocks/cta/index.js`; `src/blocks/cta/editor.scss` and
-`src/blocks/cta/block.json` are included alongside it for reference.
-
-From a clean checkout, reproduce the build and package with:
-
-```
-pnpm install --frozen-lockfile --ignore-scripts
-npm run build
-npm run build:check
-npm run package:check
-npm run package
-```
-
-The production package is `dist/hoursflow-0.1.0.zip`. Development dependencies,
-tests, and build tooling remain in the public repository rather than the
-production ZIP.
-
 == Changelog ==
 
 = 0.1.0 =

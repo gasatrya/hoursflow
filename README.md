@@ -239,3 +239,10 @@ readme stable tag, `package.json`, changelog, POT, the versioned ZIP and artifac
 references in `.github/workflows/ci.yml`, and the versioned docs. Review CI on
 the release commit before tagging; a tag push triggers a live SVN deployment.
 The tag must match `vMAJOR.MINOR.PATCH` and its version must match the metadata.
+
+For **readme-only listing edits** after a version is published, run the manual
+**Update WordPress.org readme** workflow on `main` after CI passes. It updates
+SVN `trunk/readme.txt` and the existing stable tag's `readme.txt`, without
+republishing code, changing the version, or touching listing assets. Editing
+Git alone does not change the WordPress.org listing; re-pushing a published tag
+will not update it.
