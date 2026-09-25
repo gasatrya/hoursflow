@@ -188,7 +188,7 @@ From a clean checkout, install the locked dependencies and run every local gate:
 
 ```bash
 composer install --no-interaction --prefer-dist
-npm ci --ignore-scripts
+pnpm install --frozen-lockfile --ignore-scripts
 composer check:php
 npm run check
 ```
@@ -221,3 +221,21 @@ file `src/blocks/cta/index.js` is the human-readable source for the compiled
 
 See the [release checklist on GitHub](https://github.com/gasatrya/hoursflow/blob/main/docs/release-checklist.md)
 for integration, accessibility, package, and release verification.
+
+## WordPress.org deployment
+
+After completing the release checklist, pushing a `vX.Y.Z` tag starts the CI
+workflow. Only after quality checks, both WordPress integration lanes, and the
+production package job succeed does the deploy job publish that **tested ZIP's
+contents** to the `hoursflow` WordPress.org SVN repository (trunk and tag
+`X.Y.Z`). The 10up deploy action uses `BUILD_DIR`, not the raw checkout; the
+local `assets/` directory remains part of the plugin, not WordPress.org listing
+assets. If listing assets are needed, place them in `.wordpress-org/`.
+
+Set the GitHub repository Actions secrets `SVN_USERNAME` and `SVN_PASSWORD` to
+WordPress.org plugin committer credentials before pushing a release tag. Do not
+commit credentials. For future versions, update the plugin header/constant,
+readme stable tag, `package.json`, changelog, POT, the versioned ZIP and artifact
+references in `.github/workflows/ci.yml`, and the versioned docs. Review CI on
+the release commit before tagging; a tag push triggers a live SVN deployment.
+The tag must match `vMAJOR.MINOR.PATCH` and its version must match the metadata.

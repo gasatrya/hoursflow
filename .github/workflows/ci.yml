@@ -10,7 +10,8 @@ permissions:
 
 concurrency:
   group: hoursflow-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel an in-flight WordPress.org release because of a rerun.
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/v') }}
 
 jobs:
   quality:
@@ -200,3 +201,54 @@ jobs:
           name: hoursflow-0.1.0-${{ github.sha }}
           path: dist/hoursflow-0.1.0.zip
           if-no-files-found: error
+
+  deploy:
+    name: Deploy tested package to WordPress.org
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    needs: [quality, wordpress, package]
+    steps:
+      - name: Check out tagged repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Check release tag and metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          version="${GITHUB_REF_NAME#v}"
+          test "$(node -p "require('./package.json').version")" = "$version"
+          grep -Fx "Stable tag: $version" readme.txt
+          grep -Fx " * Version: $version" hoursflow.php
+          grep -F "define( 'HOURSFLOW_VERSION', '$version' );" hoursflow.php
+
+      - name: Download tested production package
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: hoursflow-0.1.0-${{ github.sha }}
+          path: ${{ runner.temp }}/hoursflow-package
+
+      - name: Stage production files for SVN
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          zip="${RUNNER_TEMP}/hoursflow-package/hoursflow-${version}.zip"
+          test -f "$zip"
+          unzip -q "$zip" -d "${RUNNER_TEMP}/hoursflow-deploy"
+          plugin="${RUNNER_TEMP}/hoursflow-deploy/hoursflow"
+          test -f "$plugin/hoursflow.php"
+          test -f "$plugin/readme.txt"
+          grep -Fx "Stable tag: $version" "$plugin/readme.txt"
+          grep -Fx " * Version: $version" "$plugin/hoursflow.php"
+          grep -F "define( 'HOURSFLOW_VERSION', '$version' );" "$plugin/hoursflow.php"
+          test ! -e "${RUNNER_TEMP}/hoursflow-deploy/hoursflow/vendor"
+          test ! -e "${RUNNER_TEMP}/hoursflow-deploy/hoursflow/node_modules"
+
+      - name: WordPress.org Plugin Deploy
+        uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # stable
+        env:
+          SLUG: hoursflow
+          BUILD_DIR: ${{ runner.temp }}/hoursflow-deploy/hoursflow
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}

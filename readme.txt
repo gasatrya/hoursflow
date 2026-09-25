@@ -70,6 +70,10 @@ A fresh activation is unconfigured and renders no CTA until a complete valid
 configuration is saved. Invalid settings keep the last valid configuration and
 show field-specific errors.
 
+== Screenshots ==
+
+1. HoursFlow settings screen showing the business timezone, global CTA colors, weekly hours, and live open-state CTA preview.
+
 == Usage ==
 
 Use the shortcode anywhere WordPress processes shortcodes:
@@ -188,7 +192,7 @@ compiled `build/blocks/cta/index.js`; `src/blocks/cta/editor.scss` and
 From a clean checkout, reproduce the build and package with:
 
 ```
-npm ci --ignore-scripts
+pnpm install --frozen-lockfile --ignore-scripts
 npm run build
 npm run build:check
 npm run package:check

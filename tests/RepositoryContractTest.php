@@ -147,7 +147,7 @@ final class RepositoryContractTest extends TestCase
         $this->assertStringContainsString('https://github.com/gasatrya/hoursflow', $readme);
         $this->assertStringContainsString('src/blocks/cta/index.js', $readme);
         $this->assertStringContainsString('build/blocks/cta/index.js', $readme);
-        $this->assertStringContainsString('npm ci --ignore-scripts', $readme);
+        $this->assertStringContainsString('pnpm install --frozen-lockfile --ignore-scripts', $readme);
         $this->assertStringContainsString('npm run build:check', $readme);
         $this->assertStringContainsString('npm run package:check', $readme);
         $this->assertDoesNotMatchRegularExpression('/\\]\\((?!https?:|#)/', $readme);

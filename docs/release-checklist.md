@@ -1,7 +1,8 @@
 # HoursFlow release checklist
 
-Use this checklist from a clean checkout before publishing a package. It does
-not authorize a WordPress.org submission, Git tag, or hosted release.
+Use this checklist from a clean checkout before publishing a release. Pushing
+a `vX.Y.Z` Git tag now triggers an automatic WordPress.org SVN deployment after
+CI succeeds; do not push a tag until the manual checks and credentials are ready.
 
 ## Automated gates
 
@@ -9,7 +10,7 @@ not authorize a WordPress.org submission, Git tag, or hosted release.
 
    ```bash
    composer install --no-interaction --prefer-dist
-   npm ci --ignore-scripts
+   pnpm install --frozen-lockfile --ignore-scripts
    composer check:php
    npm run check
    ```
@@ -133,5 +134,33 @@ a screen reader check is recommended for the release environment.
    `hoursflow_config` and `hoursflow_schema_version` must be deleted. Reinstalling
    must start unconfigured.
 3. Re-read the public caching, limitations, privacy, external-service, and data
-   retention disclosures before release. Do not raise compatibility claims or
-   add submission/update-service claims without a separate authorized change.
+   retention disclosures before release. Do not raise compatibility claims
+   without a separate authorized change.
+
+## WordPress.org release
+
+1. Confirm the WordPress.org `hoursflow` SVN repository is ready and the GitHub
+   repository has `SVN_USERNAME` and `SVN_PASSWORD` Actions secrets for an
+   authorized WordPress.org committer. Never add those credentials to Git.
+2. Confirm the plugin header and `HOURSFLOW_VERSION`, readme stable tag, and
+   `package.json` version all match the planned `X.Y.Z`. Update the changelog,
+   POT, versioned ZIP/artifact references in `.github/workflows/ci.yml`, and
+   versioned docs for subsequent releases. Only `vX.Y.Z` tags with three numeric
+   components are accepted by the deploy gate.
+3. Complete the automated and manual checks above on the release commit and
+   confirm CI is green. If desired, add WordPress.org listing assets (banners,
+   icons, screenshots) under `.wordpress-org/` before tagging; `assets/` holds
+   plugin runtime assets and is not the SVN listing-assets directory.
+4. Tag and push the **verified commit**, for example:
+
+   ```bash
+   git tag v0.1.0
+   git push origin v0.1.0
+   ```
+
+   The tag push runs CI. When all three gate jobs pass, the deploy job extracts
+   the tested production ZIP and the 10up action publishes its contents to SVN
+   `trunk/` and `tags/0.1.0/`. Inspect the deploy log and WordPress.org listing
+   and install the published version to verify it. A failed or skipped deploy
+   is not a release; investigate before retrying. Do not reuse a published
+   version number for changed code (the deploy action skips existing SVN tags).
